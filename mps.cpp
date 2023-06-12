@@ -601,10 +601,8 @@ void setSourceTerm(void) {
 		}
 	}
 }
-a
 
-    void
-    setMatrix(void) {
+void setMatrix(void) {
 	double xij, yij, zij;
 	double distance, distance2;
 	double coefficientIJ;
