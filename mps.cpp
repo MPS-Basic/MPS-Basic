@@ -51,7 +51,7 @@ constexpr int DIRICHLET_BOUNDARY_IS_NOT_CONNECTED = 0;
 constexpr int DIRICHLET_BOUNDARY_IS_CONNECTED = 1;
 constexpr int DIRICHLET_BOUNDARY_IS_CHECKED = 2;
 
-// partile collision
+// particle collision
 constexpr double COLLISION_DISTANCE = 0.5 * PARTICLE_DISTANCE;
 constexpr double COEFFICIENT_OF_RESTITUTION = 0.2;
 
@@ -95,7 +95,7 @@ void setMatrix(void);
 void exceptionalProcessingForBoundaryCondition(void);
 void checkBoundaryCondition(void);
 void increaseDiagonalTerm(void);
-void solveSimultaniousEquationsByGaussEliminationMethod(void);
+void solveSimultaneousEquationsByGaussEliminationMethod(void);
 void removeNegativePressure(void);
 void setMinimumPressure(void);
 void calPressureGradient(void);
@@ -379,7 +379,7 @@ void mainLoopOfSimulation(void) {
 		Time += DT;
 		if ((iTimeStep % OUTPUT_INTERVAL) == 0) {
 			printf(
-			    "TimeStepNumber: %4d   Time: %lf(s)   NumberOfParticless: %d\n",
+			    "TimeStepNumber: %4d   Time: %lf(s)   NumberOfParticles: %d\n",
 			    iTimeStep, Time, NumberOfParticles);
 			writeData_inVtuFormat();
 			writeData_inProfFormat();
@@ -507,7 +507,7 @@ void collision(void) {
 						velocity_iz -= (forceDT / mi) * (zij / distance);
 						if (j > i) {
 							fprintf(stderr,
-							        "WARNING: Collision occured between %d and "
+							        "WARNING: Collision occurred between %d and "
 							        "%d particles.\n",
 							        i, j);
 						}
@@ -539,7 +539,7 @@ void calPressure(void) {
 	setBoundaryCondition();
 	setSourceTerm();
 	setMatrix();
-	solveSimultaniousEquationsByGaussEliminationMethod();
+	solveSimultaneousEquationsByGaussEliminationMethod();
 	removeNegativePressure();
 	setMinimumPressure();
 }
@@ -642,7 +642,7 @@ void setMatrix(void) {
 }
 
 void exceptionalProcessingForBoundaryCondition(void) {
-	/* If tere is no Dirichlet boundary condition on the fluid,
+	/* If there is no Dirichlet boundary condition on the fluid,
 	   increase the diagonal terms of the matrix for an exception. This allows
 	   us to solve the matrix without Dirichlet boundary conditions. */
 	checkBoundaryCondition();
@@ -696,7 +696,7 @@ void checkBoundaryCondition(void) {
 	} while (
 	    count !=
 	    0); /* This procedure is repeated until the all fluid or wall particles
-	           (which have Dirhchlet boundary condition in the particle group)
+	           (which have Dirichlet boundary condition in the particle group)
 	           are in the state of "DIRICHLET_BOUNDARY_IS_CHECKED".*/
 
 	for (i = 0; i < NumberOfParticles; i++) {
@@ -722,7 +722,7 @@ void increaseDiagonalTerm(void) {
 	}
 }
 
-void solveSimultaniousEquationsByGaussEliminationMethod(void) {
+void solveSimultaneousEquationsByGaussEliminationMethod(void) {
 	int i, j, k;
 	double c;
 	double sumOfTerms;
