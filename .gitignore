@@ -1,3 +1,5 @@
+.vscode/
+build/
 *.exe
 *.prof
 *.vtu
