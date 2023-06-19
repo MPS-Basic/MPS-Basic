@@ -424,7 +424,7 @@ void collision(void) {
 			if (dist2 < collisionDistance2) {
 				double dist = sqrt(dist2);
 				auto normal = diff.normalized();
-				double depth = dist - collisionDistance;
+				double depth = collisionDistance - dist;
 				double invM1 = p1.inverseDensity();
 				double invM2 = p2.inverseDensity();
 				double mass = 1.0 / (invM1 + invM2);
