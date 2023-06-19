@@ -1,9 +1,10 @@
 ---
-AccessModifierOffset: '0'
+AccessModifierOffset: '-4'
 IndentCaseLabels: 'false'
 IndentWidth: '4'
 PointerAlignment: Left
 TabWidth: '4'
 UseTab: ForIndentation
+ColumnLimit: '120'
 
 ...
