@@ -8,6 +8,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 
 // for 2D
 constexpr int DIM = 2;
@@ -715,84 +717,93 @@ void moveParticleUsingPressureGradient(void) {
 }
 
 void writeData_inProfFormat(void) {
-	int i;
-	FILE* fp;
-	char fileName[256];
+	std::stringstream ss;
+	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
 
-	sprintf(fileName, "output_%04d.prof", fileNumber);
-	fp = fopen(fileName, "w");
-	fprintf(fp, "%lf\n", Time);
-	fprintf(fp, "%d\n", numberOfParticles);
-	for (i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "%d %lf %lf %lf %lf %lf %lf %lf %lf\n", particleType[i], position[i * 3], position[i * 3 + 1],
-		        position[i * 3 + 2], velocity[i * 3], velocity[i * 3 + 1], velocity[i * 3 + 2], pressure[i],
-		        numberDensity[i]);
+	std::ofstream ofs(ss.str());
+	if (ofs.fail()) {
+		std::cerr << "cannot write " << ss.str() << std::endl;
 	}
-	fclose(fp);
+	ofs << Time << std::endl;
+	ofs << particles.size() << std::endl;
+	for (size_t i = 0; i < particles.size(); i++) {
+		for (size_t j = 0; j < 3; j++) {
+			ofs << particles[i].position[i] << " ";
+		}
+		for (size_t j = 0; j < 3; j++) {
+			ofs << particles[i].velocity[i] << " ";
+		}
+		ofs << particles[i].pressure << " " << particles[i].numberDensity << std::endl;
+	}
 	fileNumber++;
 }
 
 void writeData_inVtuFormat(void) {
-	double absoluteValueOfVelocity;
-	FILE* fp;
-	char fileName[1024];
+	std::stringstream ss;
+	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
 
-	sprintf(fileName, "particle_%04d.vtu", fileNumber);
-	fp = fopen(fileName, "w");
-	fprintf(fp, "<?xml version='1.0' encoding='UTF-8'?>\n");
-	fprintf(fp, "<VTKFile xmlns='VTK' byte_order='LittleEndian' version='0.1' "
-	            "type='UnstructuredGrid'>\n");
-	fprintf(fp, "<UnstructuredGrid>\n");
-	fprintf(fp, "<Piece NumberOfCells='%d' NumberOfPoints='%d'>\n", numberOfParticles, numberOfParticles);
-	fprintf(fp, "<Points>\n");
-	fprintf(fp, "<DataArray NumberOfComponents='3' type='Float32' "
-	            "Name='position' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "%lf %lf %lf\n", position[i * 3], position[i * 3 + 1], position[i * 3 + 2]);
+	std::ofstream ofs(ss.str());
+	if (ofs.fail()) {
+		std::cerr << "cannot write " << ss.str() << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "</Points>\n");
-	fprintf(fp, "<PointData>\n");
-	fprintf(fp, "<DataArray NumberOfComponents='1' type='Int32' "
-	            "Name='particleType' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "%d\n", particleType[i]);
+	ofs << "<?xml version='1.0' encoding='UTF-8'?>" << std::endl;
+	ofs << "<VTKFile xmlns='VTK' byte_order='LittleEndian' version='0.1' "
+	       "type='UnstructuredGrid'>"
+	    << std::endl;
+	ofs << "<UnstructuredGrid>" << std::endl;
+	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints=" << particles.size() << ">\n";
+	ofs << "<Points>" << std::endl;
+	ofs << "<DataArray NumberOfComponents='3' type='Float64' "
+	       "Name='position' format='ascii'>"
+	    << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << particles[i].position[0] << " " << particles[i].position[1] << " " << particles[i].position[2]
+		    << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "<DataArray NumberOfComponents='1' type='Float32' "
-	            "Name='velocity' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		absoluteValueOfVelocity = sqrt(velocity[i * 3] * velocity[i * 3] + velocity[i * 3 + 1] * velocity[i * 3 + 1] +
-		                               velocity[i * 3 + 2] * velocity[i * 3 + 2]);
-		fprintf(fp, "%f\n", (float)absoluteValueOfVelocity);
+	ofs << "</DataArray>" << std::endl;
+	ofs << "</Points>" << std::endl;
+	ofs << "<PointData>" << std::endl;
+	ofs << "<DataArray NumberOfComponents='1' type='Int32' "
+	       "Name='particleType' format='ascii'>"
+	    << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << static_cast<int>(particles[i].particleType) << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "<DataArray NumberOfComponents='1' type='Float32' "
-	            "Name='pressure' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "%f\n", (float)pressure[i]);
+	ofs << "</DataArray>" << std::endl;
+	ofs << "<DataArray NumberOfComponents='3' type='Float32' "
+	       "Name='velocity' format='ascii'>"
+	    << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << particles[i].velocity[0] << " " << particles[i].velocity[1] << " " << particles[i].velocity[2]
+		    << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "</PointData>\n");
-	fprintf(fp, "<Cells>\n");
-	fprintf(fp, "<DataArray type='Int32' Name='connectivity' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "%d\n", i);
+	ofs << "</DataArray>" << std::endl;
+	ofs << "<DataArray NumberOfComponents='1' type='Float64' "
+	       "Name='pressure' format='ascii'>"
+	    << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << particles[i].pressure << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "<DataArray type='Int32' Name='offsets' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "%d\n", i + 1);
+	ofs << "</DataArray>" << std::endl;
+	ofs << "</PointData>" << std::endl;
+	ofs << "<Cells>" << std::endl;
+	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>" << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << i << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "<DataArray type='UInt8' Name='types' format='ascii'>\n");
-	for (int i = 0; i < numberOfParticles; i++) {
-		fprintf(fp, "1\n");
+	ofs << "</DataArray>" << std::endl;
+	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>" << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << i + 1 << std::endl;
 	}
-	fprintf(fp, "</DataArray>\n");
-	fprintf(fp, "</Cells>\n");
-	fprintf(fp, "</Piece>\n");
-	fprintf(fp, "</UnstructuredGrid>\n");
-	fprintf(fp, "</VTKFile>\n");
-	fclose(fp);
+	ofs << "</DataArray>" << std::endl;
+	ofs << "<DataArray type='UInt8' Name='types' format='ascii'>" << std::endl;
+	for (int i = 0; i < particles.size(); i++) {
+		ofs << "1" << std::endl;
+	}
+	ofs << "</DataArray>" << std::endl;
+	ofs << "</Cells>" << std::endl;
+	ofs << "</Piece>" << std::endl;
+	ofs << "</UnstructuredGrid>" << std::endl;
+	ofs << "</VTKFile>" << std::endl;
 }
