@@ -174,39 +174,39 @@ int main(int argc, char** argv) {
 }
 
 void initializeParticlePositionAndVelocity_for2dim(void) {
-	int iX, iY;
-	int nX, nY;
-	double x, y, z;
 
-	nX = (int)(1.0 / PARTICLE_DISTANCE) + 5;
-	nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
-	for (iX = -4; iX < nX; iX++) {
-		for (iY = -4; iY < nY; iY++) {
-			x = PARTICLE_DISTANCE * (double)(iX);
-			y = PARTICLE_DISTANCE * (double)(iY);
-			z = 0.0;
+	int nX = (int)(1.0 / PARTICLE_DISTANCE) + 5;
+	int nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
+	for (int iX = -4; iX < nX; iX++) {
+		for (int iY = -4; iY < nY; iY++) {
+			double x = PARTICLE_DISTANCE * (double)(iX);
+			double y = PARTICLE_DISTANCE * (double)(iY);
+			ParticleType type = ParticleType::Ghost;
 
 			/* dummy wall region */
 			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
 			    ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
-				particles.emplace_back(x, y, z, ParticleType::DummyWall);
+				type = ParticleType::DummyWall;
 			}
 
 			/* wall region */
 			if (((x > -2.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
 			    ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
-				particles.emplace_back(x, y, z, ParticleType::Wall);
+				type = ParticleType::Wall;
 			}
 
 			/* wall region */
 			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
 			    ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
-				particles.emplace_back(x, y, z, ParticleType::Wall);
+				type = ParticleType::Wall;
 			}
 
 			/* fluid region */
 			if (((x > 0.0 + EPS) && (x <= 0.25 + EPS)) && ((y > 0.0 + EPS) && (y <= 0.50 + EPS))) {
-				particles.emplace_back(x, y, z, ParticleType::Fluid);
+				type = ParticleType::Fluid;
+			}
+			if (type != ParticleType::Ghost) {
+				particles.emplace_back(x, y, 0.0, type);
 			}
 		}
 	}
