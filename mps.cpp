@@ -9,8 +9,9 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <queue>
+#include <set>
 #include <sstream>
-
 // for 2D
 constexpr int DIM = 2;
 constexpr double PARTICLE_DISTANCE = 0.025;
@@ -102,7 +103,7 @@ public:
 		case ParticleType::Ghost:
 			return 1.0 / 0;
 		case ParticleType::Fluid:
-			return 1 / fluidDensity;
+			return 1 / FLUID_DENSITY;
 		case ParticleType::Wall:
 		case ParticleType::DummyWall:
 			return 0;
@@ -111,7 +112,7 @@ public:
 };
 
 std::vector<Particle> particles;
-Eigen::SparseMatrix<double> coefficientMatrix;
+Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
 Eigen::VectorXd sourceTerm;
 Eigen::VectorXd pressure;
 
@@ -131,9 +132,7 @@ void setBoundaryCondition(void);
 void setSourceTerm(void);
 void setMatrix(void);
 void exceptionalProcessingForBoundaryCondition(void);
-void checkBoundaryCondition(void);
-void increaseDiagonalTerm(void);
-void solveSimultaneousEquationsByGaussEliminationMethod(void);
+void solveSimultaneousEquations(void);
 void removeNegativePressure(void);
 void setMinimumPressure(void);
 void calPressureGradient(void);
@@ -152,7 +151,7 @@ double n0_forGradient;
 double n0_forLaplacian;
 double lambda;
 double collisionDistance, collisionDistance2;
-double fluidDensity;
+double fluidDensity = FLUID_DENSITY;
 
 int main(int argc, char** argv) {
 	printf("\n*** START PARTICLE-SIMULATION ***\n");
@@ -199,6 +198,11 @@ void initializeParticlePositionAndVelocity_for2dim(void) {
 			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
 			    ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
 				type = ParticleType::Wall;
+			}
+
+			/* empty region */
+			if (((x > 0.0 + EPS) && (x <= 1.00 + EPS)) && (y > 0.0 + EPS)) {
+				type = ParticleType::Ghost;
 			}
 
 			/* fluid region */
@@ -448,7 +452,7 @@ void calPressure(void) {
 	setBoundaryCondition();
 	setSourceTerm();
 	setMatrix();
-	solveSimultaneousEquationsByGaussEliminationMethod();
+	solveSimultaneousEquations();
 	removeNegativePressure();
 	setMinimumPressure();
 }
@@ -525,114 +529,67 @@ void setMatrix(void) {
 		coefficient_ii += (COMPRESSIBILITY) / (DT * DT);
 		triplets.emplace_back(i, i, coefficient_ii);
 	}
+	coefficientMatrix.resize(particles.size(), particles.size());
 	coefficientMatrix.setFromTriplets(triplets.begin(), triplets.end());
-	exceptionalProcessingForBoundaryCondition();
+	// exceptionalProcessingForBoundaryCondition();
 }
 
 void exceptionalProcessingForBoundaryCondition(void) {
 	/* If there is no Dirichlet boundary condition on the fluid,
 	   increase the diagonal terms of the matrix for an exception. This allows
 	   us to solve the matrix without Dirichlet boundary conditions. */
-	checkBoundaryCondition();
-	increaseDiagonalTerm();
-}
+	std::vector<bool> checked(particles.size(), false);
+	std::vector<bool> connected(particles.size(), false);
 
-void checkBoundaryCondition(void) {
-	int i, j, count;
-	double xij, yij, zij, distance2;
-
-	for (i = 0; i < numberOfParticles; i++) {
-		if (boundaryCondition[i] == FluidState::Ignored) {
-			flagForCheckingBoundaryCondition[i] = GHOST_OR_DUMMY;
-		} else if (boundaryCondition[i] == FluidState::FreeSurface) {
-			flagForCheckingBoundaryCondition[i] = DIRICHLET_BOUNDARY_IS_CONNECTED;
-		} else {
-			flagForCheckingBoundaryCondition[i] = DIRICHLET_BOUNDARY_IS_NOT_CONNECTED;
+	for (size_t i = 0; i < particles.size(); i++) {
+		if (particles[i].boundaryCondition == FluidState::FreeSurface) {
+			connected[i] = true;
 		}
-	}
-
-	do {
-		count = 0;
-		for (i = 0; i < numberOfParticles; i++) {
-			if (flagForCheckingBoundaryCondition[i] == DIRICHLET_BOUNDARY_IS_CONNECTED) {
-				for (j = 0; j < numberOfParticles; j++) {
-					if (j == i)
-						continue;
-					if ((particleType[j] == ParticleType::Ghost) || (particleType[j] == ParticleType::DummyWall))
-						continue;
-					if (flagForCheckingBoundaryCondition[j] == DIRICHLET_BOUNDARY_IS_NOT_CONNECTED) {
-						xij = position[j * 3] - position[i * 3];
-						yij = position[j * 3 + 1] - position[i * 3 + 1];
-						zij = position[j * 3 + 2] - position[i * 3 + 2];
-						distance2 = (xij * xij) + (yij * yij) + (zij * zij);
-						if (distance2 >= re2_forLaplacian)
-							continue;
-						flagForCheckingBoundaryCondition[j] = DIRICHLET_BOUNDARY_IS_CONNECTED;
+		if (connected[i]) {
+			continue;
+		}
+		// BFS for connected components
+		std::queue<size_t> queue;
+		queue.push(i);
+		checked[i] = true;
+		while (!queue.empty()) {
+			// pop front element
+			auto v = queue.front();
+			queue.pop();
+			// search for adjacent nodes
+			for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, v); it; ++it) {
+				auto nv = it.col();
+				if (!checked[nv]) {
+					if (connected[nv]) { // connected to boundary
+						connected[v] = true;
+						checked[v] = true;
+						break;
+					} else {
+						queue.push(nv);
+						checked[nv] = true;
 					}
 				}
-				flagForCheckingBoundaryCondition[i] = DIRICHLET_BOUNDARY_IS_CHECKED;
-				count++;
 			}
-		}
-	} while (count != 0); /* This procedure is repeated until the all fluid or wall particles
-	                         (which have Dirichlet boundary condition in the particle group)
-	                         are in the state of "DIRICHLET_BOUNDARY_IS_CHECKED".*/
-
-	for (i = 0; i < numberOfParticles; i++) {
-		if (flagForCheckingBoundaryCondition[i] == DIRICHLET_BOUNDARY_IS_NOT_CONNECTED) {
-			fprintf(stderr,
-			        "WARNING: There is no dirichlet boundary condition for "
-			        "%d-th particle.\n",
-			        i);
 		}
 	}
 }
 
-void increaseDiagonalTerm(void) {
-	int i;
-	int n = numberOfParticles;
-
-	for (i = 0; i < n; i++) {
-		if (flagForCheckingBoundaryCondition[i] == DIRICHLET_BOUNDARY_IS_NOT_CONNECTED) {
-			coefficientMatrix[i * n + i] = 2.0 * coefficientMatrix[i * n + i];
-		}
+void solveSimultaneousEquations(void) {
+	sourceTerm.resize(particles.size());
+	pressure.resize(particles.size());
+	for (size_t i = 0; i < particles.size(); i++) {
+		sourceTerm[i] = particles[i].sourceTerm;
 	}
-}
 
-void solveSimultaneousEquationsByGaussEliminationMethod(void) {
-	// TODO: Eigen?
-
-	int i, j, k;
-	double c;
-	double sumOfTerms;
-	int n = numberOfParticles;
-
-	for (i = 0; i < n; i++) {
-		pressure[i] = 0.0;
+	Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
+	solver.compute(coefficientMatrix);
+	pressure = solver.solve(sourceTerm);
+	if (solver.info() != Eigen::Success) {
+		std::cerr << "Pressure calculation failed." << std::endl;
 	}
-	for (i = 0; i < n - 1; i++) {
-		if (boundaryCondition[i] != FluidState::Inner)
-			continue;
-		for (j = i + 1; j < n; j++) {
-			if (boundaryCondition[j] == FluidState::Ignored)
-				continue;
-			c = coefficientMatrix[j * n + i] / coefficientMatrix[i * n + i];
-			for (k = i + 1; k < n; k++) {
-				coefficientMatrix[j * n + k] -= c * coefficientMatrix[i * n + k];
-			}
-			sourceTerm[j] -= c * sourceTerm[i];
-		}
-	}
-	for (i = n - 1; i >= 0; i--) {
-		if (boundaryCondition[i] != FluidState::Inner)
-			continue;
-		sumOfTerms = 0.0;
-		for (j = i + 1; j < n; j++) {
-			if (boundaryCondition[j] == FluidState::Ignored)
-				continue;
-			sumOfTerms += coefficientMatrix[i * n + j] * pressure[j];
-		}
-		pressure[i] = (sourceTerm[i] - sumOfTerms) / coefficientMatrix[i * n + i];
+
+	for (size_t i = 0; i < particles.size(); i++) {
+		particles[i].pressure = pressure[i];
 	}
 }
 
@@ -719,10 +676,10 @@ void writeData_inProfFormat(void) {
 	ofs << particles.size() << std::endl;
 	for (size_t i = 0; i < particles.size(); i++) {
 		for (size_t j = 0; j < 3; j++) {
-			ofs << particles[i].position[i] << " ";
+			ofs << particles[i].position[j] << " ";
 		}
 		for (size_t j = 0; j < 3; j++) {
-			ofs << particles[i].velocity[i] << " ";
+			ofs << particles[i].velocity[j] << " ";
 		}
 		ofs << particles[i].pressure << " " << particles[i].numberDensity << std::endl;
 	}
@@ -731,7 +688,7 @@ void writeData_inProfFormat(void) {
 
 void writeData_inVtuFormat(void) {
 	std::stringstream ss;
-	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
+	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
 
 	std::ofstream ofs(ss.str());
 	if (ofs.fail()) {
@@ -742,7 +699,7 @@ void writeData_inVtuFormat(void) {
 	       "type='UnstructuredGrid'>"
 	    << std::endl;
 	ofs << "<UnstructuredGrid>" << std::endl;
-	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints=" << particles.size() << ">\n";
+	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>\n";
 	ofs << "<Points>" << std::endl;
 	ofs << "<DataArray NumberOfComponents='3' type='Float64' "
 	       "Name='position' format='ascii'>"
