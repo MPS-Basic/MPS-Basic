@@ -698,21 +698,12 @@ void calPressureGradient(void) {
 }
 
 void moveParticleUsingPressureGradient(void) {
-	int i;
-
-	for (i = 0; i < numberOfParticles; i++) {
-		if (particleType[i] == ParticleType::Fluid) {
-			velocity[i * 3] += acceleration[i * 3] * DT;
-			velocity[i * 3 + 1] += acceleration[i * 3 + 1] * DT;
-			velocity[i * 3 + 2] += acceleration[i * 3 + 2] * DT;
-
-			position[i * 3] += acceleration[i * 3] * DT * DT;
-			position[i * 3 + 1] += acceleration[i * 3 + 1] * DT * DT;
-			position[i * 3 + 2] += acceleration[i * 3 + 2] * DT * DT;
+	for (auto&& p : particles) {
+		if (p.particleType == ParticleType::Fluid) {
+			p.velocity += p.acceleration * DT;
+			p.position += p.acceleration * DT * DT;
 		}
-		acceleration[i * 3] = 0.0;
-		acceleration[i * 3 + 1] = 0.0;
-		acceleration[i * 3 + 2] = 0.0;
+		p.acceleration.setZero();
 	}
 }
 
