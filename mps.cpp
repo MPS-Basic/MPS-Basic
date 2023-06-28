@@ -1,7 +1,7 @@
 #include "eigen/Eigen/Dense"
 #include "eigen/Eigen/Sparse"
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <vector>
 
 #include <cmath>
@@ -116,29 +116,29 @@ Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
 Eigen::VectorXd sourceTerm;
 Eigen::VectorXd pressure;
 
-void initializeParticlePositionAndVelocity_for2dim(void);
-void initializeParticlePositionAndVelocity_for3dim(void);
-void calConstantParameter(void);
-void calNZeroAndLambda(void);
+void initializeParticlePositionAndVelocity_for2dim();
+void initializeParticlePositionAndVelocity_for3dim();
+void calConstantParameter();
+void calNZeroAndLambda();
 double weight(double distance, double re);
-void mainLoopOfSimulation(void);
-void calGravity(void);
-void calViscosity(void);
-void moveParticle(void);
-void collision(void);
-void calPressure(void);
-void calNumberDensity(void);
-void setBoundaryCondition(void);
-void setSourceTerm(void);
-void setMatrix(void);
-void exceptionalProcessingForBoundaryCondition(void);
-void solveSimultaneousEquations(void);
-void removeNegativePressure(void);
-void setMinimumPressure(void);
-void calPressureGradient(void);
-void moveParticleUsingPressureGradient(void);
-void writeData_inProfFormat(void);
-void writeData_inVtuFormat(void);
+void mainLoopOfSimulation();
+void calGravity();
+void calViscosity();
+void moveParticle();
+void collision();
+void calPressure();
+void calNumberDensity();
+void setBoundaryCondition();
+void setSourceTerm();
+void setMatrix();
+void exceptionalProcessingForBoundaryCondition();
+void solveSimultaneousEquations();
+void removeNegativePressure();
+void setMinimumPressure();
+void calPressureGradient();
+void moveParticleUsingPressureGradient();
+void writeData_inProfFormat();
+void writeData_inVtuFormat();
 
 int fileNumber;
 double Time;
@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void initializeParticlePositionAndVelocity_for2dim(void) {
+void initializeParticlePositionAndVelocity_for2dim() {
 
 	int nX = (int)(1.0 / PARTICLE_DISTANCE) + 5;
 	int nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
@@ -216,7 +216,7 @@ void initializeParticlePositionAndVelocity_for2dim(void) {
 	}
 }
 
-void initializeParticlePositionAndVelocity_for3dim(void) {
+void initializeParticlePositionAndVelocity_for3dim() {
 	int nX = (int)(1.0 / PARTICLE_DISTANCE) + 5;
 	int nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
 	int nZ = (int)(0.3 / PARTICLE_DISTANCE) + 5;
@@ -263,7 +263,7 @@ void initializeParticlePositionAndVelocity_for3dim(void) {
 	}
 }
 
-void calConstantParameter(void) {
+void calConstantParameter() {
 	re_forNumberDensity = RADIUS_FOR_NUMBER_DENSITY;
 	re_forGradient = RADIUS_FOR_GRADIENT;
 	re_forLaplacian = RADIUS_FOR_LAPLACIAN;
@@ -282,7 +282,7 @@ void calConstantParameter(void) {
 	Time = 0.0;
 }
 
-void calNZeroAndLambda(void) {
+void calNZeroAndLambda() {
 	int iZ_start, iZ_end;
 	if (DIM == 2) {
 		iZ_start = 0;
@@ -329,7 +329,7 @@ double weight(double dis, double re) {
 	}
 }
 
-void mainLoopOfSimulation(void) {
+void mainLoopOfSimulation() {
 	int iTimeStep = 0;
 
 	writeData_inVtuFormat();
@@ -360,7 +360,7 @@ void mainLoopOfSimulation(void) {
 	}
 }
 
-void calGravity(void) {
+void calGravity() {
 	for (int i = 0; i < particles.size(); i++) {
 		if (particles[i].particleType == ParticleType::Fluid) {
 			particles[i].acceleration += G;
@@ -371,7 +371,7 @@ void calGravity(void) {
 	}
 }
 
-void calViscosity(void) {
+void calViscosity() {
 	double a = (KINEMATIC_VISCOSITY) * (2.0 * DIM) / (n0_forLaplacian * lambda);
 	size_t n = particles.size();
 	for (int i = 0; i < n; i++) {
@@ -398,7 +398,7 @@ void calViscosity(void) {
 	}
 }
 
-void moveParticle(void) {
+void moveParticle() {
 	for (size_t i = 0; i < particles.size(); i++) {
 		if (particles[i].particleType == ParticleType::Fluid) {
 			particles[i].velocity += particles[i].acceleration * DT;
@@ -409,7 +409,7 @@ void moveParticle(void) {
 	}
 }
 
-void collision(void) {
+void collision() {
 	double e = COEFFICIENT_OF_RESTITUTION;
 
 	size_t n = particles.size();
@@ -447,7 +447,7 @@ void collision(void) {
 	}
 }
 
-void calPressure(void) {
+void calPressure() {
 	calNumberDensity();
 	setBoundaryCondition();
 	setSourceTerm();
@@ -457,7 +457,7 @@ void calPressure(void) {
 	setMinimumPressure();
 }
 
-void calNumberDensity(void) {
+void calNumberDensity() {
 	for (size_t i = 0; i < particles.size(); i++) {
 		particles[i].numberDensity = 0.0;
 		if (particles[i].particleType == ParticleType::Ghost) {
@@ -474,7 +474,7 @@ void calNumberDensity(void) {
 	}
 }
 
-void setBoundaryCondition(void) {
+void setBoundaryCondition() {
 	double n0 = n0_forNumberDensity;
 	double beta = THRESHOLD_RATIO_OF_NUMBER_DENSITY;
 
@@ -489,7 +489,7 @@ void setBoundaryCondition(void) {
 	}
 }
 
-void setSourceTerm(void) {
+void setSourceTerm() {
 	int i;
 	double n0 = n0_forNumberDensity;
 	double gamma = RELAXATION_COEFFICIENT_FOR_PRESSURE;
@@ -502,7 +502,7 @@ void setSourceTerm(void) {
 	}
 }
 
-void setMatrix(void) {
+void setMatrix() {
 	std::vector<Eigen::Triplet<double>> triplets;
 	auto n0 = n0_forLaplacian;
 
@@ -534,7 +534,7 @@ void setMatrix(void) {
 	// exceptionalProcessingForBoundaryCondition();
 }
 
-void exceptionalProcessingForBoundaryCondition(void) {
+void exceptionalProcessingForBoundaryCondition() {
 	/* If there is no Dirichlet boundary condition on the fluid,
 	   increase the diagonal terms of the matrix for an exception. This allows
 	   us to solve the matrix without Dirichlet boundary conditions. */
@@ -574,7 +574,7 @@ void exceptionalProcessingForBoundaryCondition(void) {
 	}
 }
 
-void solveSimultaneousEquations(void) {
+void solveSimultaneousEquations() {
 	sourceTerm.resize(particles.size());
 	pressure.resize(particles.size());
 	for (size_t i = 0; i < particles.size(); i++) {
@@ -593,7 +593,7 @@ void solveSimultaneousEquations(void) {
 	}
 }
 
-void removeNegativePressure(void) {
+void removeNegativePressure() {
 	for (auto& p : particles) {
 		if (p.pressure < 0) {
 			p.pressure = 0;
@@ -601,7 +601,7 @@ void removeNegativePressure(void) {
 	}
 }
 
-void setMinimumPressure(void) {
+void setMinimumPressure() {
 	for (auto& p : particles) {
 		p.minimumPressure = p.pressure;
 	}
@@ -625,7 +625,7 @@ void setMinimumPressure(void) {
 	}
 }
 
-void calPressureGradient(void) {
+void calPressureGradient() {
 	double a = DIM / n0_forGradient;
 	size_t n = particles.size();
 
@@ -654,7 +654,7 @@ void calPressureGradient(void) {
 	}
 }
 
-void moveParticleUsingPressureGradient(void) {
+void moveParticleUsingPressureGradient() {
 	for (auto&& p : particles) {
 		if (p.particleType == ParticleType::Fluid) {
 			p.velocity += p.acceleration * DT;
@@ -664,7 +664,7 @@ void moveParticleUsingPressureGradient(void) {
 	}
 }
 
-void writeData_inProfFormat(void) {
+void writeData_inProfFormat() {
 	std::stringstream ss;
 	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
 
@@ -686,7 +686,7 @@ void writeData_inProfFormat(void) {
 	fileNumber++;
 }
 
-void writeData_inVtuFormat(void) {
+void writeData_inVtuFormat() {
 	std::stringstream ss;
 	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
 
