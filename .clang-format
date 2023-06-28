@@ -6,5 +6,6 @@ PointerAlignment: Left
 TabWidth: '4'
 UseTab: ForIndentation
 ColumnLimit: '120'
+AllowShortFunctionsOnASingleLine: 'None'
 
 ...
