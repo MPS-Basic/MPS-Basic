@@ -1,7 +1,7 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
-#include "eigen/Eigen/Dense"
+#include "Eigen/Dense"
 
 enum class ParticleType {
 	Ghost,
@@ -41,13 +41,14 @@ public:
 	double inverseDensity(double& density) const {
 		switch (particleType) {
 		case ParticleType::Ghost:
-			return 1.0 / 0;
+			return std::numeric_limits<double>::infinity();
 
 		case ParticleType::Fluid:
 			return 1 / density;
 
 		case ParticleType::Wall:
 		case ParticleType::DummyWall:
+		default:
 			return 0;
 		}
 	}

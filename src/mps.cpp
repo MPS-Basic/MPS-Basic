@@ -1,6 +1,6 @@
-#include "eigen/Eigen/Dense"
-#include "eigen/Eigen/Sparse"
-#include "src/particle.h"
+#include "Eigen/Dense"
+#include "Eigen/Sparse"
+#include "particle.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -302,7 +302,7 @@ void mainLoopOfSimulation() {
 		iTimeStep++;
 		Time += DT;
 		if ((iTimeStep % OUTPUT_INTERVAL) == 0) {
-			printf("TimeStepNumber: %4d   time: %lf(s)   numberOfParticles: %d\n", iTimeStep, Time, particles.size());
+			printf("TimeStepNumber: %4d   time: %lf(s)   numberOfParticles: %ld\n", iTimeStep, Time, particles.size());
 			writeData_inVtuFormat();
 			writeData_inProfFormat();
 		}
