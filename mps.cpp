@@ -1,5 +1,6 @@
 #include "eigen/Eigen/Dense"
 #include "eigen/Eigen/Sparse"
+#include "src/particle.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -62,54 +63,6 @@ constexpr double RELAXATION_COEFFICIENT_FOR_PRESSURE = 0.2;
 
 // for computation
 constexpr double EPS = (0.01 * PARTICLE_DISTANCE);
-
-enum class ParticleType {
-	Ghost,
-	Fluid,
-	Wall,
-	DummyWall,
-};
-
-enum class FluidState {
-	Ignored,        // Ghost or dummy
-	FreeSurface,    // free surface particle
-	SubFreeSurface, // inner particle near free surface
-	Inner,          // inner fluid particle
-	Splash          // splash fluid particle
-};
-
-class Particle {
-private:
-public:
-	ParticleType particleType = ParticleType::Ghost;
-	Eigen::Vector3d position;
-	Eigen::Vector3d velocity;
-	Eigen::Vector3d acceleration;
-	double pressure = 0;
-	double numberDensity = 0;
-	FluidState boundaryCondition = FluidState::Ignored;
-	double sourceTerm = 0;
-	double minimumPressure = 0;
-
-	Particle(double x, double y, double z, ParticleType type) {
-		position << x, y, z;
-		velocity.setZero();
-		acceleration.setZero();
-		particleType = type;
-	}
-
-	double inverseDensity() const {
-		switch (particleType) {
-		case ParticleType::Ghost:
-			return 1.0 / 0;
-		case ParticleType::Fluid:
-			return 1 / FLUID_DENSITY;
-		case ParticleType::Wall:
-		case ParticleType::DummyWall:
-			return 0;
-		}
-	}
-};
 
 std::vector<Particle> particles;
 Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
@@ -431,8 +384,8 @@ void collision() {
 				double dist = sqrt(dist2);
 				auto normal = diff.normalized();
 				double depth = collisionDistance - dist;
-				double invM1 = p1.inverseDensity();
-				double invM2 = p2.inverseDensity();
+				double invM1 = p1.inverseDensity(fluidDensity);
+				double invM2 = p2.inverseDensity(fluidDensity);
 				double mass = 1.0 / (invM1 + invM2);
 				double rvn = (p1.velocity - p2.velocity).dot(normal);
 				double impulse = rvn > 0 ? 0 : -(1 + e) * rvn * mass;
@@ -650,7 +603,7 @@ void calPressureGradient() {
 			}
 		}
 		grad *= a;
-		p1.acceleration -= grad * p1.inverseDensity();
+		p1.acceleration -= grad * p1.inverseDensity(fluidDensity);
 	}
 }
 
