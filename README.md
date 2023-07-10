@@ -25,22 +25,25 @@ make # for makefile
 
 
 ## Support
-If you have question, ask authors, please.
+Please ask the authors if you have any questions.
 
 ## Roadmap
 - Basic MPS simulation code of C++
 - input/output
 
 
-## Contributing
+## Contribution
 ### Coding guide
 - C++ standard: C++17
 - Do **NOT** use Exceptions
 - Macros
-    - Use macros only where they are literally needed.
+	- Defined in `common.hpp`
+    - Excessive use should be avoided
+	- Always use `rep(i, a, b)` if you need to write `for (int i = a; i < b; i++)`
+		- However, **use range-based for `for (auto& e : v)` instead whenever it is possible**
 
 ## License
-MIT Licence
+MIT License
 
 ## Project status
 This project is under development.
