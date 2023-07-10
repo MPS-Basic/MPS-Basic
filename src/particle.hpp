@@ -1,6 +1,4 @@
-#ifndef PARTICLE_H
-#define PARTICLE_H
-
+#pragma once
 #include "Eigen/Dense"
 
 enum class ParticleType {
@@ -24,18 +22,17 @@ public:
 	ParticleType particleType = ParticleType::Ghost;
 	Eigen::Vector3d position;
 	Eigen::Vector3d velocity;
-	Eigen::Vector3d acceleration;
+	Eigen::Vector3d acceleration = Eigen::Vector3d::Zero();
 	double pressure              = 0;
 	double numberDensity         = 0;
 	FluidState boundaryCondition = FluidState::Ignored;
 	double sourceTerm            = 0;
 	double minimumPressure       = 0;
 
-	Particle(double x, double y, double z, ParticleType type) {
-		position << x, y, z;
-		velocity.setZero();
-		acceleration.setZero();
-		particleType = type;
+	Particle(ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel){
+		this->particleType = type;
+		this->position = pos;
+		this->velocity = vel;
 	}
 
 	double inverseDensity(double& density) const {
@@ -53,5 +50,3 @@ public:
 		}
 	}
 };
-
-#endif

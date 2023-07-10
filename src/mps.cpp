@@ -1,6 +1,7 @@
 #include "Eigen/Dense"
 #include "Eigen/Sparse"
-#include "particle.h"
+#include "particle.hpp"
+#include "common.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,6 +14,8 @@
 #include <queue>
 #include <set>
 #include <sstream>
+
+
 // for 2D
 constexpr int DIM = 2;
 constexpr double PARTICLE_DISTANCE = 0.025;
@@ -71,6 +74,7 @@ Eigen::VectorXd pressure;
 
 void initializeParticlePositionAndVelocity_for2dim();
 void initializeParticlePositionAndVelocity_for3dim();
+void readData();
 void calConstantParameter();
 void calNZeroAndLambda();
 double weight(double distance, double re);
@@ -109,12 +113,13 @@ double fluidDensity = FLUID_DENSITY;
 int main(int argc, char** argv) {
 	printf("\n*** START PARTICLE-SIMULATION ***\n");
 
-	if (DIM == 2) {
-		initializeParticlePositionAndVelocity_for2dim();
+	// if (DIM == 2) {
+	// 	initializeParticlePositionAndVelocity_for2dim();
 
-	} else {
-		initializeParticlePositionAndVelocity_for3dim();
-	}
+	// } else {
+	// 	initializeParticlePositionAndVelocity_for3dim();
+	// }
+	readData();
 
 	calConstantParameter();
 
@@ -123,6 +128,35 @@ int main(int argc, char** argv) {
 	printf("*** END ***\n\n");
 
 	return 0;
+}
+
+void readData(){
+	std::stringstream ss;
+	ss << "../input/input.prof";
+
+	std::ifstream ifs(ss.str());
+	if(ifs.fail()){
+		std::cerr << "cannot read " << ss.str() << std::endl;
+		std::exit(-1);
+	}
+
+	int particle_size;
+	ifs >> Time;
+	ifs >> particle_size;
+	rep(i, 0, particle_size){
+		int type;
+		Eigen::Vector3d pos, vel;
+		double prs, n;
+
+		ifs >> type;
+		ifs >> pos.x() >> pos.y() >> pos.z();
+		ifs >> vel.x() >> vel.y() >> vel.z();
+		ifs >> prs >> n;
+
+		if(type != static_cast<int>(ParticleType::Ghost)){
+			particles.emplace_back(type, pos, vel);
+		}
+	}
 }
 
 void initializeParticlePositionAndVelocity_for2dim() {
@@ -163,7 +197,7 @@ void initializeParticlePositionAndVelocity_for2dim() {
 				type = ParticleType::Fluid;
 			}
 			if (type != ParticleType::Ghost) {
-				particles.emplace_back(x, y, 0.0, type);
+				// particles.emplace_back(x, y, 0.0, type);
 			}
 		}
 	}
@@ -209,7 +243,7 @@ void initializeParticlePositionAndVelocity_for3dim() {
 				}
 
 				if (type != ParticleType::Ghost) {
-					particles.emplace_back(x, y, z, type);
+					// particles.emplace_back(x, y, z, type);
 				}
 			}
 		}
@@ -232,7 +266,7 @@ void calConstantParameter() {
 	collisionDistance2 = collisionDistance * collisionDistance;
 
 	fileNumber = 0;
-	Time = 0.0;
+	// Time = 0.0; time is set based on input.prof
 }
 
 void calNZeroAndLambda() {
@@ -625,17 +659,20 @@ void writeData_inProfFormat() {
 	if (ofs.fail()) {
 		std::cerr << "cannot write " << ss.str() << std::endl;
 	}
+
 	ofs << Time << std::endl;
 	ofs << particles.size() << std::endl;
-	for (size_t i = 0; i < particles.size(); i++) {
-		for (size_t j = 0; j < 3; j++) {
-			ofs << particles[i].position[j] << " ";
-		}
-		for (size_t j = 0; j < 3; j++) {
-			ofs << particles[i].velocity[j] << " ";
-		}
-		ofs << particles[i].pressure << " " << particles[i].numberDensity << std::endl;
+	for(auto& p : particles){
+		ofs << static_cast<int>(p.particleType) << " ";
+		ofs << p.position.x() << " ";
+		ofs << p.position.y() << " ";
+		ofs << p.position.z() << " ";
+		ofs << p.velocity.x() << " ";
+		ofs << p.velocity.z() << " ";
+		ofs << p.pressure << " ";
+		ofs << p.numberDensity << std::endl;
 	}
+
 	fileNumber++;
 }
 
