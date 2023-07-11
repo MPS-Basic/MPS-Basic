@@ -1,7 +1,7 @@
 #include "Eigen/Dense"
 #include "Eigen/Sparse"
-#include "particle.hpp"
 #include "common.hpp"
+#include "particle.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,12 +15,11 @@
 #include <set>
 #include <sstream>
 
-
 // for 2D
-constexpr int DIM = 2;
+constexpr int DIM                  = 2;
 constexpr double PARTICLE_DISTANCE = 0.025;
-constexpr double DT = 0.001;
-constexpr int OUTPUT_INTERVAL = 20;
+constexpr double DT                = 0.001;
+constexpr int OUTPUT_INTERVAL      = 20;
 const Eigen::Vector3d G(0.0, -9.8, 0.0);
 
 // for 3D
@@ -33,35 +32,35 @@ const Eigen::Vector3d G(0.0, 0.0, -9.8);
 */
 
 // computational condition
-constexpr int ARRAY_SIZE = 5000;
+constexpr int ARRAY_SIZE     = 5000;
 constexpr double FINISH_TIME = 2.0;
 
 // effective radius
 constexpr double RADIUS_FOR_NUMBER_DENSITY = 2.1 * PARTICLE_DISTANCE;
-constexpr double RADIUS_FOR_GRADIENT = 2.1 * PARTICLE_DISTANCE;
-constexpr double RADIUS_FOR_LAPLACIAN = 3.1 * PARTICLE_DISTANCE;
+constexpr double RADIUS_FOR_GRADIENT       = 2.1 * PARTICLE_DISTANCE;
+constexpr double RADIUS_FOR_LAPLACIAN      = 3.1 * PARTICLE_DISTANCE;
 
 // physical properties
 constexpr double KINEMATIC_VISCOSITY = 1.0e-6;
-constexpr double FLUID_DENSITY = 1000.0;
+constexpr double FLUID_DENSITY       = 1000.0;
 
 // free surface detection
 constexpr double THRESHOLD_RATIO_OF_NUMBER_DENSITY = 0.97;
-constexpr int GHOST_OR_DUMMY = -1;
-constexpr int SURFACE = 1;
-constexpr int INNER_PARTICLE = 0;
+constexpr int GHOST_OR_DUMMY                       = -1;
+constexpr int SURFACE                              = 1;
+constexpr int INNER_PARTICLE                       = 0;
 
 // boundary condition
 constexpr int DIRICHLET_BOUNDARY_IS_NOT_CONNECTED = 0;
-constexpr int DIRICHLET_BOUNDARY_IS_CONNECTED = 1;
-constexpr int DIRICHLET_BOUNDARY_IS_CHECKED = 2;
+constexpr int DIRICHLET_BOUNDARY_IS_CONNECTED     = 1;
+constexpr int DIRICHLET_BOUNDARY_IS_CHECKED       = 2;
 
 // particle collision
-constexpr double COLLISION_DISTANCE = 0.5 * PARTICLE_DISTANCE;
+constexpr double COLLISION_DISTANCE         = 0.5 * PARTICLE_DISTANCE;
 constexpr double COEFFICIENT_OF_RESTITUTION = 0.2;
 
 // params for pressure Poisson equation
-constexpr double COMPRESSIBILITY = 0.45E-9;
+constexpr double COMPRESSIBILITY                     = 0.45E-9;
 constexpr double RELAXATION_COEFFICIENT_FOR_PRESSURE = 0.2;
 
 // for computation
@@ -130,12 +129,12 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void readData(){
+void readData() {
 	std::stringstream ss;
 	ss << "../input/input.prof";
 
 	std::ifstream ifs(ss.str());
-	if(ifs.fail()){
+	if (ifs.fail()) {
 		std::cerr << "cannot read " << ss.str() << std::endl;
 		std::exit(-1);
 	}
@@ -143,17 +142,19 @@ void readData(){
 	int particle_size;
 	ifs >> Time;
 	ifs >> particle_size;
-	rep(i, 0, particle_size){
-		int type;
+	rep(i, 0, particle_size) {
+		int type_int;
+		ParticleType type;
 		Eigen::Vector3d pos, vel;
 		double prs, n;
 
-		ifs >> type;
+		ifs >> type_int;
 		ifs >> pos.x() >> pos.y() >> pos.z();
 		ifs >> vel.x() >> vel.y() >> vel.z();
 		ifs >> prs >> n;
 
-		if(type != static_cast<int>(ParticleType::Ghost)){
+		type = static_cast<ParticleType>(type_int);
+		if (type != ParticleType::Ghost) {
 			particles.emplace_back(type, pos, vel);
 		}
 	}
@@ -165,25 +166,31 @@ void initializeParticlePositionAndVelocity_for2dim() {
 	int nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
 	for (int iX = -4; iX < nX; iX++) {
 		for (int iY = -4; iY < nY; iY++) {
-			double x = PARTICLE_DISTANCE * (double)(iX);
-			double y = PARTICLE_DISTANCE * (double)(iY);
+			double x          = PARTICLE_DISTANCE * (double)(iX);
+			double y          = PARTICLE_DISTANCE * (double)(iY);
 			ParticleType type = ParticleType::Ghost;
 
 			/* dummy wall region */
-			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-			    ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
+			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
+			     (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
+			    ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
+			     (y <= 0.6 + EPS))) {
 				type = ParticleType::DummyWall;
 			}
 
 			/* wall region */
-			if (((x > -2.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
-			    ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
+			if (((x > -2.0 * PARTICLE_DISTANCE + EPS) &&
+			     (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
+			    ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) &&
+			     (y <= 0.6 + EPS))) {
 				type = ParticleType::Wall;
 			}
 
 			/* wall region */
-			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-			    ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) {
+			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
+			     (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
+			    ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) &&
+			     (y <= 0.6 + EPS))) {
 				type = ParticleType::Wall;
 			}
 
@@ -193,7 +200,8 @@ void initializeParticlePositionAndVelocity_for2dim() {
 			}
 
 			/* fluid region */
-			if (((x > 0.0 + EPS) && (x <= 0.25 + EPS)) && ((y > 0.0 + EPS) && (y <= 0.50 + EPS))) {
+			if (((x > 0.0 + EPS) && (x <= 0.25 + EPS)) &&
+			    ((y > 0.0 + EPS) && (y <= 0.50 + EPS))) {
 				type = ParticleType::Fluid;
 			}
 			if (type != ParticleType::Ghost) {
@@ -210,34 +218,44 @@ void initializeParticlePositionAndVelocity_for3dim() {
 	for (int iX = -4; iX < nX; iX++) {
 		for (int iY = -4; iY < nY; iY++) {
 			for (int iZ = -4; iZ < nZ; iZ++) {
-				double x = PARTICLE_DISTANCE * iX;
-				double y = PARTICLE_DISTANCE * iY;
-				double z = PARTICLE_DISTANCE * iZ;
+				double x          = PARTICLE_DISTANCE * iX;
+				double y          = PARTICLE_DISTANCE * iY;
+				double z          = PARTICLE_DISTANCE * iZ;
 				ParticleType type = ParticleType::Ghost;
 
 				/* dummy wall region */
-				if ((((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-				     ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) &&
-				    ((z > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) && (z <= 0.3 + 4.0 * PARTICLE_DISTANCE + EPS))) {
+				if ((((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
+				      (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
+				     ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
+				      (y <= 0.6 + EPS))) &&
+				    ((z > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
+				     (z <= 0.3 + 4.0 * PARTICLE_DISTANCE + EPS))) {
 					type = ParticleType::DummyWall;
 				}
 
 				/* wall region */
-				if ((((x > -2.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
-				     ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) &&
-				    ((z > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) && (z <= 0.3 + 2.0 * PARTICLE_DISTANCE + EPS))) {
+				if ((((x > -2.0 * PARTICLE_DISTANCE + EPS) &&
+				      (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
+				     ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) &&
+				      (y <= 0.6 + EPS))) &&
+				    ((z > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) &&
+				     (z <= 0.3 + 2.0 * PARTICLE_DISTANCE + EPS))) {
 					type = ParticleType::Wall;
 				}
 
 				/* wall region */
-				if ((((x > -4.0 * PARTICLE_DISTANCE + EPS) && (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-				     ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) && (y <= 0.6 + EPS))) &&
-				    ((z > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) && (z <= 0.3 + 4.0 * PARTICLE_DISTANCE + EPS))) {
+				if ((((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
+				      (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
+				     ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) &&
+				      (y <= 0.6 + EPS))) &&
+				    ((z > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
+				     (z <= 0.3 + 4.0 * PARTICLE_DISTANCE + EPS))) {
 					type = ParticleType::Wall;
 				}
 
 				/* fluid region */
-				if ((((x > 0.0 + EPS) && (x <= 0.25 + EPS)) && ((y > 0.0 + EPS) && (y < 0.5 + EPS))) &&
+				if ((((x > 0.0 + EPS) && (x <= 0.25 + EPS)) &&
+				     ((y > 0.0 + EPS) && (y < 0.5 + EPS))) &&
 				    ((z > 0.0 + EPS) && (z <= 0.3 + EPS))) {
 					type = ParticleType::Fluid;
 				}
@@ -251,18 +269,18 @@ void initializeParticlePositionAndVelocity_for3dim() {
 }
 
 void calConstantParameter() {
-	re_forNumberDensity = RADIUS_FOR_NUMBER_DENSITY;
-	re_forGradient = RADIUS_FOR_GRADIENT;
-	re_forLaplacian = RADIUS_FOR_LAPLACIAN;
+	re_forNumberDensity  = RADIUS_FOR_NUMBER_DENSITY;
+	re_forGradient       = RADIUS_FOR_GRADIENT;
+	re_forLaplacian      = RADIUS_FOR_LAPLACIAN;
 	re2_forNumberDensity = re_forNumberDensity * re_forNumberDensity;
-	re2_forGradient = re_forGradient * re_forGradient;
-	re2_forLaplacian = re_forLaplacian * re_forLaplacian;
+	re2_forGradient      = re_forGradient * re_forGradient;
+	re2_forLaplacian     = re_forLaplacian * re_forLaplacian;
 
 	calNZeroAndLambda();
 
 	fluidDensity = FLUID_DENSITY;
 
-	collisionDistance = COLLISION_DISTANCE;
+	collisionDistance  = COLLISION_DISTANCE;
 	collisionDistance2 = collisionDistance * collisionDistance;
 
 	fileNumber = 0;
@@ -273,16 +291,16 @@ void calNZeroAndLambda() {
 	int iZ_start, iZ_end;
 	if (DIM == 2) {
 		iZ_start = 0;
-		iZ_end = 1;
+		iZ_end   = 1;
 	} else {
 		iZ_start = -4;
-		iZ_end = 5;
+		iZ_end   = 5;
 	}
 
 	n0_forNumberDensity = 0.0;
-	n0_forGradient = 0.0;
-	n0_forLaplacian = 0.0;
-	lambda = 0.0;
+	n0_forGradient      = 0.0;
+	n0_forLaplacian     = 0.0;
+	lambda              = 0.0;
 	for (int iX = -4; iX < 5; iX++) {
 		for (int iY = -4; iY < 5; iY++) {
 			for (int iZ = iZ_start; iZ < iZ_end; iZ++) {
@@ -294,7 +312,7 @@ void calNZeroAndLambda() {
 				double zj = PARTICLE_DISTANCE * (double)(iZ);
 				Eigen::Vector3d rj(xj, yj, zj);
 				double dis2 = rj.squaredNorm();
-				double dis = rj.norm();
+				double dis  = rj.norm();
 				n0_forNumberDensity += weight(dis, re_forNumberDensity);
 				n0_forGradient += weight(dis, re_forGradient);
 				n0_forLaplacian += weight(dis, re_forLaplacian);
@@ -336,7 +354,9 @@ void mainLoopOfSimulation() {
 		iTimeStep++;
 		Time += DT;
 		if ((iTimeStep % OUTPUT_INTERVAL) == 0) {
-			printf("TimeStepNumber: %4d   time: %lf(s)   numberOfParticles: %ld\n", iTimeStep, Time, particles.size());
+			std::cout << "timestep number: " << iTimeStep << "   time: " << Time
+			          << "(s)   number of particles: " << particles.size()
+			          << std::endl;
 			writeData_inVtuFormat();
 			writeData_inProfFormat();
 		}
@@ -371,8 +391,8 @@ void calViscosity() {
 			auto& pj = particles[j];
 			if (i == j || pj.particleType == ParticleType::Ghost)
 				continue;
-			auto diff = pj.position - pi.position;
-			auto distance2 = diff.squaredNorm();
+			auto diff       = pj.position - pi.position;
+			auto distance2  = diff.squaredNorm();
 			double distance = sqrt(distance2);
 			if (distance < re_forLaplacian) {
 				double w = weight(distance, re_forLaplacian);
@@ -404,31 +424,32 @@ void collision() {
 		for (int j = 0; j < i; j++) {
 			auto& p1 = particles[i];
 			auto& p2 = particles[j];
-			auto t1 = p1.particleType;
-			auto t2 = p2.particleType;
+			auto t1  = p1.particleType;
+			auto t2  = p2.particleType;
 			// do not collide with ghost particles
 			if (t1 == ParticleType::Ghost || t2 == ParticleType::Ghost)
 				continue;
 			// at least one particle must be a fluid particle
 			if (t1 != ParticleType::Fluid && t2 != ParticleType::Fluid)
 				continue;
-			auto diff = p1.position - p2.position;
+			auto diff    = p1.position - p2.position;
 			double dist2 = diff.squaredNorm();
 			if (dist2 < collisionDistance2) {
-				double dist = sqrt(dist2);
-				auto normal = diff.normalized();
-				double depth = collisionDistance - dist;
-				double invM1 = p1.inverseDensity(fluidDensity);
-				double invM2 = p2.inverseDensity(fluidDensity);
-				double mass = 1.0 / (invM1 + invM2);
-				double rvn = (p1.velocity - p2.velocity).dot(normal);
+				double dist    = sqrt(dist2);
+				auto normal    = diff.normalized();
+				double depth   = collisionDistance - dist;
+				double invM1   = p1.inverseDensity(fluidDensity);
+				double invM2   = p2.inverseDensity(fluidDensity);
+				double mass    = 1.0 / (invM1 + invM2);
+				double rvn     = (p1.velocity - p2.velocity).dot(normal);
 				double impulse = rvn > 0 ? 0 : -(1 + e) * rvn * mass;
 				double positionImpulse = depth * mass;
 				p1.velocity += impulse * invM1 * normal;
 				p2.velocity -= impulse * invM2 * normal;
 				p1.position += positionImpulse * invM1 * normal;
 				p2.position -= positionImpulse * invM2 * normal;
-				std::cerr << "WARNING: Collision between particles " << i << " and " << j << " occurred." << std::endl;
+				std::cerr << "WARNING: Collision between particles " << i
+				          << " and " << j << " occurred." << std::endl;
 			}
 		}
 	}
@@ -451,22 +472,25 @@ void calNumberDensity() {
 			continue;
 		}
 		for (size_t j = 0; j < particles.size(); j++) {
-			if ((j == i) || (particles[j].particleType == ParticleType::Ghost)) {
+			if ((j == i) ||
+			    (particles[j].particleType == ParticleType::Ghost)) {
 				continue;
 			}
-			auto r_ij = particles[j].position - particles[i].position;
+			auto r_ij      = particles[j].position - particles[i].position;
 			auto norm_r_ij = r_ij.norm();
-			particles[i].numberDensity += weight(norm_r_ij, re_forNumberDensity);
+			particles[i].numberDensity +=
+			    weight(norm_r_ij, re_forNumberDensity);
 		}
 	}
 }
 
 void setBoundaryCondition() {
-	double n0 = n0_forNumberDensity;
+	double n0   = n0_forNumberDensity;
 	double beta = THRESHOLD_RATIO_OF_NUMBER_DENSITY;
 
 	for (size_t i = 0; i < particles.size(); i++) {
-		if (particles[i].particleType == ParticleType::Ghost || particles[i].particleType == ParticleType::DummyWall) {
+		if (particles[i].particleType == ParticleType::Ghost ||
+		    particles[i].particleType == ParticleType::DummyWall) {
 			particles[i].boundaryCondition = FluidState::Ignored;
 		} else if (particles[i].numberDensity < beta * n0) {
 			particles[i].boundaryCondition = FluidState::FreeSurface;
@@ -478,13 +502,14 @@ void setBoundaryCondition() {
 
 void setSourceTerm() {
 	int i;
-	double n0 = n0_forNumberDensity;
+	double n0    = n0_forNumberDensity;
 	double gamma = RELAXATION_COEFFICIENT_FOR_PRESSURE;
 
 	for (size_t i = 0; i < particles.size(); i++) {
 		particles[i].sourceTerm = 0.0;
 		if (particles[i].boundaryCondition == FluidState::Inner) {
-			particles[i].sourceTerm = gamma * (1.0 / (DT * DT)) * ((particles[i].numberDensity - n0) / n0);
+			particles[i].sourceTerm = gamma * (1.0 / (DT * DT)) *
+			                          ((particles[i].numberDensity - n0) / n0);
 		}
 	}
 }
@@ -500,16 +525,18 @@ void setMatrix() {
 			continue;
 		}
 		for (size_t j = 0; j < particles.size(); j++) {
-			if ((j == i) || (particles[j].boundaryCondition == FluidState::Ignored)) {
+			if ((j == i) ||
+			    (particles[j].boundaryCondition == FluidState::Ignored)) {
 				continue;
 			}
-			auto r_ij = particles[j].position - particles[i].position;
+			auto r_ij        = particles[j].position - particles[i].position;
 			auto square_r_ij = r_ij.squaredNorm();
 			if (square_r_ij > re_forLaplacian * re_forLaplacian) {
 				continue;
 			}
 			auto norm_r_ij = r_ij.norm();
-			double coefficient_ij = a * weight(norm_r_ij, re_forLaplacian) / fluidDensity;
+			double coefficient_ij =
+			    a * weight(norm_r_ij, re_forLaplacian) / fluidDensity;
 			triplets.emplace_back(i, j, -1.0 * coefficient_ij);
 			coefficient_ii += coefficient_ij;
 		}
@@ -544,12 +571,14 @@ void exceptionalProcessingForBoundaryCondition() {
 			auto v = queue.front();
 			queue.pop();
 			// search for adjacent nodes
-			for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, v); it; ++it) {
+			for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(
+			         coefficientMatrix, v);
+			     it; ++it) {
 				auto nv = it.col();
 				if (!checked[nv]) {
 					if (connected[nv]) { // connected to boundary
 						connected[v] = true;
-						checked[v] = true;
+						checked[v]   = true;
 						break;
 					} else {
 						queue.push(nv);
@@ -595,12 +624,12 @@ void setMinimumPressure() {
 	size_t n = particles.size();
 	for (int i = 1; i < n; i++) {
 		auto& p1 = particles[i];
-		auto t1 = p1.particleType;
+		auto t1  = p1.particleType;
 		if (t1 == ParticleType::Ghost || t1 == ParticleType::DummyWall)
 			continue;
 		for (int j = 0; j < i; j++) {
 			auto& p2 = particles[j];
-			auto t2 = p2.particleType;
+			auto t2  = p2.particleType;
 			if (t2 == ParticleType::Ghost || t2 == ParticleType::DummyWall)
 				continue;
 			auto diff = p1.position - p2.position;
@@ -625,14 +654,15 @@ void calPressureGradient() {
 			if (i == j)
 				continue;
 			auto& p2 = particles[j];
-			if (p2.particleType == ParticleType::Ghost || p2.particleType == ParticleType::DummyWall)
+			if (p2.particleType == ParticleType::Ghost ||
+			    p2.particleType == ParticleType::DummyWall)
 				continue;
-			auto diff = p2.position - p1.position;
+			auto diff    = p2.position - p1.position;
 			double dist2 = diff.squaredNorm();
 			if (dist2 < re2_forGradient) {
 				double dist = sqrt(dist2);
-				double w = weight(dist, re_forGradient);
-				double pij = (p2.pressure - p1.minimumPressure) / dist2;
+				double w    = weight(dist, re_forGradient);
+				double pij  = (p2.pressure - p1.minimumPressure) / dist2;
 				grad += diff * pij * w;
 			}
 		}
@@ -653,7 +683,8 @@ void moveParticleUsingPressureGradient() {
 
 void writeData_inProfFormat() {
 	std::stringstream ss;
-	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
+	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber
+	   << ".prof";
 
 	std::ofstream ofs(ss.str());
 	if (ofs.fail()) {
@@ -662,7 +693,7 @@ void writeData_inProfFormat() {
 
 	ofs << Time << std::endl;
 	ofs << particles.size() << std::endl;
-	for(auto& p : particles){
+	for (auto& p : particles) {
 		ofs << static_cast<int>(p.particleType) << " ";
 		ofs << p.position.x() << " ";
 		ofs << p.position.y() << " ";
@@ -678,7 +709,8 @@ void writeData_inProfFormat() {
 
 void writeData_inVtuFormat() {
 	std::stringstream ss;
-	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
+	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber
+	   << ".vtu";
 
 	std::ofstream ofs(ss.str());
 	if (ofs.fail()) {
@@ -689,14 +721,15 @@ void writeData_inVtuFormat() {
 	       "type='UnstructuredGrid'>"
 	    << std::endl;
 	ofs << "<UnstructuredGrid>" << std::endl;
-	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>\n";
+	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='"
+	    << particles.size() << "'>\n";
 	ofs << "<Points>" << std::endl;
 	ofs << "<DataArray NumberOfComponents='3' type='Float64' "
 	       "Name='position' format='ascii'>"
 	    << std::endl;
 	for (int i = 0; i < particles.size(); i++) {
-		ofs << particles[i].position[0] << " " << particles[i].position[1] << " " << particles[i].position[2]
-		    << std::endl;
+		ofs << particles[i].position[0] << " " << particles[i].position[1]
+		    << " " << particles[i].position[2] << std::endl;
 	}
 	ofs << "</DataArray>" << std::endl;
 	ofs << "</Points>" << std::endl;
@@ -712,8 +745,8 @@ void writeData_inVtuFormat() {
 	       "Name='velocity' format='ascii'>"
 	    << std::endl;
 	for (int i = 0; i < particles.size(); i++) {
-		ofs << particles[i].velocity[0] << " " << particles[i].velocity[1] << " " << particles[i].velocity[2]
-		    << std::endl;
+		ofs << particles[i].velocity[0] << " " << particles[i].velocity[1]
+		    << " " << particles[i].velocity[2] << std::endl;
 	}
 	ofs << "</DataArray>" << std::endl;
 	ofs << "<DataArray NumberOfComponents='1' type='Float64' "
@@ -725,12 +758,14 @@ void writeData_inVtuFormat() {
 	ofs << "</DataArray>" << std::endl;
 	ofs << "</PointData>" << std::endl;
 	ofs << "<Cells>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>" << std::endl;
+	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>"
+	    << std::endl;
 	for (int i = 0; i < particles.size(); i++) {
 		ofs << i << std::endl;
 	}
 	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>" << std::endl;
+	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>"
+	    << std::endl;
 	for (int i = 0; i < particles.size(); i++) {
 		ofs << i + 1 << std::endl;
 	}
