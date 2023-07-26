@@ -71,8 +71,6 @@ Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
 Eigen::VectorXd sourceTerm;
 Eigen::VectorXd pressure;
 
-void initializeParticlePositionAndVelocity_for2dim();
-void initializeParticlePositionAndVelocity_for3dim();
 void readData();
 void calConstantParameter();
 void calNZeroAndLambda();
@@ -112,12 +110,6 @@ double fluidDensity = FLUID_DENSITY;
 int main(int argc, char** argv) {
 	printf("\n*** START PARTICLE-SIMULATION ***\n");
 
-	// if (DIM == 2) {
-	// 	initializeParticlePositionAndVelocity_for2dim();
-
-	// } else {
-	// 	initializeParticlePositionAndVelocity_for3dim();
-	// }
 	readData();
 
 	calConstantParameter();
@@ -156,114 +148,6 @@ void readData() {
 		type = static_cast<ParticleType>(type_int);
 		if (type != ParticleType::Ghost) {
 			particles.emplace_back(type, pos, vel);
-		}
-	}
-}
-
-void initializeParticlePositionAndVelocity_for2dim() {
-
-	int nX = (int)(1.0 / PARTICLE_DISTANCE) + 5;
-	int nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
-	for (int iX = -4; iX < nX; iX++) {
-		for (int iY = -4; iY < nY; iY++) {
-			double x          = PARTICLE_DISTANCE * (double)(iX);
-			double y          = PARTICLE_DISTANCE * (double)(iY);
-			ParticleType type = ParticleType::Ghost;
-
-			/* dummy wall region */
-			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
-			     (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-			    ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
-			     (y <= 0.6 + EPS))) {
-				type = ParticleType::DummyWall;
-			}
-
-			/* wall region */
-			if (((x > -2.0 * PARTICLE_DISTANCE + EPS) &&
-			     (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
-			    ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) &&
-			     (y <= 0.6 + EPS))) {
-				type = ParticleType::Wall;
-			}
-
-			/* wall region */
-			if (((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
-			     (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-			    ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) &&
-			     (y <= 0.6 + EPS))) {
-				type = ParticleType::Wall;
-			}
-
-			/* empty region */
-			if (((x > 0.0 + EPS) && (x <= 1.00 + EPS)) && (y > 0.0 + EPS)) {
-				type = ParticleType::Ghost;
-			}
-
-			/* fluid region */
-			if (((x > 0.0 + EPS) && (x <= 0.25 + EPS)) &&
-			    ((y > 0.0 + EPS) && (y <= 0.50 + EPS))) {
-				type = ParticleType::Fluid;
-			}
-			if (type != ParticleType::Ghost) {
-				// particles.emplace_back(x, y, 0.0, type);
-			}
-		}
-	}
-}
-
-void initializeParticlePositionAndVelocity_for3dim() {
-	int nX = (int)(1.0 / PARTICLE_DISTANCE) + 5;
-	int nY = (int)(0.6 / PARTICLE_DISTANCE) + 5;
-	int nZ = (int)(0.3 / PARTICLE_DISTANCE) + 5;
-	for (int iX = -4; iX < nX; iX++) {
-		for (int iY = -4; iY < nY; iY++) {
-			for (int iZ = -4; iZ < nZ; iZ++) {
-				double x          = PARTICLE_DISTANCE * iX;
-				double y          = PARTICLE_DISTANCE * iY;
-				double z          = PARTICLE_DISTANCE * iZ;
-				ParticleType type = ParticleType::Ghost;
-
-				/* dummy wall region */
-				if ((((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
-				      (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-				     ((y > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
-				      (y <= 0.6 + EPS))) &&
-				    ((z > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
-				     (z <= 0.3 + 4.0 * PARTICLE_DISTANCE + EPS))) {
-					type = ParticleType::DummyWall;
-				}
-
-				/* wall region */
-				if ((((x > -2.0 * PARTICLE_DISTANCE + EPS) &&
-				      (x <= 1.00 + 2.0 * PARTICLE_DISTANCE + EPS)) &&
-				     ((y > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) &&
-				      (y <= 0.6 + EPS))) &&
-				    ((z > 0.0 - 2.0 * PARTICLE_DISTANCE + EPS) &&
-				     (z <= 0.3 + 2.0 * PARTICLE_DISTANCE + EPS))) {
-					type = ParticleType::Wall;
-				}
-
-				/* wall region */
-				if ((((x > -4.0 * PARTICLE_DISTANCE + EPS) &&
-				      (x <= 1.00 + 4.0 * PARTICLE_DISTANCE + EPS)) &&
-				     ((y > 0.6 - 2.0 * PARTICLE_DISTANCE + EPS) &&
-				      (y <= 0.6 + EPS))) &&
-				    ((z > 0.0 - 4.0 * PARTICLE_DISTANCE + EPS) &&
-				     (z <= 0.3 + 4.0 * PARTICLE_DISTANCE + EPS))) {
-					type = ParticleType::Wall;
-				}
-
-				/* fluid region */
-				if ((((x > 0.0 + EPS) && (x <= 0.25 + EPS)) &&
-				     ((y > 0.0 + EPS) && (y < 0.5 + EPS))) &&
-				    ((z > 0.0 + EPS) && (z <= 0.3 + EPS))) {
-					type = ParticleType::Fluid;
-				}
-
-				if (type != ParticleType::Ghost) {
-					// particles.emplace_back(x, y, z, type);
-				}
-			}
 		}
 	}
 }
@@ -307,9 +191,9 @@ void calNZeroAndLambda() {
 				if (((iX == 0) && (iY == 0)) && (iZ == 0))
 					continue;
 
-				double xj = PARTICLE_DISTANCE * (double)(iX);
-				double yj = PARTICLE_DISTANCE * (double)(iY);
-				double zj = PARTICLE_DISTANCE * (double)(iZ);
+				double xj = PARTICLE_DISTANCE * (double) (iX);
+				double yj = PARTICLE_DISTANCE * (double) (iY);
+				double zj = PARTICLE_DISTANCE * (double) (iZ);
 				Eigen::Vector3d rj(xj, yj, zj);
 				double dis2 = rj.squaredNorm();
 				double dis  = rj.norm();
