@@ -1,24 +1,12 @@
+#include "../src/output.hpp"
 #include "../src/particle.hpp"
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 
-void check_fluid_range(std::vector<double>& x_range,
-                       std::vector<double>& y_range,
-                       double& l0,
-                       double& eps);
-bool isInside(Eigen::Vector3d& position,
-              std::vector<double>& x_range,
-              std::vector<double>& y_range,
-              double& eps);
-void writeProf(std::vector<Particle>& particles);
-void writeVtu(std::vector<Particle>& particles);
-void dataArrayBegin(std::ofstream& ofs,
-                    const std::string& numberOfComponents,
-                    const std::string& type,
-                    const std::string& name);
-void dataArrayEnd(std::ofstream& ofs);
+void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps);
+bool isInside(Eigen::Vector3d& position, std::vector<double>& x_range, std::vector<double>& y_range, double& eps);
 
 int main(int argc, char** argv) {
 	std::vector<Particle> particles;
@@ -36,7 +24,7 @@ int main(int argc, char** argv) {
 	int iy_end   = round(fluid_y_range.at(1) / l0) + 4;
 	for (int ix = ix_begin; ix <= ix_end; ix++) {
 		for (int iy = iy_begin; iy <= iy_end; iy++) {
-			Eigen::Vector3d pos((double)(ix)*l0, (double)iy*l0, 0.0);
+			Eigen::Vector3d pos((double) (ix) *l0, (double) iy * l0, 0.0);
 			ParticleType type = ParticleType::Ghost;
 
 			// dummy wall region
@@ -72,41 +60,36 @@ int main(int argc, char** argv) {
 
 			if (type != ParticleType::Ghost) {
 				Eigen::Vector3d vel = Eigen::Vector3d::Zero();
-				particles.emplace_back(type, pos, vel);
+				particles.emplace_back(particles.size(), type, pos, vel);
 			}
 		}
 	}
 
-	writeProf(particles);
-	writeVtu(particles);
+	std::stringstream ss;
+	ss.str("input.prof");
+	writeProf(ss, 0.0, particles);
+	ss.str("input.vtu");
+	writeVtu(ss, 0.0, particles);
 }
 
-void check_fluid_range(std::vector<double>& x_range,
-                       std::vector<double>& y_range,
-                       double& l0,
-                       double& eps) {
+void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps) {
 	std::sort(x_range.begin(), x_range.end());
 	std::sort(y_range.begin(), y_range.end());
 
 	double nx = (x_range.at(1) - x_range.at(0)) / l0;
 	if (abs(nx - std::round(nx)) > eps) {
-		std::cerr << "x_range of the fluid is not divisible by particle length."
-		          << std::endl;
+		std::cerr << "x_range of the fluid is not divisible by particle length." << std::endl;
 		std::exit(-1);
 	}
 
 	double ny = (y_range.at(1) - y_range.at(0)) / l0;
 	if (abs(ny - std::round(ny)) > eps) {
-		std::cerr << "y_range of the fluid is not divisible by particle length."
-		          << std::endl;
+		std::cerr << "y_range of the fluid is not divisible by particle length." << std::endl;
 		std::exit(-1);
 	}
 }
 
-bool isInside(Eigen::Vector3d& pos,
-              std::vector<double>& x_range,
-              std::vector<double>& y_range,
-              double& eps) {
+bool isInside(Eigen::Vector3d& pos, std::vector<double>& x_range, std::vector<double>& y_range, double& eps) {
 	std::sort(x_range.begin(), x_range.end());
 	std::sort(y_range.begin(), y_range.end());
 
@@ -115,142 +98,4 @@ bool isInside(Eigen::Vector3d& pos,
 		return true;
 	else
 		return false;
-}
-
-void writeProf(std::vector<Particle>& particles) {
-	std::stringstream ss;
-	ss << "input.prof";
-
-	std::ofstream ofs(ss.str());
-	if (ofs.fail()) {
-		std::cerr << "cannot write " << ss.str() << std::endl;
-		std::exit(-1);
-	}
-
-	ofs << 0.0 << std::endl; // time
-	ofs << particles.size() << std::endl;
-	for(auto& p : particles){
-		ofs << static_cast<int>(p.particleType) << " ";
-		ofs << p.position.x() << " ";
-		ofs << p.position.y() << " ";
-		ofs << p.position.z() << " ";
-		ofs << p.velocity.x() << " ";
-		ofs << p.velocity.y() << " ";
-		ofs << p.velocity.z() << " ";
-		ofs << p.pressure << " ";
-		ofs << p.numberDensity << std::endl;
-	}
-}
-
-void writeVtu(std::vector<Particle>& particles) {
-	std::stringstream ss;
-	ss << "input.vtu";
-
-	std::ofstream ofs(ss.str());
-	if (ofs.fail()) {
-		std::cerr << "cannot write " << ss.str() << std::endl;
-		std::exit(-1);
-	}
-
-	// --------------
-	// --- Header ---
-	// --------------
-	ofs << "<?xml version='1.0' encoding='UTF-8'?>" << std::endl;
-	ofs << "<VTKFile xmlns='VTK' byte_order='LittleEndian' version='0.1' "
-	       "type "
-	       "= 'UnstructuredGrid' >"
-	    << std::endl;
-	ofs << "<UnstructuredGrid>" << std::endl;
-	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='"
-	    << particles.size() << "'>" << std::endl;
-
-	/// ------------------
-	/// ----- Points -----
-	/// ------------------
-	ofs << "<Points>" << std::endl;
-	ofs << "<DataArray NumberOfComponents='3' type='Float64' "
-	       "Name='position' format='ascii'>"
-	    << std::endl;
-	for(auto& p : particles){
-		ofs << p.position.x() << " ";
-		ofs << p.position.y() << " ";
-		ofs << p.position.z() << std::endl;
-	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "</Points>" << std::endl;
-
-	// ---------------------
-	// ----- PointData -----
-	// ---------------------
-	ofs << "<PointData>" << std::endl;
-
-	dataArrayBegin(ofs, "1", "Int32", "particleType");
-	for(auto& p : particles){
-		ofs << static_cast<int>(p.particleType) << std::endl;
-	}
-	dataArrayEnd(ofs);
-
-	dataArrayBegin(ofs, "3", "Float64", "velocity");
-	for(auto& p : particles){
-		ofs << p.velocity.x() << " ";
-		ofs << p.velocity.y() << " ";
-		ofs << p.velocity.z() << std::endl;
-	}
-	dataArrayEnd(ofs);
-
-	dataArrayBegin(ofs, "1", "Float64", "pressure");
-	for(auto& p : particles){
-		ofs << p.pressure << std::endl;
-	}
-	dataArrayEnd(ofs);
-
-	dataArrayBegin(ofs, "1", "Float64", "numberDensity");
-	for(auto& p : particles){
-		ofs << p.numberDensity << std::endl;
-	}
-	dataArrayEnd(ofs);
-
-	ofs << "</PointData>" << std::endl;
-
-	// -----------------
-	// ----- Cells -----
-	// -----------------
-	ofs << "<Cells>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << i << std::endl;
-	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << i + 1 << std::endl;
-	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray type='UInt8' Name='types' format='ascii'>" << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << "1" << std::endl;
-	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "</Cells>" << std::endl;
-
-	// ------------------
-	// ----- Footer -----
-	// ------------------
-	ofs << "</Piece>" << std::endl;
-	ofs << "</UnstructuredGrid>" << std::endl;
-	ofs << "</VTKFile>" << std::endl;
-}
-
-void dataArrayBegin(std::ofstream& ofs,
-                    const std::string& numberOfComponents,
-                    const std::string& type,
-                    const std::string& name) {
-	ofs << "<DataArray NumberOfComponents='" << numberOfComponents << "' type='"
-	    << type << "' Name='" << name << "' format='ascii'>" << std::endl;
-}
-
-void dataArrayEnd(std::ofstream& ofs) {
-	ofs << "</DataArray>" << std::endl;
 }

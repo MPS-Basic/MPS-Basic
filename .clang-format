@@ -5,7 +5,7 @@ IndentWidth: '4'
 PointerAlignment: Left
 TabWidth: '4'
 UseTab: ForIndentation
-ColumnLimit: '80'
+ColumnLimit: '120'
 AllowShortFunctionsOnASingleLine: 'None'
 AlignAfterOpenBracket: 'Align'
 BinPackParameters: 'false'

@@ -1,39 +1,36 @@
 #include "Eigen/Dense"
 #include "Eigen/Sparse"
+#include "bucket.hpp"
 #include "common.hpp"
+#include "domain.hpp"
+#include "output.hpp"
 #include "particle.hpp"
-#include <iostream>
-#include <string>
-#include <vector>
-
+#include "system.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <omp.h>
 #include <queue>
 #include <set>
 #include <sstream>
-
-// for 2D
-constexpr int DIM                  = 2;
-constexpr double PARTICLE_DISTANCE = 0.025;
-constexpr double DT                = 0.001;
-constexpr int OUTPUT_INTERVAL      = 20;
-const Eigen::Vector3d G(0.0, -9.8, 0.0);
-
-// for 3D
-/*
-#define DIM                  3
-#define PARTICLE_DISTANCE    0.075
-#define DT                   0.003
-#define OUTPUT_INTERVAL      2
-const Eigen::Vector3d G(0.0, 0.0, -9.8);
-*/
+#include <string>
+#include <vector>
 
 // computational condition
-constexpr int ARRAY_SIZE     = 5000;
-constexpr double FINISH_TIME = 2.0;
+constexpr double PARTICLE_DISTANCE     = 0.025;
+constexpr double DT                    = 0.001;
+constexpr double FINISH_TIME           = 2.0;
+constexpr double OUTPUT_PERIOD         = 0.04;
+constexpr double CFL_CONDITION         = 0.2;
+constexpr int NUMBER_OF_PHYSICAL_CORES = 4;
+
+constexpr int DIM = 2;
+const Eigen::Vector3d G(0.0, -9.8, 0.0);
+// constexpr int DIM = 3;
+// const Eigen::Vector3d G(0.0, 0.0, -9.8);
 
 // effective radius
 constexpr double RADIUS_FOR_NUMBER_DENSITY = 2.1 * PARTICLE_DISTANCE;
@@ -46,41 +43,27 @@ constexpr double FLUID_DENSITY       = 1000.0;
 
 // free surface detection
 constexpr double THRESHOLD_RATIO_OF_NUMBER_DENSITY = 0.97;
-constexpr int GHOST_OR_DUMMY                       = -1;
-constexpr int SURFACE                              = 1;
-constexpr int INNER_PARTICLE                       = 0;
 
-// boundary condition
-constexpr int DIRICHLET_BOUNDARY_IS_NOT_CONNECTED = 0;
-constexpr int DIRICHLET_BOUNDARY_IS_CONNECTED     = 1;
-constexpr int DIRICHLET_BOUNDARY_IS_CHECKED       = 2;
-
-// particle collision
+// collision
 constexpr double COLLISION_DISTANCE         = 0.5 * PARTICLE_DISTANCE;
 constexpr double COEFFICIENT_OF_RESTITUTION = 0.2;
 
-// params for pressure Poisson equation
+// parameters for pressure Poisson equation
 constexpr double COMPRESSIBILITY                     = 0.45E-9;
 constexpr double RELAXATION_COEFFICIENT_FOR_PRESSURE = 0.2;
 
-// for computation
-constexpr double EPS = (0.01 * PARTICLE_DISTANCE);
+void setParameters();
 
-std::vector<Particle> particles;
-Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
-Eigen::VectorXd sourceTerm;
-Eigen::VectorXd pressure;
-
-void readData();
-void calConstantParameter();
-void calNZeroAndLambda();
-double weight(double distance, double re);
-void mainLoopOfSimulation();
+// main loop
 void calGravity();
 void calViscosity();
 void moveParticle();
 void collision();
 void calPressure();
+void calPressureGradient();
+void moveParticleUsingPressureGradient();
+
+// pressure calculation
 void calNumberDensity();
 void setBoundaryCondition();
 void setSourceTerm();
@@ -89,89 +72,94 @@ void exceptionalProcessingForBoundaryCondition();
 void solveSimultaneousEquations();
 void removeNegativePressure();
 void setMinimumPressure();
-void calPressureGradient();
-void moveParticleUsingPressureGradient();
-void writeData_inProfFormat();
-void writeData_inVtuFormat();
+void calCourant();
 
-int fileNumber;
-double Time;
-// int numberOfParticles; // use particles.size()
-double re_forNumberDensity, re2_forNumberDensity;
-double re_forGradient, re2_forGradient;
-double re_forLaplacian, re2_forLaplacian;
+void readData();
+void writeData();
+
+void setNeighbors();
+double weight(double distance, double re);
+
+// simulation parameters
+double initialTime, Time;
+int timestep   = 0;
+int fileNumber = 0;
+clock_t simStartTime, timestepStartTime, timestepEndTime;
+double courant;
+FILE* logFile;
+
+// effective radius
+double re_forNumberDensity = RADIUS_FOR_NUMBER_DENSITY;
+double re_forGradient      = RADIUS_FOR_GRADIENT;
+double re_forLaplacian     = RADIUS_FOR_LAPLACIAN;
+double reMax               = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
+
+// physical properties
+double fluidDensity = FLUID_DENSITY;
+
+// constant parameters
 double n0_forNumberDensity;
 double n0_forGradient;
 double n0_forLaplacian;
 double lambda;
-double collisionDistance, collisionDistance2;
-double fluidDensity = FLUID_DENSITY;
+
+std::vector<Particle> particles;
+Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
+Eigen::VectorXd sourceTerm;
+Eigen::VectorXd pressure;
+Bucket bucket;
+Domain domain;
 
 int main(int argc, char** argv) {
-	printf("\n*** START PARTICLE-SIMULATION ***\n");
+	startSimulation(simStartTime);
 
+	omp_set_num_threads(NUMBER_OF_PHYSICAL_CORES);
 	readData();
+	setParameters();
+	bucket.set(reMax, CFL_CONDITION, domain, particles.size());
+	writeData();
 
-	calConstantParameter();
+	while (Time < FINISH_TIME) {
+		timestepStartTime = std::clock();
 
-	mainLoopOfSimulation();
+		bucket.storeParticles(particles, domain);
+		setNeighbors();
+		calGravity();
+		calViscosity();
+		moveParticle();
 
-	printf("*** END ***\n\n");
+		bucket.storeParticles(particles, domain);
+		setNeighbors();
+		collision();
+
+		bucket.storeParticles(particles, domain);
+		setNeighbors();
+		calPressure();
+		calPressureGradient();
+		moveParticleUsingPressureGradient();
+
+		calCourant();
+
+		timestep++;
+		Time += DT;
+		timestepEndTime = std::clock();
+		writeData();
+	}
+
+	endSimulation(simStartTime, logFile);
 
 	return 0;
 }
 
-void readData() {
-	std::stringstream ss;
-	ss << "../input/input.prof";
-
-	std::ifstream ifs(ss.str());
-	if (ifs.fail()) {
-		std::cerr << "cannot read " << ss.str() << std::endl;
+void setParameters() {
+	char filename[256];
+	sprintf(filename, "result/result.log");
+	int fileOpenError = fopen_s(&logFile, filename, "w");
+	if (fileOpenError) {
+		std::cerr << "cannot write result/result.log" << std::endl;
 		std::exit(-1);
 	}
 
-	int particle_size;
-	ifs >> Time;
-	ifs >> particle_size;
-	rep(i, 0, particle_size) {
-		int type_int;
-		ParticleType type;
-		Eigen::Vector3d pos, vel;
-		double prs, n;
-
-		ifs >> type_int;
-		ifs >> pos.x() >> pos.y() >> pos.z();
-		ifs >> vel.x() >> vel.y() >> vel.z();
-		ifs >> prs >> n;
-
-		type = static_cast<ParticleType>(type_int);
-		if (type != ParticleType::Ghost) {
-			particles.emplace_back(type, pos, vel);
-		}
-	}
-}
-
-void calConstantParameter() {
-	re_forNumberDensity  = RADIUS_FOR_NUMBER_DENSITY;
-	re_forGradient       = RADIUS_FOR_GRADIENT;
-	re_forLaplacian      = RADIUS_FOR_LAPLACIAN;
-	re2_forNumberDensity = re_forNumberDensity * re_forNumberDensity;
-	re2_forGradient      = re_forGradient * re_forGradient;
-	re2_forLaplacian     = re_forLaplacian * re_forLaplacian;
-
-	calNZeroAndLambda();
-
-	fluidDensity = FLUID_DENSITY;
-
-	collisionDistance  = COLLISION_DISTANCE;
-	collisionDistance2 = collisionDistance * collisionDistance;
-
-	fileNumber = 0;
-	// Time = 0.0; time is set based on input.prof
-}
-
-void calNZeroAndLambda() {
 	int iZ_start, iZ_end;
 	if (DIM == 2) {
 		iZ_start = 0;
@@ -205,81 +193,35 @@ void calNZeroAndLambda() {
 		}
 	}
 	lambda = lambda / n0_forLaplacian;
-
-	std::cout << "n0=" << n0_forNumberDensity << std::endl;
-}
-
-double weight(double dis, double re) {
-	if (dis >= re) {
-		return 0.0;
-
-	} else {
-		return (re / dis) - 1.0;
-	}
-}
-
-void mainLoopOfSimulation() {
-	int iTimeStep = 0;
-
-	writeData_inVtuFormat();
-	writeData_inProfFormat();
-
-	while (1) {
-		calGravity();
-		calViscosity();
-		moveParticle();
-
-		collision();
-
-		calPressure();
-		calPressureGradient();
-		moveParticleUsingPressureGradient();
-
-		iTimeStep++;
-		Time += DT;
-		if ((iTimeStep % OUTPUT_INTERVAL) == 0) {
-			std::cout << "timestep number: " << iTimeStep << "   time: " << Time
-			          << "(s)   number of particles: " << particles.size()
-			          << std::endl;
-			writeData_inVtuFormat();
-			writeData_inProfFormat();
-		}
-
-		if (Time >= FINISH_TIME) {
-			break;
-		}
-	}
 }
 
 void calGravity() {
-	for (int i = 0; i < particles.size(); i++) {
-		if (particles[i].particleType == ParticleType::Fluid) {
-			particles[i].acceleration += G;
+#pragma omp parallel for
+	for (auto& p : particles) {
+		if (p.type == ParticleType::Fluid) {
+			p.acceleration += G;
 
 		} else {
-			particles[i].acceleration.setZero();
+			p.acceleration.setZero();
 		}
 	}
 }
 
 void calViscosity() {
 	double a = (KINEMATIC_VISCOSITY) * (2.0 * DIM) / (n0_forLaplacian * lambda);
-	size_t n = particles.size();
-	for (int i = 0; i < n; i++) {
-		auto& pi = particles[i];
-		if (pi.particleType == ParticleType::Ghost)
+
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		if (pi.type != ParticleType::Fluid)
 			continue;
+
 		Eigen::Vector3d viscosityTerm = Eigen::Vector3d::Zero();
 
-		for (int j = 0; i < n; i++) {
-			auto& pj = particles[j];
-			if (i == j || pj.particleType == ParticleType::Ghost)
-				continue;
-			auto diff       = pj.position - pi.position;
-			auto distance2  = diff.squaredNorm();
-			double distance = sqrt(distance2);
-			if (distance < re_forLaplacian) {
-				double w = weight(distance, re_forLaplacian);
+		for (auto& neighbor : pi.neighbors) {
+			auto& pj = particles[neighbor.id];
+
+			if (neighbor.distance < re_forLaplacian) {
+				double w = weight(neighbor.distance, re_forLaplacian);
 				viscosityTerm += (pj.velocity - pi.velocity) * w;
 			}
 		}
@@ -290,50 +232,49 @@ void calViscosity() {
 }
 
 void moveParticle() {
-	for (size_t i = 0; i < particles.size(); i++) {
-		if (particles[i].particleType == ParticleType::Fluid) {
-			particles[i].velocity += particles[i].acceleration * DT;
-			particles[i].position += particles[i].velocity * DT;
+#pragma omp parallel for
+	for (auto& p : particles) {
+		if (p.type == ParticleType::Fluid) {
+			p.velocity += p.acceleration * DT;
+			p.position += p.velocity * DT;
+
 		} else {
-			particles[i].acceleration.setZero();
+			p.acceleration.setZero();
 		}
 	}
 }
 
 void collision() {
-	double e = COEFFICIENT_OF_RESTITUTION;
+	for (auto& pi : particles) {
+		if (pi.type != ParticleType::Fluid)
+			continue;
 
-	size_t n = particles.size();
-	for (int i = 1; i < n; i++) {
-		for (int j = 0; j < i; j++) {
-			auto& p1 = particles[i];
-			auto& p2 = particles[j];
-			auto t1  = p1.particleType;
-			auto t2  = p2.particleType;
-			// do not collide with ghost particles
-			if (t1 == ParticleType::Ghost || t2 == ParticleType::Ghost)
+		for (auto& neighbor : pi.neighbors) {
+			Particle& pj = particles[neighbor.id];
+			if (pj.type == ParticleType::Fluid && pj.id >= pi.id)
 				continue;
-			// at least one particle must be a fluid particle
-			if (t1 != ParticleType::Fluid && t2 != ParticleType::Fluid)
-				continue;
-			auto diff    = p1.position - p2.position;
-			double dist2 = diff.squaredNorm();
-			if (dist2 < collisionDistance2) {
-				double dist    = sqrt(dist2);
-				auto normal    = diff.normalized();
-				double depth   = collisionDistance - dist;
-				double invM1   = p1.inverseDensity(fluidDensity);
-				double invM2   = p2.inverseDensity(fluidDensity);
-				double mass    = 1.0 / (invM1 + invM2);
-				double rvn     = (p1.velocity - p2.velocity).dot(normal);
-				double impulse = rvn > 0 ? 0 : -(1 + e) * rvn * mass;
+
+			if (neighbor.distance < COLLISION_DISTANCE) {
+
+				double invMi = pi.inverseDensity(fluidDensity);
+				double invMj = pj.inverseDensity(fluidDensity);
+				double mass  = 1.0 / (invMi + invMj);
+
+				Eigen::Vector3d normal = (pj.position - pi.position).normalized();
+				double relVel          = (pj.velocity - pi.velocity).dot(normal);
+				double impulse         = 0.0;
+				if (relVel < 0.0)
+					impulse = -(1 + COEFFICIENT_OF_RESTITUTION) * relVel * mass;
+				pi.velocity -= impulse * invMi * normal;
+				pj.velocity += impulse * invMj * normal;
+
+				double depth           = COLLISION_DISTANCE - neighbor.distance;
 				double positionImpulse = depth * mass;
-				p1.velocity += impulse * invM1 * normal;
-				p2.velocity -= impulse * invM2 * normal;
-				p1.position += positionImpulse * invM1 * normal;
-				p2.position -= positionImpulse * invM2 * normal;
-				std::cerr << "WARNING: Collision between particles " << i
-				          << " and " << j << " occurred." << std::endl;
+				pi.position -= positionImpulse * invMi * normal;
+				pj.position += positionImpulse * invMj * normal;
+
+				// std::cerr << "WARNING: Collision between particles " << pi.id << " and " << pj.id << " occurred."
+				// << std::endl;
 			}
 		}
 	}
@@ -350,21 +291,15 @@ void calPressure() {
 }
 
 void calNumberDensity() {
-	for (size_t i = 0; i < particles.size(); i++) {
-		particles[i].numberDensity = 0.0;
-		if (particles[i].particleType == ParticleType::Ghost) {
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		pi.numberDensity = 0.0;
+
+		if (pi.type == ParticleType::Ghost)
 			continue;
-		}
-		for (size_t j = 0; j < particles.size(); j++) {
-			if ((j == i) ||
-			    (particles[j].particleType == ParticleType::Ghost)) {
-				continue;
-			}
-			auto r_ij      = particles[j].position - particles[i].position;
-			auto norm_r_ij = r_ij.norm();
-			particles[i].numberDensity +=
-			    weight(norm_r_ij, re_forNumberDensity);
-		}
+
+		for (auto& neighbor : pi.neighbors)
+			pi.numberDensity += weight(neighbor.distance, re_forNumberDensity);
 	}
 }
 
@@ -372,28 +307,29 @@ void setBoundaryCondition() {
 	double n0   = n0_forNumberDensity;
 	double beta = THRESHOLD_RATIO_OF_NUMBER_DENSITY;
 
-	for (size_t i = 0; i < particles.size(); i++) {
-		if (particles[i].particleType == ParticleType::Ghost ||
-		    particles[i].particleType == ParticleType::DummyWall) {
-			particles[i].boundaryCondition = FluidState::Ignored;
-		} else if (particles[i].numberDensity < beta * n0) {
-			particles[i].boundaryCondition = FluidState::FreeSurface;
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
+			pi.boundaryCondition = FluidState::Ignored;
+
+		} else if (pi.numberDensity < beta * n0) {
+			pi.boundaryCondition = FluidState::FreeSurface;
+
 		} else {
-			particles[i].boundaryCondition = FluidState::Inner;
+			pi.boundaryCondition = FluidState::Inner;
 		}
 	}
 }
 
 void setSourceTerm() {
-	int i;
 	double n0    = n0_forNumberDensity;
 	double gamma = RELAXATION_COEFFICIENT_FOR_PRESSURE;
 
-	for (size_t i = 0; i < particles.size(); i++) {
-		particles[i].sourceTerm = 0.0;
-		if (particles[i].boundaryCondition == FluidState::Inner) {
-			particles[i].sourceTerm = gamma * (1.0 / (DT * DT)) *
-			                          ((particles[i].numberDensity - n0) / n0);
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		pi.sourceTerm = 0.0;
+		if (pi.boundaryCondition == FluidState::Inner) {
+			pi.sourceTerm = gamma * (1.0 / (DT * DT)) * ((pi.numberDensity - n0) / n0);
 		}
 	}
 }
@@ -401,69 +337,63 @@ void setSourceTerm() {
 void setMatrix() {
 	std::vector<Eigen::Triplet<double>> triplets;
 	auto n0 = n0_forLaplacian;
+	auto a  = 2.0 * DIM / (n0 * lambda);
+	coefficientMatrix.resize(particles.size(), particles.size());
 
-	auto a = 2.0 * DIM / (n0 * lambda);
-	for (size_t i = 0; i < particles.size(); i++) {
-		double coefficient_ii = 0;
-		if (particles[i].boundaryCondition != FluidState::Inner) {
+	for (auto& pi : particles) {
+		if (pi.boundaryCondition != FluidState::Inner)
 			continue;
-		}
-		for (size_t j = 0; j < particles.size(); j++) {
-			if ((j == i) ||
-			    (particles[j].boundaryCondition == FluidState::Ignored)) {
+
+		double coefficient_ii = 0.0;
+		for (auto& neighbor : pi.neighbors) {
+			Particle& pj = particles[neighbor.id];
+			if (pj.boundaryCondition == FluidState::Ignored)
 				continue;
+
+			if (neighbor.distance < re_forLaplacian) {
+				double coefficient_ij = a * weight(neighbor.distance, re_forLaplacian) / fluidDensity;
+				triplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
+				coefficient_ii += coefficient_ij;
 			}
-			auto r_ij        = particles[j].position - particles[i].position;
-			auto square_r_ij = r_ij.squaredNorm();
-			if (square_r_ij > re_forLaplacian * re_forLaplacian) {
-				continue;
-			}
-			auto norm_r_ij = r_ij.norm();
-			double coefficient_ij =
-			    a * weight(norm_r_ij, re_forLaplacian) / fluidDensity;
-			triplets.emplace_back(i, j, -1.0 * coefficient_ij);
-			coefficient_ii += coefficient_ij;
 		}
 		coefficient_ii += (COMPRESSIBILITY) / (DT * DT);
-		triplets.emplace_back(i, i, coefficient_ii);
+		triplets.emplace_back(pi.id, pi.id, coefficient_ii);
 	}
-	coefficientMatrix.resize(particles.size(), particles.size());
 	coefficientMatrix.setFromTriplets(triplets.begin(), triplets.end());
+
 	// exceptionalProcessingForBoundaryCondition();
 }
 
 void exceptionalProcessingForBoundaryCondition() {
 	/* If there is no Dirichlet boundary condition on the fluid,
-	   increase the diagonal terms of the matrix for an exception. This allows
-	   us to solve the matrix without Dirichlet boundary conditions. */
+	   increase the diagonal terms of the matrix for an exception. This
+	   allows us to solve the matrix without Dirichlet boundary conditions.
+	 */
 	std::vector<bool> checked(particles.size(), false);
 	std::vector<bool> connected(particles.size(), false);
 
-	for (size_t i = 0; i < particles.size(); i++) {
-		if (particles[i].boundaryCondition == FluidState::FreeSurface) {
-			connected[i] = true;
-		}
-		if (connected[i]) {
+	for (auto& pi : particles) {
+		if (pi.boundaryCondition == FluidState::FreeSurface)
+			connected[pi.id] = true;
+		if (connected[pi.id])
 			continue;
-		}
 		// BFS for connected components
 		std::queue<size_t> queue;
-		queue.push(i);
-		checked[i] = true;
+		queue.push(pi.id);
+		checked[pi.id] = true;
 		while (!queue.empty()) {
 			// pop front element
 			auto v = queue.front();
 			queue.pop();
 			// search for adjacent nodes
-			for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(
-			         coefficientMatrix, v);
-			     it; ++it) {
+			for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, v); it; ++it) {
 				auto nv = it.col();
 				if (!checked[nv]) {
 					if (connected[nv]) { // connected to boundary
 						connected[v] = true;
 						checked[v]   = true;
 						break;
+
 					} else {
 						queue.push(nv);
 						checked[nv] = true;
@@ -477,8 +407,10 @@ void exceptionalProcessingForBoundaryCondition() {
 void solveSimultaneousEquations() {
 	sourceTerm.resize(particles.size());
 	pressure.resize(particles.size());
-	for (size_t i = 0; i < particles.size(); i++) {
-		sourceTerm[i] = particles[i].sourceTerm;
+
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		sourceTerm[pi.id] = pi.sourceTerm;
 	}
 
 	Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
@@ -486,181 +418,252 @@ void solveSimultaneousEquations() {
 	pressure = solver.solve(sourceTerm);
 	if (solver.info() != Eigen::Success) {
 		std::cerr << "Pressure calculation failed." << std::endl;
+		std::exit(-1);
 	}
 
-	for (size_t i = 0; i < particles.size(); i++) {
-		particles[i].pressure = pressure[i];
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		pi.pressure = pressure[pi.id];
 	}
 }
 
 void removeNegativePressure() {
+#pragma omp parallel for
 	for (auto& p : particles) {
-		if (p.pressure < 0) {
-			p.pressure = 0;
+		if (p.pressure < 0.0) {
+			p.pressure = 0.0;
 		}
 	}
 }
 
 void setMinimumPressure() {
+#pragma omp parallel for
 	for (auto& p : particles) {
 		p.minimumPressure = p.pressure;
 	}
-	size_t n = particles.size();
-	for (int i = 1; i < n; i++) {
-		auto& p1 = particles[i];
-		auto t1  = p1.particleType;
-		if (t1 == ParticleType::Ghost || t1 == ParticleType::DummyWall)
+
+	for (auto& pi : particles) {
+		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall)
 			continue;
-		for (int j = 0; j < i; j++) {
-			auto& p2 = particles[j];
-			auto t2  = p2.particleType;
-			if (t2 == ParticleType::Ghost || t2 == ParticleType::DummyWall)
+
+		for (auto& neighbor : pi.neighbors) {
+			Particle& pj = particles[neighbor.id];
+			if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
 				continue;
-			auto diff = p1.position - p2.position;
-			if (diff.squaredNorm() > re2_forGradient)
+			if (pj.id > pi.id)
 				continue;
-			p1.minimumPressure = std::min(p1.minimumPressure, p2.pressure);
-			p2.minimumPressure = std::min(p2.minimumPressure, p1.pressure);
+
+			if (neighbor.distance < re_forGradient) {
+				pi.minimumPressure = std::min(pi.minimumPressure, pj.pressure);
+				pj.minimumPressure = std::min(pj.minimumPressure, pi.pressure);
+			}
 		}
 	}
 }
 
 void calPressureGradient() {
 	double a = DIM / n0_forGradient;
-	size_t n = particles.size();
 
-	for (int i = 0; i < n; i++) {
-		auto& p1 = particles[i];
-		if (p1.particleType != ParticleType::Fluid)
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		if (pi.type != ParticleType::Fluid)
 			continue;
+
 		Eigen::Vector3d grad = Eigen::Vector3d::Zero();
-		for (int j = 0; j < n; j++) {
-			if (i == j)
+		for (auto& neighbor : pi.neighbors) {
+			Particle& pj = particles[neighbor.id];
+			if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
 				continue;
-			auto& p2 = particles[j];
-			if (p2.particleType == ParticleType::Ghost ||
-			    p2.particleType == ParticleType::DummyWall)
-				continue;
-			auto diff    = p2.position - p1.position;
-			double dist2 = diff.squaredNorm();
-			if (dist2 < re2_forGradient) {
-				double dist = sqrt(dist2);
-				double w    = weight(dist, re_forGradient);
-				double pij  = (p2.pressure - p1.minimumPressure) / dist2;
-				grad += diff * pij * w;
+
+			if (neighbor.distance < re_forGradient) {
+				double w = weight(neighbor.distance, re_forGradient);
+				// double dist2 = pow(neighbor.distance, 2);
+				double dist2 = (pj.position - pi.position).squaredNorm();
+				double pij   = (pj.pressure - pi.minimumPressure) / dist2;
+				grad += (pj.position - pi.position) * pij * w;
 			}
 		}
 		grad *= a;
-		p1.acceleration -= grad * p1.inverseDensity(fluidDensity);
+		pi.acceleration -= grad * pi.inverseDensity(fluidDensity);
 	}
 }
 
 void moveParticleUsingPressureGradient() {
+#pragma omp parallel for
 	for (auto&& p : particles) {
-		if (p.particleType == ParticleType::Fluid) {
+		if (p.type == ParticleType::Fluid) {
 			p.velocity += p.acceleration * DT;
 			p.position += p.acceleration * DT * DT;
 		}
+
 		p.acceleration.setZero();
 	}
 }
 
-void writeData_inProfFormat() {
-	std::stringstream ss;
-	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber
-	   << ".prof";
+void calCourant() {
+	courant = 0.0;
 
-	std::ofstream ofs(ss.str());
-	if (ofs.fail()) {
-		std::cerr << "cannot write " << ss.str() << std::endl;
+	for (auto& pi : particles) {
+		if (pi.type != ParticleType::Fluid)
+			continue;
+
+		double iCourant = (pi.velocity.norm() * DT) / PARTICLE_DISTANCE;
+		courant         = std::max(courant, iCourant);
 	}
 
-	ofs << Time << std::endl;
-	ofs << particles.size() << std::endl;
-	for (auto& p : particles) {
-		ofs << static_cast<int>(p.particleType) << " ";
-		ofs << p.position.x() << " ";
-		ofs << p.position.y() << " ";
-		ofs << p.position.z() << " ";
-		ofs << p.velocity.x() << " ";
-		ofs << p.velocity.z() << " ";
-		ofs << p.pressure << " ";
-		ofs << p.numberDensity << std::endl;
+	if (courant > CFL_CONDITION) {
+		std::cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << std::endl;
 	}
-
-	fileNumber++;
 }
 
-void writeData_inVtuFormat() {
+void readData() {
 	std::stringstream ss;
-	ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber
-	   << ".vtu";
+	std::ifstream ifs;
 
-	std::ofstream ofs(ss.str());
-	if (ofs.fail()) {
-		std::cerr << "cannot write " << ss.str() << std::endl;
+	ss.str("./input/input.prof");
+	ifs.open(ss.str());
+	if (ifs.fail()) {
+		std::cerr << "cannot read " << ss.str() << std::endl;
+		std::exit(-1);
 	}
-	ofs << "<?xml version='1.0' encoding='UTF-8'?>" << std::endl;
-	ofs << "<VTKFile xmlns='VTK' byte_order='LittleEndian' version='0.1' "
-	       "type='UnstructuredGrid'>"
-	    << std::endl;
-	ofs << "<UnstructuredGrid>" << std::endl;
-	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='"
-	    << particles.size() << "'>\n";
-	ofs << "<Points>" << std::endl;
-	ofs << "<DataArray NumberOfComponents='3' type='Float64' "
-	       "Name='position' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << particles[i].position[0] << " " << particles[i].position[1]
-		    << " " << particles[i].position[2] << std::endl;
+
+	int particleSize;
+	ifs >> Time;
+	initialTime = Time;
+	ifs >> particleSize;
+	rep(i, 0, particleSize) {
+		int type_int;
+		ParticleType type;
+		Eigen::Vector3d pos, vel;
+		double prs, n;
+
+		ifs >> type_int;
+		ifs >> pos.x() >> pos.y() >> pos.z();
+		ifs >> vel.x() >> vel.y() >> vel.z();
+		ifs >> prs >> n;
+
+		type = static_cast<ParticleType>(type_int);
+		if (type != ParticleType::Ghost) {
+			particles.emplace_back(particles.size(), type, pos, vel);
+		}
 	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "</Points>" << std::endl;
-	ofs << "<PointData>" << std::endl;
-	ofs << "<DataArray NumberOfComponents='1' type='Int32' "
-	       "Name='particleType' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << static_cast<int>(particles[i].particleType) << std::endl;
+	ifs.close();
+	ifs.clear();
+
+	ss.str("./input/input.domain");
+	ifs.open(ss.str());
+	if (ifs.fail()) {
+		std::cerr << "cannot read " << ss.str() << std::endl;
+		std::exit(-1);
 	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray NumberOfComponents='3' type='Float32' "
-	       "Name='velocity' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << particles[i].velocity[0] << " " << particles[i].velocity[1]
-		    << " " << particles[i].velocity[2] << std::endl;
+
+	std::string dumstr;
+	ifs >> dumstr >> domain.xMin;
+	ifs >> dumstr >> domain.xMax;
+	ifs >> dumstr >> domain.yMin;
+	ifs >> dumstr >> domain.yMax;
+	ifs >> dumstr >> domain.zMin;
+	ifs >> dumstr >> domain.zMax;
+	domain.xLength = domain.xMax - domain.xMin;
+	domain.yLength = domain.yMax - domain.yMin;
+	domain.zLength = domain.zMax - domain.zMin;
+	ifs.close();
+	ifs.clear();
+}
+
+void writeData() {
+	int second, minute, hour;
+
+	char elapsed[256];
+	second = (double) (timestepEndTime - simStartTime) / CLOCKS_PER_SEC;
+	calSecondMinuteHour(second, minute, hour);
+	sprintf(elapsed, "elapsed=%dh %02dm %02ds", hour, minute, second);
+
+	double ave;
+	if (timestep == 0) {
+		ave = 0.0;
+	} else {
+		ave = ((double) (timestepEndTime - simStartTime) / CLOCKS_PER_SEC) / timestep;
 	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray NumberOfComponents='1' type='Float64' "
-	       "Name='pressure' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << particles[i].pressure << std::endl;
+
+	char remain[256];
+	second = ((FINISH_TIME - Time) / Time) * ave * timestep;
+	calSecondMinuteHour(second, minute, hour);
+	if (timestep == 0)
+		sprintf(remain, "remain=-h --m --s");
+	else
+		sprintf(remain, "remain=%dh %02dm %02ds", hour, minute, second);
+
+	double last = (double) (timestepEndTime - timestepStartTime) / CLOCKS_PER_SEC;
+
+	// terminal output
+	printf("%d: dt=%.gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	       "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
+	       timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
+
+	// log output
+	fprintf(logFile,
+	        "%d: dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	        "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
+	        timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
+
+	// error output
+	fprintf(stderr, "%4d: t=%.3lfs\n", timestep, Time);
+
+	if (Time - initialTime >= OUTPUT_PERIOD * double(fileNumber)) {
+		std::stringstream ss;
+		ss << "result/prof/output_";
+		ss << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
+		writeProf(ss, Time, particles);
+
+		ss.str("");
+		ss << "result/vtu/output_";
+		ss << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
+		writeVtu(ss, Time, particles);
+
+		fileNumber++;
 	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "</PointData>" << std::endl;
-	ofs << "<Cells>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << i << std::endl;
+}
+
+void setNeighbors() {
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		if (pi.type == ParticleType::Ghost)
+			continue;
+
+		pi.neighbors.clear();
+
+		int ix = (int) ((pi.position.x() - domain.xMin) / bucket.length) + 1;
+		int iy = (int) ((pi.position.y() - domain.yMin) / bucket.length) + 1;
+		int iz = (int) ((pi.position.z() - domain.zMin) / bucket.length) + 1;
+
+		for (int jx = ix - 1; jx <= ix + 1; jx++) {
+			for (int jy = iy - 1; jy <= iy + 1; jy++) {
+				for (int jz = iz - 1; jz <= iz + 1; jz++) {
+					int jBucket = jx + jy * bucket.numX + jz * bucket.numX * bucket.numY;
+					int j       = bucket.first[jBucket];
+
+					while (j != -1) {
+						Particle& pj = particles[j];
+
+						double dist = (pj.position - pi.position).norm();
+						if (j != pi.id && dist < reMax) {
+							pi.neighbors.emplace_back(j, dist);
+						}
+
+						j = bucket.next[j];
+					}
+				}
+			}
+		}
 	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>"
-	    << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << i + 1 << std::endl;
+}
+
+double weight(double dis, double re) {
+	if (dis >= re) {
+		return 0.0;
+
+	} else {
+		return (re / dis) - 1.0;
 	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray type='UInt8' Name='types' format='ascii'>" << std::endl;
-	for (int i = 0; i < particles.size(); i++) {
-		ofs << "1" << std::endl;
-	}
-	ofs << "</DataArray>" << std::endl;
-	ofs << "</Cells>" << std::endl;
-	ofs << "</Piece>" << std::endl;
-	ofs << "</UnstructuredGrid>" << std::endl;
-	ofs << "</VTKFile>" << std::endl;
 }
