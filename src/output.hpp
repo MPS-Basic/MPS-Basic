@@ -7,9 +7,7 @@
 
 #include "particle.hpp"
 
-void writeProf(const std::stringstream& ss,
-               const double& time,
-               const std::vector<Particle>& particles) {
+void writeProf(const std::stringstream& ss, const double& time, const std::vector<Particle>& particles) {
 	std::ofstream ofs(ss.str());
 	if (ofs.fail()) {
 		std::cerr << "cannot write " << ss.str() << std::endl;
@@ -20,7 +18,7 @@ void writeProf(const std::stringstream& ss,
 	ofs << particles.size() << std::endl;
 	for (auto& p : particles) {
 		ofs << static_cast<int>(p.type) << " ";
-		ofs << p.position.x() << " " << p.position.y() << " " << p.position.z();
+		ofs << p.position.x() << " " << p.position.y() << " " << p.position.z() << " ";
 		ofs << p.velocity.x() << " " << p.velocity.y() << " " << p.velocity.z();
 		ofs << std::endl;
 	}
@@ -30,17 +28,15 @@ void dataArrayBegin(std::ofstream& ofs,
                     const std::string& numberOfComponents,
                     const std::string& type,
                     const std::string& name) {
-	ofs << "<DataArray NumberOfComponents='" << numberOfComponents << "' type='"
-	    << type << "' Name='" << name << "' format='ascii'>" << std::endl;
+	ofs << "<DataArray NumberOfComponents='" << numberOfComponents << "' type='" << type << "' Name='" << name
+	    << "' format='ascii'>" << std::endl;
 }
 
 void dataArrayEnd(std::ofstream& ofs) {
 	ofs << "</DataArray>" << std::endl;
 }
 
-void writeVtu(const std::stringstream& ss,
-              const double& time,
-              const std::vector<Particle> particles) {
+void writeVtu(const std::stringstream& ss, const double& time, const std::vector<Particle> particles) {
 	std::ofstream ofs(ss.str());
 	if (ofs.fail()) {
 		std::cerr << "cannot write " << ss.str() << std::endl;
@@ -56,8 +52,8 @@ void writeVtu(const std::stringstream& ss,
 	       "= 'UnstructuredGrid' >"
 	    << std::endl;
 	ofs << "<UnstructuredGrid>" << std::endl;
-	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='"
-	    << particles.size() << "'>" << std::endl;
+	ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>"
+	    << std::endl;
 
 	/// ------------------
 	/// ----- Points -----
@@ -109,14 +105,12 @@ void writeVtu(const std::stringstream& ss,
 	// ----- Cells -----
 	// -----------------
 	ofs << "<Cells>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>"
-	    << std::endl;
+	ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>" << std::endl;
 	for (int i = 0; i < particles.size(); i++) {
 		ofs << i << std::endl;
 	}
 	ofs << "</DataArray>" << std::endl;
-	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>"
-	    << std::endl;
+	ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>" << std::endl;
 	for (int i = 0; i < particles.size(); i++) {
 		ofs << i + 1 << std::endl;
 	}

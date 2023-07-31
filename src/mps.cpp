@@ -535,12 +535,10 @@ void readData() {
 		int type_int;
 		ParticleType type;
 		Eigen::Vector3d pos, vel;
-		double prs, n;
 
 		ifs >> type_int;
 		ifs >> pos.x() >> pos.y() >> pos.z();
 		ifs >> vel.x() >> vel.y() >> vel.z();
-		ifs >> prs >> n;
 
 		type = static_cast<ParticleType>(type_int);
 		if (type != ParticleType::Ghost) {
