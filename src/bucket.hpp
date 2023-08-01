@@ -31,7 +31,7 @@ public:
 		next.resize(particleSize);
 	}
 
-	void storeParticles(const std::vector<Particle>& particles, const Domain& domain) {
+	void storeParticles(std::vector<Particle>& particles, const Domain& domain) {
 #pragma omp parallel for
 		rep(i, 0, num) {
 			first[i] = -1;
@@ -54,11 +54,13 @@ public:
 			if (p.position.z() < domain.zMin || domain.zMax < p.position.z())
 				isInDomain = false;
 			if (!isInDomain) {
-				std::cerr << "ERROR: particle " << p.id << " is out of domain." << std::endl;
+				std::cerr << "WARNING: particle " << p.id << " is out of domain." << std::endl;
 				std::cerr << "x = " << p.position.x() << " ";
 				std::cerr << "y = " << p.position.y() << " ";
 				std::cerr << "z = " << p.position.z() << std::endl;
-				std::exit(-1);
+				p.type = ParticleType::Ghost;
+				continue;
+				// std::exit(-1);
 			}
 
 			int ix      = (int) ((p.position.x() - domain.xMin) / length) + 1;
