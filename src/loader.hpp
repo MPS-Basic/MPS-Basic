@@ -64,7 +64,7 @@ public:
 	}
 };
 
-constexpr char* IDENTIFIER_REGEX = "[a-zA-Z0-9_]+";
+const char* IDENTIFIER_REGEX = "[a-zA-Z0-9_]+";
 
 class Loader {
 private:
