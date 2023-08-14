@@ -3,7 +3,7 @@
 #include <iostream>
 
 void startSimulation(clock_t& simStartTime);
-void endSimulation(clock_t& simStartTime);
+void endSimulation(clock_t& simStartTime, FILE* logFile);
 void calSecondMinuteHour(int& second, int& minute, int& hour);
 
 void startSimulation(clock_t& simStartTime) {
