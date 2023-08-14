@@ -1,3 +1,8 @@
+.vscode/
+build/
+result/
 *.exe
 *.prof
 *.vtu
+*.bat
+*.ps1

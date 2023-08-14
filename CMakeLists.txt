@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.1.4)
+project(mps VERSION 0.1.0 LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# main executable
+add_executable(${PROJECT_NAME} src/mps.cpp)
+# eigen 
+include_directories(eigen)
+# google test 
+add_subdirectory(googletest)
+option(INSTALL_GTEST "Enables installation of googletest" OFF) # Disable install
+add_executable(mps_test test/loader_test.cpp)
+target_include_directories(mps_test PUBLIC googletest/googletest/include)
+target_include_directories(mps_test PUBLIC src)
+target_link_libraries(mps_test gtest_main)
+enable_testing()

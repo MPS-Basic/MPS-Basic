@@ -1,0 +1,21 @@
+image: gcc
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+build:
+  stage: build
+  before_script:
+    - apt update && apt -y install ninja-build cmake
+  script:
+    - cmake -G "Ninja" .
+    - ninja
+  artifacts:
+    paths:
+      - mps
+      - mps_test
+
+test:
+  stage: test
+  script:
+    - ./mps_test
