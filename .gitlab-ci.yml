@@ -14,10 +14,10 @@ build:
     - ninja
   artifacts:
     paths:
-      - mps
-      - mps_test
+      - ./build/mps
+      - ./build/mps_test
 
 test:
   stage: test
   script:
-    - ./mps_test
+    - ./build/mps_test
