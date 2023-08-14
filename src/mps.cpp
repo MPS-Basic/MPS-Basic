@@ -113,7 +113,7 @@ Domain domain;
 int main(int argc, char** argv) {
 	startSimulation(simStartTime);
 
-	omp_set_num_threads(NUMBER_OF_PHYSICAL_CORES);
+	// omp_set_num_threads(NUMBER_OF_PHYSICAL_CORES);
 	readData();
 	setParameters();
 	bucket.set(reMax, CFL_CONDITION, domain, particles.size());
@@ -152,13 +152,13 @@ int main(int argc, char** argv) {
 }
 
 void setParameters() {
-	char filename[256];
-	sprintf(filename, "result/result.log");
-	int fileOpenError = fopen_s(&logFile, filename, "w");
-	if (fileOpenError) {
-		std::cerr << "cannot write result/result.log" << std::endl;
-		std::exit(-1);
-	}
+	// char filename[256];
+	// sprintf(filename, "result/result.log");
+	// int fileOpenError = fopen_s(&logFile, filename, "w");
+	// if (fileOpenError) {
+	// 	std::cerr << "cannot write result/result.log" << std::endl;
+	// 	std::exit(-1);
+	// }
 
 	int iZ_start, iZ_end;
 	if (DIM == 2) {
@@ -600,10 +600,10 @@ void writeData() {
 	       timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
 
 	// log output
-	fprintf(logFile,
-	        "%d: dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
-	        "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
-	        timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
+	// fprintf(logFile,
+	//         "%d: dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	//         "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
+	//         timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
 
 	// error output
 	fprintf(stderr, "%4d: t=%.3lfs\n", timestep, Time);
