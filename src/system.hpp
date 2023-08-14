@@ -20,7 +20,7 @@ void endSimulation(clock_t& simStartTime, FILE* logFile) {
 	calSecondMinuteHour(second, minute, hour);
 	printf("\nTotal Simulation Time = %dh %02dm %02ds\n", hour, minute, second);
 
-	fclose(logFile);
+	// fclose(logFile);
 
 	std::cout << std::endl;
 	std::cout << "*** END SIMULATION ***" << std::endl;
