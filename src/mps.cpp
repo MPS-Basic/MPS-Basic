@@ -3,6 +3,7 @@
 #include "bucket.hpp"
 #include "common.hpp"
 #include "domain.hpp"
+#include "loader.hpp"
 #include "output.hpp"
 #include "particle.hpp"
 #include "system.hpp"
@@ -23,12 +24,12 @@ class Settings {
 private:
 public:
 	// computational condition
-	double particleDistance   = 0.025;
-	double dt                 = 0.001;
-	double finishTime         = 2.0;
-	double outputPeriod       = 0.04;
-	double cflCondition       = 0.2;
-	int numberOfPhysicalCores = 4;
+	double particleDistance = 0.025;
+	double dt               = 0.001;
+	double finishTime       = 2.0;
+	double outputPeriod     = 0.04;
+	double cflCondition     = 0.2;
+	int numPhysicalCores    = 4;
 
 	int dim = 2;
 	Eigen::Vector3d gravity(0.0, -9.8, 0.0);
@@ -56,6 +57,51 @@ public:
 	double relaxationCoefficientForPressure = 0.2;
 
 	Settings() {
+	}
+
+	void load(std::string path) {
+		double gx = gravity[0];
+		double gy = gravity[1];
+		double gz = gravity[2];
+		radiusForNumberDensity /= particleDistance;
+		radiusForGradient /= particleDistance;
+		radiusForLaplacian /= particleDistance;
+		collisionDistance /= particleDistance;
+
+		Loader loader;
+		loader.addDefinition("particle_distance", &particleDistance, particleDistance);
+		loader.addDefinition("dt", &dt, dt);
+		loader.addDefinition("finish_time", &finishTime, finishTime);
+		loader.addDefinition("output_period", &outputPeriod, outputPeriod);
+		loader.addDefinition("cfl_condition", &cflCondition, cflCondition);
+		loader.addDefinition("num_physical_cores", &numPhysicalCores, numPhysicalCores);
+		loader.addDefinition("dim", &dim, dim);
+		loader.addDefinition("gravity_x", &gx, gx);
+		loader.addDefinition("gravity_y", &gy, gy);
+		loader.addDefinition("gravity_z", &gz, gz);
+		loader.addDefinition("radius_for_number_density_ratio", &radiusForNumberDensity, radiusForNumberDensity);
+		loader.addDefinition("radius_for_number_gradient_ratio", &radiusForGradient, radiusForGradient);
+		loader.addDefinition("radius_for_number_laplacian_ratio", &radiusForLaplacian, radiusForLaplacian);
+		loader.addDefinition("kinematic_viscosity", &kinematicViscosity, kinematicViscosity);
+		loader.addDefinition("fluid_density", &fluidDensity, fluidDensity);
+		loader.addDefinition("threshold_ratio_of_number_density", &thresholdRatioOfNumberDensity,
+		                     thresholdRatioOfNumberDensity);
+		loader.addDefinition("collision_distance_ratio", &collisionDistance, collisionDistance);
+		loader.addDefinition("coefficient_of_restitution", &coefficientOfRestitution, coefficientOfRestitution);
+		loader.addDefinition("compressibility", &compressibility, compressibility);
+		loader.addDefinition("relaxation_coefficient_for_pressure", &relaxationCoefficientForPressure,
+		                     relaxationCoefficientForPressure);
+
+		std::ifstream in(path);
+		loader.load(in);
+		
+		gravity[0] = gx;
+		gravity[1] = gy;
+		gravity[2] = gz;
+		radiusForNumberDensity *= particleDistance;
+		radiusForGradient *= particleDistance;
+		radiusForLaplacian *= particleDistance;
+		collisionDistance *= particleDistance;
 	}
 };
 
@@ -122,7 +168,7 @@ Domain domain;
 int main(int argc, char** argv) {
 	startSimulation(simStartTime);
 
-	// omp_set_num_threads(settings.numberOfPhysicalCores);
+	// omp_set_num_threads(settings.numPhysicalCores);
 	readData();
 	setParameters();
 	bucket.set(reMax, settings.cflCondition, domain, particles.size());
