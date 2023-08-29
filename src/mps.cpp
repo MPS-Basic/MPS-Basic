@@ -32,7 +32,7 @@ public:
 	int numPhysicalCores    = 4;
 
 	int dim = 2;
-	Eigen::Vector3d gravity(0.0, -9.8, 0.0);
+	Eigen::Vector3d gravity;
 	// int dim = 3;
 	// Eigen::Vector3d gravity(0.0, 0.0, -9.8);
 
@@ -57,12 +57,14 @@ public:
 	double relaxationCoefficientForPressure = 0.2;
 
 	Settings() {
+		gravity.setZero();
+		gravity(1) = -9.8;
 	}
 
 	void load(std::string path) {
-		double gx = gravity[0];
-		double gy = gravity[1];
-		double gz = gravity[2];
+		double gx = gravity(0);
+		double gy = gravity(0);
+		double gz = gravity(0);
 		radiusForNumberDensity /= particleDistance;
 		radiusForGradient /= particleDistance;
 		radiusForLaplacian /= particleDistance;
@@ -150,7 +152,7 @@ double re_forLaplacian     = settings.radiusForLaplacian;
 double reMax               = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
 
 // physical properties
-double settings.fluidDensity = settings.fluidDensity;
+double fluidDensity = settings.fluidDensity;
 
 // constant parameters
 double n0_forNumberDensity;
