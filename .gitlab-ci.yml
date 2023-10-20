@@ -19,5 +19,17 @@ build:
 
 test:
   stage: test
+  before_script:
+    - apt update && apt -y install gcovr
   script:
-    - ./build/mps_test
+    - cd build
+    - ./mps_test
+    - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+  coverage: /^\s*lines:\s*\d+.\d+\%/
+  artifacts:
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    expire_in: 2 days
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/coverage.xml
