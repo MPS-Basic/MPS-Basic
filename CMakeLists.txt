@@ -12,11 +12,16 @@ endif()
 # eigen 
 add_subdirectory(eigen)
 target_include_directories(${PROJECT_NAME} PUBLIC eigen)
+
+# test section
+add_executable(mps_test test/loader_test.cpp)
 # google test 
 add_subdirectory(googletest)
 option(INSTALL_GTEST "Enables installation of googletest" OFF) # Disable install
-add_executable(mps_test test/loader_test.cpp)
 target_include_directories(mps_test PUBLIC googletest/googletest/include)
 target_include_directories(mps_test PUBLIC src)
 target_link_libraries(mps_test gtest_main)
+# test coverage
+target_compile_options(mps_test PUBLIC -fprofile-arcs -ftest-coverage)
+target_link_options(mps_test PUBLIC -lgcov --coverage)
 enable_testing()
