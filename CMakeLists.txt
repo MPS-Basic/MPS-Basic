@@ -10,7 +10,6 @@ if(OpenMP_CXX_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 endif()
 # eigen 
-add_subdirectory(eigen)
 target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 
 # google test 
