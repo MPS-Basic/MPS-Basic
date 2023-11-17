@@ -3,7 +3,12 @@ image: gcc
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
-build:
+stages:
+  - build
+  - test
+  - run
+
+build_gcc:
   stage: build
   before_script:
     - apt update && apt -y install ninja-build cmake
@@ -17,7 +22,7 @@ build:
       - ./build/mps
       - ./build/mps_test
 
-test:
+ctest:
   stage: test
   before_script:
     - apt update && apt -y install gcovr
@@ -33,3 +38,8 @@ test:
       coverage_report:
         coverage_format: cobertura
         path: build/coverage.xml
+
+dambreak:
+  stage: run
+  script:
+    - echo "Running dam break simulation"
