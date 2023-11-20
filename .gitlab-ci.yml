@@ -47,5 +47,6 @@ dambreak:
     - mkdir result/vtu
     - ./build/mps
   artifacts:
-    - result/prof/*.prof
-    - result/vtu/*.vtu
+    paths:
+      - result/prof/*.prof
+      - result/vtu/*.vtu
