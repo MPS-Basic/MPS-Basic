@@ -1,4 +1,4 @@
-image: gcc
+image: gcc:11 # gcov is not available in gcc 12 yet
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -21,9 +21,10 @@ build_mps:
 unit_test:
   stage: test
   before_script:
-    - apt update && apt -y install cmake gcovr
+    - apt update && apt -y upgrade && apt -y install cmake python3-pip
+    - pip3 install gcovr # gcov in debian is too old
   script:
-    - cmake -S . -B build
+    - cmake -DCMAKE_BUILD_TYPE=PROFILE -S . -B build # enable coverage
     - cd build
     - make mps_test
     - ctest

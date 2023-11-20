@@ -40,5 +40,8 @@ target_link_libraries(
 
 include(GoogleTest)
 gtest_discover_tests(mps_test)
-target_compile_options(mps_test PUBLIC -fprofile-arcs -ftest-coverage)
-target_link_options(mps_test PUBLIC -lgcov --coverage)
+# coverage
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_C_FLAGS_PROFILE --coverage)
+    set(CMAKE_CXX_FLAGS_PROFILE --coverage)
+endif()
