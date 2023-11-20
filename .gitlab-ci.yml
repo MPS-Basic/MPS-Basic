@@ -42,4 +42,10 @@ ctest:
 dambreak:
   stage: run
   script:
-    - echo "Running dam break simulation"
+    - mkdir result
+    - mkdir result/prof
+    - mkdir result/vtu
+    - ./build/mps
+  artifacts:
+    - result/prof/*.prof
+    - result/vtu/*.vtu
