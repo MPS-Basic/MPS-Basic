@@ -13,21 +13,20 @@ build_mps:
     - apt update && apt -y install ninja-build cmake
   script:
     - cmake -S . -B build
-    - cd build && make
+    - cd build && make mps
   artifacts:
     paths:
       - build/mps
-      - build/mps_test
 
 unit_test:
   stage: test
-  needs:
-    - build_mps
   before_script:
-    - apt update && apt -y install gcovr
+    - apt update && apt -y install cmake gcovr
   script:
+    - cmake -S . -B build
     - cd build
-    - ./mps_test
+    - make mps_test
+    - ctest
     - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
   coverage: /^\s*lines:\s*\d+.\d+\%/
   artifacts:
