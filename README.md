@@ -5,7 +5,7 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 ## installation
 ### Requirements
 - Git
-- cmake (newer than 3.1.4)
+- cmake (newer than 3.9)
 - C++ 17 compiler
 
 ### Build step
@@ -22,7 +22,11 @@ make # for makefile
 ```
 
 ## Usage
-
+```bash
+mkdir -p result/prof
+mkdir -p result/vtu
+./build/mps # run dambreak simulation
+```
 
 ## Support
 Please ask the authors if you have any questions.

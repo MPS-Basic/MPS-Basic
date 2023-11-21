@@ -1,21 +1,66 @@
-image: gcc
+image: gcc:11 # gcov is not available in gcc 12 yet
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
-build:
+stages:
+  - build
+  - test
+
+build_mps:
   stage: build
   before_script:
     - apt update && apt -y install ninja-build cmake
   script:
-    - cmake -G "Ninja" .
-    - ninja
+    - cmake -S . -B build
+    - cd build && make mps
   artifacts:
     paths:
-      - mps
-      - mps_test
+      - build/mps
 
-test:
+unit_test:
   stage: test
+  before_script:
+    - apt update && apt -y upgrade && apt -y install cmake python3-pip
+    - pip3 install gcovr # gcov in debian is too old
   script:
-    - ./mps_test
+    - cmake -DCMAKE_BUILD_TYPE=PROFILE -S . -B build # enable coverage
+    - cd build
+    - make mps_test
+    - ctest
+    - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
+  coverage: /^\s*lines:\s*\d+.\d+\%/
+  artifacts:
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    expire_in: 2 days
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/coverage.xml
+
+make_input_dambreak:
+  stage: build
+  before_script:
+    - apt update && apt -y install cmake
+  script:
+    - cd input
+    - cmake -S . -B build
+    - cd build && make && cd ../
+    - ./build/make_input
+  artifacts:
+    paths:
+      - input/input.prof
+
+dambreak:
+  stage: test
+  needs:
+    - build_mps
+    - make_input_dambreak
+  script:
+    - mkdir -p result/prof
+    - mkdir -p result/vtu
+    - ./build/mps
+  artifacts:
+    paths:
+      - result/prof/*.prof
+      - result/vtu/*.vtu

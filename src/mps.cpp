@@ -3,6 +3,7 @@
 #include "bucket.hpp"
 #include "common.hpp"
 #include "domain.hpp"
+#include "loader.hpp"
 #include "output.hpp"
 #include "particle.hpp"
 #include "system.hpp"
@@ -19,38 +20,92 @@
 #include <string>
 #include <vector>
 
-// computational condition
-constexpr double PARTICLE_DISTANCE     = 0.025;
-constexpr double DT                    = 0.001;
-constexpr double FINISH_TIME           = 2.0;
-constexpr double OUTPUT_PERIOD         = 0.04;
-constexpr double CFL_CONDITION         = 0.2;
-constexpr int NUMBER_OF_PHYSICAL_CORES = 4;
+class Settings {
+private:
+public:
+	// computational condition
+	double particleDistance = 0.025;
+	double dt               = 0.001;
+	double finishTime       = 2.0;
+	double outputPeriod     = 0.04;
+	double cflCondition     = 0.2;
+	int numPhysicalCores    = 4;
 
-constexpr int DIM = 2;
-const Eigen::Vector3d G(0.0, -9.8, 0.0);
-// constexpr int DIM = 3;
-// const Eigen::Vector3d G(0.0, 0.0, -9.8);
+	int dim = 2;
+	Eigen::Vector3d gravity;
+	// int dim = 3;
+	// Eigen::Vector3d gravity(0.0, 0.0, -9.8);
 
-// effective radius
-constexpr double RADIUS_FOR_NUMBER_DENSITY = 2.1 * PARTICLE_DISTANCE;
-constexpr double RADIUS_FOR_GRADIENT       = 2.1 * PARTICLE_DISTANCE;
-constexpr double RADIUS_FOR_LAPLACIAN      = 3.1 * PARTICLE_DISTANCE;
+	// effective radius
+	double radiusForNumberDensity = 2.1 * particleDistance;
+	double radiusForGradient      = 2.1 * particleDistance;
+	double radiusForLaplacian     = 3.1 * particleDistance;
 
-// physical properties
-constexpr double KINEMATIC_VISCOSITY = 1.0e-6;
-constexpr double FLUID_DENSITY       = 1000.0;
+	// physical properties
+	double kinematicViscosity = 1.0e-6;
+	double fluidDensity       = 1000.0;
 
-// free surface detection
-constexpr double THRESHOLD_RATIO_OF_NUMBER_DENSITY = 0.97;
+	// free surface detection
+	double thresholdRatioOfNumberDensity = 0.97;
 
-// collision
-constexpr double COLLISION_DISTANCE         = 0.5 * PARTICLE_DISTANCE;
-constexpr double COEFFICIENT_OF_RESTITUTION = 0.2;
+	// collision
+	double collisionDistance        = 0.5 * particleDistance;
+	double coefficientOfRestitution = 0.2;
 
-// parameters for pressure Poisson equation
-constexpr double COMPRESSIBILITY                     = 0.45E-9;
-constexpr double RELAXATION_COEFFICIENT_FOR_PRESSURE = 0.2;
+	// parameters for pressure Poisson equation
+	double compressibility                  = 0.45E-9;
+	double relaxationCoefficientForPressure = 0.2;
+
+	Settings() {
+		gravity.setZero();
+		gravity(1) = -9.8;
+	}
+
+	void load(std::string path) {
+		double gx = gravity(0);
+		double gy = gravity(0);
+		double gz = gravity(0);
+		radiusForNumberDensity /= particleDistance;
+		radiusForGradient /= particleDistance;
+		radiusForLaplacian /= particleDistance;
+		collisionDistance /= particleDistance;
+
+		Loader loader;
+		loader.addDefinition("particle_distance", &particleDistance, particleDistance);
+		loader.addDefinition("dt", &dt, dt);
+		loader.addDefinition("finish_time", &finishTime, finishTime);
+		loader.addDefinition("output_period", &outputPeriod, outputPeriod);
+		loader.addDefinition("cfl_condition", &cflCondition, cflCondition);
+		loader.addDefinition("num_physical_cores", &numPhysicalCores, numPhysicalCores);
+		loader.addDefinition("dim", &dim, dim);
+		loader.addDefinition("gravity_x", &gx, gx);
+		loader.addDefinition("gravity_y", &gy, gy);
+		loader.addDefinition("gravity_z", &gz, gz);
+		loader.addDefinition("radius_for_number_density_ratio", &radiusForNumberDensity, radiusForNumberDensity);
+		loader.addDefinition("radius_for_number_gradient_ratio", &radiusForGradient, radiusForGradient);
+		loader.addDefinition("radius_for_number_laplacian_ratio", &radiusForLaplacian, radiusForLaplacian);
+		loader.addDefinition("kinematic_viscosity", &kinematicViscosity, kinematicViscosity);
+		loader.addDefinition("fluid_density", &fluidDensity, fluidDensity);
+		loader.addDefinition("threshold_ratio_of_number_density", &thresholdRatioOfNumberDensity,
+		                     thresholdRatioOfNumberDensity);
+		loader.addDefinition("collision_distance_ratio", &collisionDistance, collisionDistance);
+		loader.addDefinition("coefficient_of_restitution", &coefficientOfRestitution, coefficientOfRestitution);
+		loader.addDefinition("compressibility", &compressibility, compressibility);
+		loader.addDefinition("relaxation_coefficient_for_pressure", &relaxationCoefficientForPressure,
+		                     relaxationCoefficientForPressure);
+
+		std::ifstream in(path);
+		loader.load(in);
+		
+		gravity[0] = gx;
+		gravity[1] = gy;
+		gravity[2] = gz;
+		radiusForNumberDensity *= particleDistance;
+		radiusForGradient *= particleDistance;
+		radiusForLaplacian *= particleDistance;
+		collisionDistance *= particleDistance;
+	}
+};
 
 void setParameters();
 
@@ -80,6 +135,8 @@ void writeData();
 void setNeighbors();
 double weight(double distance, double re);
 
+Settings settings;
+
 // simulation parameters
 double initialTime, Time;
 int timestep   = 0;
@@ -89,13 +146,13 @@ double courant;
 FILE* logFile;
 
 // effective radius
-double re_forNumberDensity = RADIUS_FOR_NUMBER_DENSITY;
-double re_forGradient      = RADIUS_FOR_GRADIENT;
-double re_forLaplacian     = RADIUS_FOR_LAPLACIAN;
+double re_forNumberDensity = settings.radiusForNumberDensity;
+double re_forGradient      = settings.radiusForGradient;
+double re_forLaplacian     = settings.radiusForLaplacian;
 double reMax               = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
 
 // physical properties
-double fluidDensity = FLUID_DENSITY;
+double fluidDensity = settings.fluidDensity;
 
 // constant parameters
 double n0_forNumberDensity;
@@ -113,13 +170,13 @@ Domain domain;
 int main(int argc, char** argv) {
 	startSimulation(simStartTime);
 
-	// omp_set_num_threads(NUMBER_OF_PHYSICAL_CORES);
+	// omp_set_num_threads(settings.numPhysicalCores);
 	readData();
 	setParameters();
-	bucket.set(reMax, CFL_CONDITION, domain, particles.size());
+	bucket.set(reMax, settings.cflCondition, domain, particles.size());
 	writeData();
 
-	while (Time < FINISH_TIME) {
+	while (Time < settings.finishTime) {
 		timestepStartTime = std::clock();
 
 		bucket.storeParticles(particles, domain);
@@ -141,7 +198,7 @@ int main(int argc, char** argv) {
 		calCourant();
 
 		timestep++;
-		Time += DT;
+		Time += settings.dt;
 		timestepEndTime = std::clock();
 		writeData();
 	}
@@ -161,7 +218,7 @@ void setParameters() {
 	// }
 
 	int iZ_start, iZ_end;
-	if (DIM == 2) {
+	if (settings.dim == 2) {
 		iZ_start = 0;
 		iZ_end   = 1;
 	} else {
@@ -179,9 +236,9 @@ void setParameters() {
 				if (((iX == 0) && (iY == 0)) && (iZ == 0))
 					continue;
 
-				double xj = PARTICLE_DISTANCE * (double) (iX);
-				double yj = PARTICLE_DISTANCE * (double) (iY);
-				double zj = PARTICLE_DISTANCE * (double) (iZ);
+				double xj = settings.particleDistance * (double) (iX);
+				double yj = settings.particleDistance * (double) (iY);
+				double zj = settings.particleDistance * (double) (iZ);
 				Eigen::Vector3d rj(xj, yj, zj);
 				double dis2 = rj.squaredNorm();
 				double dis  = rj.norm();
@@ -199,7 +256,7 @@ void calGravity() {
 #pragma omp parallel for
 	for (auto& p : particles) {
 		if (p.type == ParticleType::Fluid) {
-			p.acceleration += G;
+			p.acceleration += settings.gravity;
 
 		} else {
 			p.acceleration.setZero();
@@ -208,7 +265,7 @@ void calGravity() {
 }
 
 void calViscosity() {
-	double a = (KINEMATIC_VISCOSITY) * (2.0 * DIM) / (n0_forLaplacian * lambda);
+	double a = (settings.kinematicViscosity) * (2.0 * settings.dim) / (n0_forLaplacian * lambda);
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -235,8 +292,8 @@ void moveParticle() {
 #pragma omp parallel for
 	for (auto& p : particles) {
 		if (p.type == ParticleType::Fluid) {
-			p.velocity += p.acceleration * DT;
-			p.position += p.velocity * DT;
+			p.velocity += p.acceleration * settings.dt;
+			p.position += p.velocity * settings.dt;
 
 		} else {
 			p.acceleration.setZero();
@@ -254,21 +311,21 @@ void collision() {
 			if (pj.type == ParticleType::Fluid && pj.id >= pi.id)
 				continue;
 
-			if (neighbor.distance < COLLISION_DISTANCE) {
+			if (neighbor.distance < settings.collisionDistance) {
 
-				double invMi = pi.inverseDensity(fluidDensity);
-				double invMj = pj.inverseDensity(fluidDensity);
+				double invMi = pi.inverseDensity(settings.fluidDensity);
+				double invMj = pj.inverseDensity(settings.fluidDensity);
 				double mass  = 1.0 / (invMi + invMj);
 
 				Eigen::Vector3d normal = (pj.position - pi.position).normalized();
 				double relVel          = (pj.velocity - pi.velocity).dot(normal);
 				double impulse         = 0.0;
 				if (relVel < 0.0)
-					impulse = -(1 + COEFFICIENT_OF_RESTITUTION) * relVel * mass;
+					impulse = -(1 + settings.coefficientOfRestitution) * relVel * mass;
 				pi.velocity -= impulse * invMi * normal;
 				pj.velocity += impulse * invMj * normal;
 
-				double depth           = COLLISION_DISTANCE - neighbor.distance;
+				double depth           = settings.collisionDistance - neighbor.distance;
 				double positionImpulse = depth * mass;
 				pi.position -= positionImpulse * invMi * normal;
 				pj.position += positionImpulse * invMj * normal;
@@ -305,7 +362,7 @@ void calNumberDensity() {
 
 void setBoundaryCondition() {
 	double n0   = n0_forNumberDensity;
-	double beta = THRESHOLD_RATIO_OF_NUMBER_DENSITY;
+	double beta = settings.thresholdRatioOfNumberDensity;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -323,13 +380,13 @@ void setBoundaryCondition() {
 
 void setSourceTerm() {
 	double n0    = n0_forNumberDensity;
-	double gamma = RELAXATION_COEFFICIENT_FOR_PRESSURE;
+	double gamma = settings.relaxationCoefficientForPressure;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
 		pi.sourceTerm = 0.0;
 		if (pi.boundaryCondition == FluidState::Inner) {
-			pi.sourceTerm = gamma * (1.0 / (DT * DT)) * ((pi.numberDensity - n0) / n0);
+			pi.sourceTerm = gamma * (1.0 / (settings.dt * settings.dt)) * ((pi.numberDensity - n0) / n0);
 		}
 	}
 }
@@ -337,7 +394,7 @@ void setSourceTerm() {
 void setMatrix() {
 	std::vector<Eigen::Triplet<double>> triplets;
 	auto n0 = n0_forLaplacian;
-	auto a  = 2.0 * DIM / (n0 * lambda);
+	auto a  = 2.0 * settings.dim / (n0 * lambda);
 	coefficientMatrix.resize(particles.size(), particles.size());
 
 	for (auto& pi : particles) {
@@ -351,12 +408,12 @@ void setMatrix() {
 				continue;
 
 			if (neighbor.distance < re_forLaplacian) {
-				double coefficient_ij = a * weight(neighbor.distance, re_forLaplacian) / fluidDensity;
+				double coefficient_ij = a * weight(neighbor.distance, re_forLaplacian) / settings.fluidDensity;
 				triplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
 				coefficient_ii += coefficient_ij;
 			}
 		}
-		coefficient_ii += (COMPRESSIBILITY) / (DT * DT);
+		coefficient_ii += (settings.compressibility) / (settings.dt * settings.dt);
 		triplets.emplace_back(pi.id, pi.id, coefficient_ii);
 	}
 	coefficientMatrix.setFromTriplets(triplets.begin(), triplets.end());
@@ -462,7 +519,7 @@ void setMinimumPressure() {
 }
 
 void calPressureGradient() {
-	double a = DIM / n0_forGradient;
+	double a = settings.dim / n0_forGradient;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -484,7 +541,7 @@ void calPressureGradient() {
 			}
 		}
 		grad *= a;
-		pi.acceleration -= grad * pi.inverseDensity(fluidDensity);
+		pi.acceleration -= grad * pi.inverseDensity(settings.fluidDensity);
 	}
 }
 
@@ -492,8 +549,8 @@ void moveParticleUsingPressureGradient() {
 #pragma omp parallel for
 	for (auto&& p : particles) {
 		if (p.type == ParticleType::Fluid) {
-			p.velocity += p.acceleration * DT;
-			p.position += p.acceleration * DT * DT;
+			p.velocity += p.acceleration * settings.dt;
+			p.position += p.acceleration * settings.dt * settings.dt;
 		}
 
 		p.acceleration.setZero();
@@ -507,11 +564,11 @@ void calCourant() {
 		if (pi.type != ParticleType::Fluid)
 			continue;
 
-		double iCourant = (pi.velocity.norm() * DT) / PARTICLE_DISTANCE;
+		double iCourant = (pi.velocity.norm() * settings.dt) / settings.particleDistance;
 		courant         = std::max(courant, iCourant);
 	}
 
-	if (courant > CFL_CONDITION) {
+	if (courant > settings.cflCondition) {
 		std::cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << std::endl;
 	}
 }
@@ -585,7 +642,7 @@ void writeData() {
 	}
 
 	char remain[256];
-	second = ((FINISH_TIME - Time) / Time) * ave * timestep;
+	second = ((settings.finishTime - Time) / Time) * ave * timestep;
 	calSecondMinuteHour(second, minute, hour);
 	if (timestep == 0)
 		sprintf(remain, "remain=-h --m --s");
@@ -595,20 +652,20 @@ void writeData() {
 	double last = (double) (timestepEndTime - timestepStartTime) / CLOCKS_PER_SEC;
 
 	// terminal output
-	printf("%d: dt=%.gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	printf("%d: settings.dt=%.gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
 	       "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
-	       timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
+	       timestep, settings.dt, Time, settings.finishTime, elapsed, remain, ave, last, fileNumber, courant);
 
 	// log output
 	// fprintf(logFile,
-	//         "%d: dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	//         "%d: settings.dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
 	//         "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
-	//         timestep, DT, Time, FINISH_TIME, elapsed, remain, ave, last, fileNumber, courant);
+	//         timestep, settings.dt, Time, settings.finishTime, elapsed, remain, ave, last, fileNumber, courant);
 
 	// error output
 	fprintf(stderr, "%4d: t=%.3lfs\n", timestep, Time);
 
-	if (Time - initialTime >= OUTPUT_PERIOD * double(fileNumber)) {
+	if (Time - initialTime >= settings.outputPeriod * double(fileNumber)) {
 		std::stringstream ss;
 		ss << "result/prof/output_";
 		ss << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
