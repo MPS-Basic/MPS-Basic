@@ -9,10 +9,10 @@ find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 endif()
-# eigen 
+# eigen
 target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 
-# google test 
+# google test
 # include(FetchContent)
 # FetchContent_Declare(
 #   googletest
@@ -22,10 +22,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 # # For Windows: Prevent overriding the parent project's compiler/linker settings
 # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # FetchContent_MakeAvailable(googletest)
-# 
+#
 # enable_testing()
 # add_executable(
-#     mps_test 
+#     mps_test
 #     test/loader_test.cpp
 # )
 # target_include_directories(
@@ -37,7 +37,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 #     mps_test
 #     GTest::gtest_main
 # )
-# 
+#
 # include(GoogleTest)
 # gtest_discover_tests(mps_test)
 # # coverage

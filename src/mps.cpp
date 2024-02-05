@@ -197,13 +197,13 @@ double courant;
 FILE* logFile;
 
 // effective radius
-double re_forNumberDensity = settings.radiusForNumberDensity;
-double re_forGradient      = settings.radiusForGradient;
-double re_forLaplacian     = settings.radiusForLaplacian;
-double reMax               = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
+double re_forNumberDensity;
+double re_forGradient;
+double re_forLaplacian;
+double reMax;
 
 // physical properties
-double fluidDensity = settings.fluidDensity;
+double fluidDensity;
 
 // constant parameters
 double n0_forNumberDensity;
@@ -631,6 +631,11 @@ void readData() {
 	YAML::Node input = YAML::LoadFile("./input/input.yml");
 	settings.load(input);
 	domain = settings.domain;
+	re_forNumberDensity = settings.radiusForNumberDensity;
+	re_forGradient = settings.radiusForGradient;
+	re_forLaplacian = settings.radiusForLaplacian;
+	reMax = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
+	fluidDensity = settings.fluidDensity;
 
 	ss.str("./input/input.prof");
 	ifs.open(ss.str());
