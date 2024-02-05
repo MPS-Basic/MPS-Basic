@@ -19,92 +19,143 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <yaml-cpp/yaml.h>
+
+using namespace std;
+using namespace Eigen;
 
 class Settings {
 private:
 public:
 	// computational condition
-	double particleDistance = 0.025;
-	double dt               = 0.001;
-	double finishTime       = 2.0;
-	double outputPeriod     = 0.04;
-	double cflCondition     = 0.2;
-	int numPhysicalCores    = 4;
+	int dim;
+	double particleDistance;
+	double dt;
+	double finishTime;
+	double outputPeriod;
+	double cflCondition;
+	int numPhysicalCores;
 
-	int dim = 2;
-	Eigen::Vector3d gravity;
-	// int dim = 3;
-	// Eigen::Vector3d gravity(0.0, 0.0, -9.8);
-
-	// effective radius
-	double radiusForNumberDensity = 2.1 * particleDistance;
-	double radiusForGradient      = 2.1 * particleDistance;
-	double radiusForLaplacian     = 3.1 * particleDistance;
+	// domain
+	Domain domain;
 
 	// physical properties
-	double kinematicViscosity = 1.0e-6;
-	double fluidDensity       = 1000.0;
+	double kinematicViscosity;
+	double fluidDensity;
+
+	// gravity
+	Vector3d gravity;
 
 	// free surface detection
-	double thresholdRatioOfNumberDensity = 0.97;
-
-	// collision
-	double collisionDistance        = 0.5 * particleDistance;
-	double coefficientOfRestitution = 0.2;
+	double surfaceDetectionRatio;
 
 	// parameters for pressure Poisson equation
-	double compressibility                  = 0.45E-9;
-	double relaxationCoefficientForPressure = 0.2;
+	double compressibility;
+	double relaxationCoefficientForPressure;
+
+	// collision
+	double collisionDistance;
+	double coefficientOfRestitution;
+
+	// effective radius
+	double radiusForNumberDensity;
+	double radiusForGradient;
+	double radiusForLaplacian;
 
 	Settings() {
-		gravity.setZero();
-		gravity(1) = -9.8;
 	}
 
-	void load(std::string path) {
-		double gx = gravity(0);
-		double gy = gravity(0);
-		double gz = gravity(0);
-		radiusForNumberDensity /= particleDistance;
-		radiusForGradient /= particleDistance;
-		radiusForLaplacian /= particleDistance;
-		collisionDistance /= particleDistance;
+	void load(YAML::Node input) {
+		// computational conditions
+		dim              = input["dim"].as<int>();
+		particleDistance = input["particleDistance"].as<double>();
+		dt               = input["dt"].as<double>();
+		finishTime       = input["finishTime"].as<double>();
+		outputPeriod     = input["outputPeriod"].as<double>();
+		cflCondition     = input["cflCondition"].as<double>();
+		numPhysicalCores = input["numPhysicalCores"].as<int>();
 
-		Loader loader;
-		loader.addDefinition("particle_distance", &particleDistance, particleDistance);
-		loader.addDefinition("dt", &dt, dt);
-		loader.addDefinition("finish_time", &finishTime, finishTime);
-		loader.addDefinition("output_period", &outputPeriod, outputPeriod);
-		loader.addDefinition("cfl_condition", &cflCondition, cflCondition);
-		loader.addDefinition("num_physical_cores", &numPhysicalCores, numPhysicalCores);
-		loader.addDefinition("dim", &dim, dim);
-		loader.addDefinition("gravity_x", &gx, gx);
-		loader.addDefinition("gravity_y", &gy, gy);
-		loader.addDefinition("gravity_z", &gz, gz);
-		loader.addDefinition("radius_for_number_density_ratio", &radiusForNumberDensity, radiusForNumberDensity);
-		loader.addDefinition("radius_for_number_gradient_ratio", &radiusForGradient, radiusForGradient);
-		loader.addDefinition("radius_for_number_laplacian_ratio", &radiusForLaplacian, radiusForLaplacian);
-		loader.addDefinition("kinematic_viscosity", &kinematicViscosity, kinematicViscosity);
-		loader.addDefinition("fluid_density", &fluidDensity, fluidDensity);
-		loader.addDefinition("threshold_ratio_of_number_density", &thresholdRatioOfNumberDensity,
-		                     thresholdRatioOfNumberDensity);
-		loader.addDefinition("collision_distance_ratio", &collisionDistance, collisionDistance);
-		loader.addDefinition("coefficient_of_restitution", &coefficientOfRestitution, coefficientOfRestitution);
-		loader.addDefinition("compressibility", &compressibility, compressibility);
-		loader.addDefinition("relaxation_coefficient_for_pressure", &relaxationCoefficientForPressure,
-		                     relaxationCoefficientForPressure);
+		// physical properties
+		fluidDensity       = input["fluidDensity"].as<double>();
+		kinematicViscosity = input["kinematicViscosity"].as<double>();
 
-		std::ifstream in(path);
-		loader.load(in);
-		
-		gravity[0] = gx;
-		gravity[1] = gy;
-		gravity[2] = gz;
-		radiusForNumberDensity *= particleDistance;
-		radiusForGradient *= particleDistance;
-		radiusForLaplacian *= particleDistance;
-		collisionDistance *= particleDistance;
+		// gravity
+		gravity[0] = input["gravity"][0].as<double>();
+		gravity[1] = input["gravity"][1].as<double>();
+		gravity[2] = input["gravity"][2].as<double>();
+
+		// free surface detection
+		surfaceDetectionRatio = input["surfaceDetectionRatio"].as<double>();
+
+		// pressure Poisson equation
+		compressibility                  = input["compressibility"].as<double>();
+		relaxationCoefficientForPressure = input["relaxationCoefficientForPressure"].as<double>();
+
+		// collision
+		collisionDistance        = input["collisionDistanceRatio"].as<double>() * particleDistance;
+		coefficientOfRestitution = input["coefficientOfRestitution"].as<double>();
+
+		// effective radius
+		radiusForNumberDensity = input["radiusRatioForNumberDensity"].as<double>() * particleDistance;
+		radiusForGradient      = input["radiusRatioForGradient"].as<double>() * particleDistance;
+		radiusForLaplacian     = input["radiusRatioForLaplacian"].as<double>() * particleDistance;
+
+		// domain
+		domain.xMin    = input["domainMin"][0].as<double>();
+		domain.xMax    = input["domainMax"][0].as<double>();
+		domain.yMin    = input["domainMin"][1].as<double>();
+		domain.yMax    = input["domainMax"][1].as<double>();
+		domain.zMin    = input["domainMin"][2].as<double>();
+		domain.zMax    = input["domainMax"][2].as<double>();
+		domain.xLength = domain.xMax - domain.xMin;
+		domain.yLength = domain.yMax - domain.yMin;
+		domain.zLength = domain.zMax - domain.zMin;
 	}
+
+	// void load(std::string path) {
+	// 	double gx = gravity(0);
+	// 	double gy = gravity(0);
+	// 	double gz = gravity(0);
+	// 	radiusForNumberDensity /= particleDistance;
+	// 	radiusForGradient /= particleDistance;
+	// 	radiusForLaplacian /= particleDistance;
+	// 	collisionDistance /= particleDistance;
+
+	// 	Loader loader;
+	// 	loader.addDefinition("particle_distance", &particleDistance, particleDistance);
+	// 	loader.addDefinition("dt", &dt, dt);
+	// 	loader.addDefinition("finish_time", &finishTime, finishTime);
+	// 	loader.addDefinition("output_period", &outputPeriod, outputPeriod);
+	// 	loader.addDefinition("cfl_condition", &cflCondition, cflCondition);
+	// 	loader.addDefinition("num_physical_cores", &numPhysicalCores, numPhysicalCores);
+	// 	loader.addDefinition("dim", &dim, dim);
+	// 	loader.addDefinition("gravity_x", &gx, gx);
+	// 	loader.addDefinition("gravity_y", &gy, gy);
+	// 	loader.addDefinition("gravity_z", &gz, gz);
+	// 	loader.addDefinition("radius_for_number_density_ratio", &radiusForNumberDensity, radiusForNumberDensity);
+	// 	loader.addDefinition("radius_for_number_gradient_ratio", &radiusForGradient, radiusForGradient);
+	// 	loader.addDefinition("radius_for_number_laplacian_ratio", &radiusForLaplacian, radiusForLaplacian);
+	// 	loader.addDefinition("kinematic_viscosity", &kinematicViscosity, kinematicViscosity);
+	// 	loader.addDefinition("fluid_density", &fluidDensity, fluidDensity);
+	// 	loader.addDefinition("threshold_ratio_of_number_density", &surfaceDetectionRatio,
+	// 	                     surfaceDetectionRatio);
+	// 	loader.addDefinition("collision_distance_ratio", &collisionDistance, collisionDistance);
+	// 	loader.addDefinition("coefficient_of_restitution", &coefficientOfRestitution, coefficientOfRestitution);
+	// 	loader.addDefinition("compressibility", &compressibility, compressibility);
+	// 	loader.addDefinition("relaxation_coefficient_for_pressure", &relaxationCoefficientForPressure,
+	// 	                     relaxationCoefficientForPressure);
+
+	// 	std::ifstream in(path);
+	// 	loader.load(in);
+
+	// 	gravity[0] = gx;
+	// 	gravity[1] = gy;
+	// 	gravity[2] = gz;
+	// 	radiusForNumberDensity *= particleDistance;
+	// 	radiusForGradient *= particleDistance;
+	// 	radiusForLaplacian *= particleDistance;
+	// 	collisionDistance *= particleDistance;
+	// }
 };
 
 void setParameters();
@@ -362,7 +413,7 @@ void calNumberDensity() {
 
 void setBoundaryCondition() {
 	double n0   = n0_forNumberDensity;
-	double beta = settings.thresholdRatioOfNumberDensity;
+	double beta = settings.surfaceDetectionRatio;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -577,6 +628,10 @@ void readData() {
 	std::stringstream ss;
 	std::ifstream ifs;
 
+	YAML::Node input = YAML::LoadFile("./input/input.yml");
+	settings.load(input);
+	domain = settings.domain;
+
 	ss.str("./input/input.prof");
 	ifs.open(ss.str());
 	if (ifs.fail()) {
@@ -605,25 +660,26 @@ void readData() {
 	ifs.close();
 	ifs.clear();
 
-	ss.str("./input/input.domain");
-	ifs.open(ss.str());
-	if (ifs.fail()) {
-		std::cerr << "cannot read " << ss.str() << std::endl;
-		std::exit(-1);
-	}
+	// ss.str("./input/input.domain");
+	// ifs.open(ss.str());
+	// if (ifs.fail()) {
+	// 	std::cerr << "cannot read " << ss.str() << std::endl;
+	// 	std::exit(-1);
+	// }
 
-	std::string dumstr;
-	ifs >> dumstr >> domain.xMin;
-	ifs >> dumstr >> domain.xMax;
-	ifs >> dumstr >> domain.yMin;
-	ifs >> dumstr >> domain.yMax;
-	ifs >> dumstr >> domain.zMin;
-	ifs >> dumstr >> domain.zMax;
-	domain.xLength = domain.xMax - domain.xMin;
-	domain.yLength = domain.yMax - domain.yMin;
-	domain.zLength = domain.zMax - domain.zMin;
-	ifs.close();
-	ifs.clear();
+	// std::string dumstr;
+	// ifs >> dumstr >> domain.xMin;
+	// ifs >> dumstr >> domain.xMax;
+	// ifs >> dumstr >> domain.yMin;
+	// ifs >> dumstr >> domain.yMax;
+	// ifs >> dumstr >> domain.zMin;
+	// ifs >> dumstr >> domain.zMax;
+	// domain.xLength = domain.xMax - domain.xMin;
+	// domain.yLength = domain.yMax - domain.yMin;
+	// domain.zLength = domain.zMax - domain.zMin;
+
+	// ifs.close();
+	// ifs.clear();
 }
 
 void writeData() {

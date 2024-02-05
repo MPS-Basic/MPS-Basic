@@ -25,8 +25,12 @@ make # for makefile
 ```bash
 mkdir -p result/prof
 mkdir -p result/vtu
-./build/mps # run dambreak simulation
+./build/mps.exe 2>result/error.log # run dambreak simulation
 ```
+Standard error output will be set to "result/error.log" by "2>result/error.log".
+Withoutit, both standartd output and standard error output would be displayed in the terminal.
+
+## If You Are Using VSCode
 
 ## Support
 Please ask the authors if you have any questions.
