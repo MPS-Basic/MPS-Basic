@@ -111,51 +111,6 @@ public:
 		domain.yLength = domain.yMax - domain.yMin;
 		domain.zLength = domain.zMax - domain.zMin;
 	}
-
-	// void load(std::string path) {
-	// 	double gx = gravity(0);
-	// 	double gy = gravity(0);
-	// 	double gz = gravity(0);
-	// 	radiusForNumberDensity /= particleDistance;
-	// 	radiusForGradient /= particleDistance;
-	// 	radiusForLaplacian /= particleDistance;
-	// 	collisionDistance /= particleDistance;
-
-	// 	Loader loader;
-	// 	loader.addDefinition("particle_distance", &particleDistance, particleDistance);
-	// 	loader.addDefinition("dt", &dt, dt);
-	// 	loader.addDefinition("finish_time", &finishTime, finishTime);
-	// 	loader.addDefinition("output_period", &outputPeriod, outputPeriod);
-	// 	loader.addDefinition("cfl_condition", &cflCondition, cflCondition);
-	// 	loader.addDefinition("num_physical_cores", &numPhysicalCores, numPhysicalCores);
-	// 	loader.addDefinition("dim", &dim, dim);
-	// 	loader.addDefinition("gravity_x", &gx, gx);
-	// 	loader.addDefinition("gravity_y", &gy, gy);
-	// 	loader.addDefinition("gravity_z", &gz, gz);
-	// 	loader.addDefinition("radius_for_number_density_ratio", &radiusForNumberDensity, radiusForNumberDensity);
-	// 	loader.addDefinition("radius_for_number_gradient_ratio", &radiusForGradient, radiusForGradient);
-	// 	loader.addDefinition("radius_for_number_laplacian_ratio", &radiusForLaplacian, radiusForLaplacian);
-	// 	loader.addDefinition("kinematic_viscosity", &kinematicViscosity, kinematicViscosity);
-	// 	loader.addDefinition("fluid_density", &fluidDensity, fluidDensity);
-	// 	loader.addDefinition("threshold_ratio_of_number_density", &surfaceDetectionRatio,
-	// 	                     surfaceDetectionRatio);
-	// 	loader.addDefinition("collision_distance_ratio", &collisionDistance, collisionDistance);
-	// 	loader.addDefinition("coefficient_of_restitution", &coefficientOfRestitution, coefficientOfRestitution);
-	// 	loader.addDefinition("compressibility", &compressibility, compressibility);
-	// 	loader.addDefinition("relaxation_coefficient_for_pressure", &relaxationCoefficientForPressure,
-	// 	                     relaxationCoefficientForPressure);
-
-	// 	std::ifstream in(path);
-	// 	loader.load(in);
-
-	// 	gravity[0] = gx;
-	// 	gravity[1] = gy;
-	// 	gravity[2] = gz;
-	// 	radiusForNumberDensity *= particleDistance;
-	// 	radiusForGradient *= particleDistance;
-	// 	radiusForLaplacian *= particleDistance;
-	// 	collisionDistance *= particleDistance;
-	// }
 };
 
 void setParameters();
@@ -628,6 +583,8 @@ void readData() {
 	std::stringstream ss;
 	std::ifstream ifs;
 
+	// read input.yml
+	// TODO: input file name should be given as an argument
 	YAML::Node input = YAML::LoadFile("./input/input.yml");
 	settings.load(input);
 	domain = settings.domain;
@@ -637,6 +594,7 @@ void readData() {
 	reMax = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
 	fluidDensity = settings.fluidDensity;
 
+	// read input.prof
 	ss.str("./input/input.prof");
 	ifs.open(ss.str());
 	if (ifs.fail()) {
@@ -664,27 +622,6 @@ void readData() {
 	}
 	ifs.close();
 	ifs.clear();
-
-	// ss.str("./input/input.domain");
-	// ifs.open(ss.str());
-	// if (ifs.fail()) {
-	// 	std::cerr << "cannot read " << ss.str() << std::endl;
-	// 	std::exit(-1);
-	// }
-
-	// std::string dumstr;
-	// ifs >> dumstr >> domain.xMin;
-	// ifs >> dumstr >> domain.xMax;
-	// ifs >> dumstr >> domain.yMin;
-	// ifs >> dumstr >> domain.yMax;
-	// ifs >> dumstr >> domain.zMin;
-	// ifs >> dumstr >> domain.zMax;
-	// domain.xLength = domain.xMax - domain.xMin;
-	// domain.yLength = domain.yMax - domain.yMin;
-	// domain.zLength = domain.zMax - domain.zMin;
-
-	// ifs.close();
-	// ifs.clear();
 }
 
 void writeData() {
