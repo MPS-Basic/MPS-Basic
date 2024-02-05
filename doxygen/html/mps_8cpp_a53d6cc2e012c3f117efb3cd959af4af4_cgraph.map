@@ -1,0 +1,5 @@
+<map id="collision" name="collision">
+<area shape="rect" id="Node000001" title="Collide particles that are too close." alt="" coords="5,5,74,32"/>
+<area shape="rect" id="Node000002" href="$class_particle.html#aaf04b310f05eb587bb2ab2f2cb155783" title=" " alt="" coords="122,5,279,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,16,107,16,107,21,74,21"/>
+</map>
