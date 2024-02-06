@@ -30,13 +30,6 @@ using namespace Eigen;
 
 class MPS {
 public:
-	// int dim;
-	// double particleDistance;
-	double re_forNumberDensity;
-	double re_forGradient;
-	double re_forLaplacian;
-	double reMax;
-
 	Settings settings;
 	RefValues refValues;
 	Simulation simulation;
@@ -55,35 +48,40 @@ public:
 	Bucket bucket;
 	Domain domain;
 
-	MPS() {
+	MPS(const Settings& settings, const vector<Particle>& particles, double initialTime) {
+		this->settings    = settings;
+		this->domain      = settings.domain;
+		this->particles   = particles;
+		this->initialTime = initialTime;
+		this->Time        = initialTime;
 	}
 
 	void run() {
 		startSimulation(simStartTime);
 
 		// omp_set_num_threads(settings.numPhysicalCores);
-		readData();
-		refValues.calc(settings.dim, settings.particleDistance, re_forNumberDensity, re_forGradient, re_forLaplacian);
-		bucket.set(reMax, settings.cflCondition, domain, particles.size());
+		refValues.calc(settings.dim, settings.particleDistance, settings.re_forNumberDensity, settings.re_forGradient,
+		               settings.re_forLaplacian);
+		bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
 		writeData();
 
 		while (Time < settings.finishTime) {
 			timestepStartTime = std::clock();
 
 			bucket.storeParticles(particles, domain);
-			setNeighbors();
+			setNeighbors(settings.reMax);
 			calGravity();
-			calViscosity();
+			calViscosity(settings.re_forLaplacian);
 			moveParticle();
 
 			bucket.storeParticles(particles, domain);
-			setNeighbors();
+			setNeighbors(settings.reMax);
 			collision();
 
 			bucket.storeParticles(particles, domain);
-			setNeighbors();
+			setNeighbors(settings.reMax);
 			calPressure();
-			calPressureGradient();
+			calPressureGradient(settings.re_forGradient);
 			moveParticleUsingPressureGradient();
 
 			calCourant();
@@ -110,7 +108,7 @@ private:
 		}
 	}
 
-	void calViscosity() {
+	void calViscosity(const double& re) {
 		double n0     = refValues.n0_forLaplacian;
 		double lambda = refValues.lambda;
 		double a      = (settings.kinematicViscosity) * (2.0 * settings.dim) / (n0 * lambda);
@@ -125,8 +123,8 @@ private:
 			for (auto& neighbor : pi.neighbors) {
 				auto& pj = particles[neighbor.id];
 
-				if (neighbor.distance < re_forLaplacian) {
-					double w = weight(neighbor.distance, re_forLaplacian);
+				if (neighbor.distance < settings.re_forLaplacian) {
+					double w = weight(neighbor.distance, re);
 					viscosityTerm += (pj.velocity - pi.velocity) * w;
 				}
 			}
@@ -186,16 +184,16 @@ private:
 	}
 
 	void calPressure() {
-		calNumberDensity();
+		calNumberDensity(settings.re_forNumberDensity);
 		setBoundaryCondition();
 		setSourceTerm();
-		setMatrix();
+		setMatrix(settings.re_forLaplacian);
 		solveSimultaneousEquations();
 		removeNegativePressure();
-		setMinimumPressure();
+		setMinimumPressure(settings.re_forGradient);
 	}
 
-	void calNumberDensity() {
+	void calNumberDensity(const double& re) {
 #pragma omp parallel for
 		for (auto& pi : particles) {
 			pi.numberDensity = 0.0;
@@ -204,7 +202,7 @@ private:
 				continue;
 
 			for (auto& neighbor : pi.neighbors)
-				pi.numberDensity += weight(neighbor.distance, re_forNumberDensity);
+				pi.numberDensity += weight(neighbor.distance, re);
 		}
 	}
 
@@ -239,7 +237,7 @@ private:
 		}
 	}
 
-	void setMatrix() {
+	void setMatrix(const double& re) {
 		std::vector<Eigen::Triplet<double>> triplets;
 		auto n0 = refValues.n0_forLaplacian;
 		auto a  = 2.0 * settings.dim / (n0 * refValues.lambda);
@@ -255,8 +253,8 @@ private:
 				if (pj.boundaryCondition == FluidState::Ignored)
 					continue;
 
-				if (neighbor.distance < re_forLaplacian) {
-					double coefficient_ij = a * weight(neighbor.distance, re_forLaplacian) / settings.fluidDensity;
+				if (neighbor.distance < re) {
+					double coefficient_ij = a * weight(neighbor.distance, re) / settings.fluidDensity;
 					triplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
 					coefficient_ii += coefficient_ij;
 				}
@@ -341,7 +339,7 @@ private:
 		}
 	}
 
-	void setMinimumPressure() {
+	void setMinimumPressure(const double& re) {
 #pragma omp parallel for
 		for (auto& p : particles) {
 			p.minimumPressure = p.pressure;
@@ -358,7 +356,7 @@ private:
 				if (pj.id > pi.id)
 					continue;
 
-				if (neighbor.distance < re_forGradient) {
+				if (neighbor.distance < re) {
 					pi.minimumPressure = std::min(pi.minimumPressure, pj.pressure);
 					pj.minimumPressure = std::min(pj.minimumPressure, pi.pressure);
 				}
@@ -366,7 +364,7 @@ private:
 		}
 	}
 
-	void calPressureGradient() {
+	void calPressureGradient(const double& re) {
 		double a = settings.dim / refValues.n0_forGradient;
 
 #pragma omp parallel for
@@ -380,8 +378,8 @@ private:
 				if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
 					continue;
 
-				if (neighbor.distance < re_forGradient) {
-					double w = weight(neighbor.distance, re_forGradient);
+				if (neighbor.distance < re) {
+					double w = weight(neighbor.distance, re);
 					// double dist2 = pow(neighbor.distance, 2);
 					double dist2 = (pj.position - pi.position).squaredNorm();
 					double pij   = (pj.pressure - pi.minimumPressure) / dist2;
@@ -419,50 +417,6 @@ private:
 		if (courant > settings.cflCondition) {
 			std::cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << std::endl;
 		}
-	}
-
-	void readData() {
-		std::stringstream ss;
-		std::ifstream ifs;
-
-		// read input.yml
-		// TODO: input file name should be given as an argument
-		YAML::Node input = YAML::LoadFile("./input/input.yml");
-		settings.load(input);
-		domain              = settings.domain;
-		re_forNumberDensity = settings.re_forNumberDensity;
-		re_forGradient      = settings.re_forGradient;
-		re_forLaplacian     = settings.re_forLaplacian;
-		reMax               = settings.reMax;
-
-		// read input.prof
-		ss.str("./input/input.prof");
-		ifs.open(ss.str());
-		if (ifs.fail()) {
-			std::cerr << "cannot read " << ss.str() << std::endl;
-			std::exit(-1);
-		}
-
-		int particleSize;
-		ifs >> Time;
-		initialTime = Time;
-		ifs >> particleSize;
-		rep(i, 0, particleSize) {
-			int type_int;
-			ParticleType type;
-			Eigen::Vector3d pos, vel;
-
-			ifs >> type_int;
-			ifs >> pos.x() >> pos.y() >> pos.z();
-			ifs >> vel.x() >> vel.y() >> vel.z();
-
-			type = static_cast<ParticleType>(type_int);
-			if (type != ParticleType::Ghost) {
-				particles.emplace_back(particles.size(), type, pos, vel);
-			}
-		}
-		ifs.close();
-		ifs.clear();
 	}
 
 	void writeData() {
@@ -519,7 +473,7 @@ private:
 		}
 	}
 
-	void setNeighbors() {
+	void setNeighbors(const double& re) {
 #pragma omp parallel for
 		for (auto& pi : particles) {
 			if (pi.type == ParticleType::Ghost)
@@ -541,7 +495,7 @@ private:
 							Particle& pj = particles[j];
 
 							double dist = (pj.position - pi.position).norm();
-							if (j != pi.id && dist < reMax) {
+							if (j != pi.id && dist < re) {
 								pi.neighbors.emplace_back(j, dist);
 							}
 
@@ -553,10 +507,3 @@ private:
 		}
 	}
 };
-
-int main(int argc, char** argv) {
-	MPS mps = MPS();
-	mps.run();
-
-	return 0;
-}
