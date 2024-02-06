@@ -32,21 +32,22 @@ class MPS {
 public:
 	Settings settings;
 	RefValues refValues;
-	Simulation simulation;
+	vector<Particle> particles;
+	Bucket bucket;
+	Domain domain;
 
+	// pressure Poisson equation
+	SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
+	VectorXd sourceTerm;
+	VectorXd pressure;
+
+	// simulation parameters
 	double initialTime, Time;
 	int timestep   = 0;
 	int fileNumber = 0;
 	clock_t simStartTime, timestepStartTime, timestepEndTime;
 	double courant;
 	FILE* logFile;
-
-	vector<Particle> particles;
-	SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
-	VectorXd sourceTerm;
-	VectorXd pressure;
-	Bucket bucket;
-	Domain domain;
 
 	MPS(const Settings& settings, const vector<Particle>& particles, double initialTime) {
 		this->settings    = settings;
