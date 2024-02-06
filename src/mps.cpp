@@ -8,7 +8,6 @@
 #include "particle.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
-#include "simulation.hpp"
 #include "system.hpp"
 #include "weight.hpp"
 #include <cmath>
