@@ -6,7 +6,11 @@
 #include "loader.hpp"
 #include "output.hpp"
 #include "particle.hpp"
+#include "refvalues.hpp"
+#include "settings.hpp"
+#include "simulation.hpp"
 #include "system.hpp"
+#include "weight.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -24,96 +28,7 @@
 using namespace std;
 using namespace Eigen;
 
-class Settings {
-private:
-public:
-	// computational condition
-	int dim;
-	double particleDistance;
-	double dt;
-	double finishTime;
-	double outputPeriod;
-	double cflCondition;
-	int numPhysicalCores;
-
-	// domain
-	Domain domain;
-
-	// physical properties
-	double kinematicViscosity;
-	double fluidDensity;
-
-	// gravity
-	Vector3d gravity;
-
-	// free surface detection
-	double surfaceDetectionRatio;
-
-	// parameters for pressure Poisson equation
-	double compressibility;
-	double relaxationCoefficientForPressure;
-
-	// collision
-	double collisionDistance;
-	double coefficientOfRestitution;
-
-	// effective radius
-	double radiusForNumberDensity;
-	double radiusForGradient;
-	double radiusForLaplacian;
-
-	Settings() {
-	}
-
-	void load(YAML::Node input) {
-		// computational conditions
-		dim              = input["dim"].as<int>();
-		particleDistance = input["particleDistance"].as<double>();
-		dt               = input["dt"].as<double>();
-		finishTime       = input["finishTime"].as<double>();
-		outputPeriod     = input["outputPeriod"].as<double>();
-		cflCondition     = input["cflCondition"].as<double>();
-		numPhysicalCores = input["numPhysicalCores"].as<int>();
-
-		// physical properties
-		fluidDensity       = input["fluidDensity"].as<double>();
-		kinematicViscosity = input["kinematicViscosity"].as<double>();
-
-		// gravity
-		gravity[0] = input["gravity"][0].as<double>();
-		gravity[1] = input["gravity"][1].as<double>();
-		gravity[2] = input["gravity"][2].as<double>();
-
-		// free surface detection
-		surfaceDetectionRatio = input["surfaceDetectionRatio"].as<double>();
-
-		// pressure Poisson equation
-		compressibility                  = input["compressibility"].as<double>();
-		relaxationCoefficientForPressure = input["relaxationCoefficientForPressure"].as<double>();
-
-		// collision
-		collisionDistance        = input["collisionDistanceRatio"].as<double>() * particleDistance;
-		coefficientOfRestitution = input["coefficientOfRestitution"].as<double>();
-
-		// effective radius
-		radiusForNumberDensity = input["radiusRatioForNumberDensity"].as<double>() * particleDistance;
-		radiusForGradient      = input["radiusRatioForGradient"].as<double>() * particleDistance;
-		radiusForLaplacian     = input["radiusRatioForLaplacian"].as<double>() * particleDistance;
-
-		// domain
-		domain.xMin    = input["domainMin"][0].as<double>();
-		domain.xMax    = input["domainMax"][0].as<double>();
-		domain.yMin    = input["domainMin"][1].as<double>();
-		domain.yMax    = input["domainMax"][1].as<double>();
-		domain.zMin    = input["domainMin"][2].as<double>();
-		domain.zMax    = input["domainMax"][2].as<double>();
-		domain.xLength = domain.xMax - domain.xMin;
-		domain.yLength = domain.yMax - domain.yMin;
-		domain.zLength = domain.zMax - domain.zMin;
-	}
-};
-
-void setParameters();
+// void setParameters();
 
 // main loop
 void calGravity();
@@ -139,9 +54,11 @@ void readData();
 void writeData();
 
 void setNeighbors();
-double weight(double distance, double re);
+// double weight(double distance, double re);
 
 Settings settings;
+RefValues refValues;
+Simulation simulation;
 
 // simulation parameters
 double initialTime, Time;
@@ -157,15 +74,6 @@ double re_forGradient;
 double re_forLaplacian;
 double reMax;
 
-// physical properties
-double fluidDensity;
-
-// constant parameters
-double n0_forNumberDensity;
-double n0_forGradient;
-double n0_forLaplacian;
-double lambda;
-
 std::vector<Particle> particles;
 Eigen::SparseMatrix<double, Eigen::RowMajor> coefficientMatrix;
 Eigen::VectorXd sourceTerm;
@@ -178,7 +86,8 @@ int main(int argc, char** argv) {
 
 	// omp_set_num_threads(settings.numPhysicalCores);
 	readData();
-	setParameters();
+	// setParameters();
+	refValues.calc(settings.dim, settings.particleDistance, re_forNumberDensity, re_forGradient, re_forLaplacian);
 	bucket.set(reMax, settings.cflCondition, domain, particles.size());
 	writeData();
 
@@ -214,49 +123,49 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void setParameters() {
-	// char filename[256];
-	// sprintf(filename, "result/result.log");
-	// int fileOpenError = fopen_s(&logFile, filename, "w");
-	// if (fileOpenError) {
-	// 	std::cerr << "cannot write result/result.log" << std::endl;
-	// 	std::exit(-1);
-	// }
-
-	int iZ_start, iZ_end;
-	if (settings.dim == 2) {
-		iZ_start = 0;
-		iZ_end   = 1;
-	} else {
-		iZ_start = -4;
-		iZ_end   = 5;
-	}
-
-	n0_forNumberDensity = 0.0;
-	n0_forGradient      = 0.0;
-	n0_forLaplacian     = 0.0;
-	lambda              = 0.0;
-	for (int iX = -4; iX < 5; iX++) {
-		for (int iY = -4; iY < 5; iY++) {
-			for (int iZ = iZ_start; iZ < iZ_end; iZ++) {
-				if (((iX == 0) && (iY == 0)) && (iZ == 0))
-					continue;
-
-				double xj = settings.particleDistance * (double) (iX);
-				double yj = settings.particleDistance * (double) (iY);
-				double zj = settings.particleDistance * (double) (iZ);
-				Eigen::Vector3d rj(xj, yj, zj);
-				double dis2 = rj.squaredNorm();
-				double dis  = rj.norm();
-				n0_forNumberDensity += weight(dis, re_forNumberDensity);
-				n0_forGradient += weight(dis, re_forGradient);
-				n0_forLaplacian += weight(dis, re_forLaplacian);
-				lambda += dis2 * weight(dis, re_forLaplacian);
-			}
-		}
-	}
-	lambda = lambda / n0_forLaplacian;
-}
+// void setParameters() {
+// 	// char filename[256];
+// 	// sprintf(filename, "result/result.log");
+// 	// int fileOpenError = fopen_s(&logFile, filename, "w");
+// 	// if (fileOpenError) {
+// 	// 	std::cerr << "cannot write result/result.log" << std::endl;
+// 	// 	std::exit(-1);
+// 	// }
+//
+// 	int iZ_start, iZ_end;
+// 	if (settings.dim == 2) {
+// 		iZ_start = 0;
+// 		iZ_end   = 1;
+// 	} else {
+// 		iZ_start = -4;
+// 		iZ_end   = 5;
+// 	}
+//
+// 	n0_forNumberDensity = 0.0;
+// 	n0_forGradient      = 0.0;
+// 	n0_forLaplacian     = 0.0;
+// 	lambda              = 0.0;
+// 	for (int iX = -4; iX < 5; iX++) {
+// 		for (int iY = -4; iY < 5; iY++) {
+// 			for (int iZ = iZ_start; iZ < iZ_end; iZ++) {
+// 				if (((iX == 0) && (iY == 0)) && (iZ == 0))
+// 					continue;
+//
+// 				double xj = settings.particleDistance * (double) (iX);
+// 				double yj = settings.particleDistance * (double) (iY);
+// 				double zj = settings.particleDistance * (double) (iZ);
+// 				Eigen::Vector3d rj(xj, yj, zj);
+// 				double dis2 = rj.squaredNorm();
+// 				double dis  = rj.norm();
+// 				n0_forNumberDensity += weight(dis, re_forNumberDensity);
+// 				n0_forGradient += weight(dis, re_forGradient);
+// 				n0_forLaplacian += weight(dis, re_forLaplacian);
+// 				lambda += dis2 * weight(dis, re_forLaplacian);
+// 			}
+// 		}
+// 	}
+// 	lambda = lambda / n0_forLaplacian;
+// }
 
 void calGravity() {
 #pragma omp parallel for
@@ -271,7 +180,9 @@ void calGravity() {
 }
 
 void calViscosity() {
-	double a = (settings.kinematicViscosity) * (2.0 * settings.dim) / (n0_forLaplacian * lambda);
+	double n0     = refValues.n0_forLaplacian;
+	double lambda = refValues.lambda;
+	double a      = (settings.kinematicViscosity) * (2.0 * settings.dim) / (n0 * lambda);
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -367,7 +278,7 @@ void calNumberDensity() {
 }
 
 void setBoundaryCondition() {
-	double n0   = n0_forNumberDensity;
+	double n0   = refValues.n0_forNumberDensity;
 	double beta = settings.surfaceDetectionRatio;
 
 #pragma omp parallel for
@@ -385,7 +296,7 @@ void setBoundaryCondition() {
 }
 
 void setSourceTerm() {
-	double n0    = n0_forNumberDensity;
+	double n0    = refValues.n0_forNumberDensity;
 	double gamma = settings.relaxationCoefficientForPressure;
 
 #pragma omp parallel for
@@ -399,8 +310,8 @@ void setSourceTerm() {
 
 void setMatrix() {
 	std::vector<Eigen::Triplet<double>> triplets;
-	auto n0 = n0_forLaplacian;
-	auto a  = 2.0 * settings.dim / (n0 * lambda);
+	auto n0 = refValues.n0_forLaplacian;
+	auto a  = 2.0 * settings.dim / (n0 * refValues.lambda);
 	coefficientMatrix.resize(particles.size(), particles.size());
 
 	for (auto& pi : particles) {
@@ -525,7 +436,7 @@ void setMinimumPressure() {
 }
 
 void calPressureGradient() {
-	double a = settings.dim / n0_forGradient;
+	double a = settings.dim / refValues.n0_forGradient;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -587,12 +498,11 @@ void readData() {
 	// TODO: input file name should be given as an argument
 	YAML::Node input = YAML::LoadFile("./input/input.yml");
 	settings.load(input);
-	domain = settings.domain;
+	domain              = settings.domain;
 	re_forNumberDensity = settings.radiusForNumberDensity;
-	re_forGradient = settings.radiusForGradient;
-	re_forLaplacian = settings.radiusForLaplacian;
-	reMax = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
-	fluidDensity = settings.fluidDensity;
+	re_forGradient      = settings.radiusForGradient;
+	re_forLaplacian     = settings.radiusForLaplacian;
+	reMax               = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
 
 	// read input.prof
 	ss.str("./input/input.prof");
@@ -650,13 +560,13 @@ void writeData() {
 	double last = (double) (timestepEndTime - timestepStartTime) / CLOCKS_PER_SEC;
 
 	// terminal output
-	printf("%d: settings.dt=%.gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	printf("%d: dt=%.gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
 	       "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
 	       timestep, settings.dt, Time, settings.finishTime, elapsed, remain, ave, last, fileNumber, courant);
 
 	// log output
 	// fprintf(logFile,
-	//         "%d: settings.dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
+	//         "%d: dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
 	//         "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
 	//         timestep, settings.dt, Time, settings.finishTime, elapsed, remain, ave, last, fileNumber, courant);
 
@@ -709,14 +619,5 @@ void setNeighbors() {
 				}
 			}
 		}
-	}
-}
-
-double weight(double dis, double re) {
-	if (dis >= re) {
-		return 0.0;
-
-	} else {
-		return (re / dis) - 1.0;
 	}
 }
