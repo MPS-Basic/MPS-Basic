@@ -38,9 +38,10 @@ public:
 	double coefficientOfRestitution;
 
 	// effective radius
-	double radiusForNumberDensity;
-	double radiusForGradient;
-	double radiusForLaplacian;
+	double re_forNumberDensity;
+	double re_forGradient;
+	double re_forLaplacian;
+	double reMax;
 
 	Settings() {
 	}
@@ -76,9 +77,10 @@ public:
 		coefficientOfRestitution = input["coefficientOfRestitution"].as<double>();
 
 		// effective radius
-		radiusForNumberDensity = input["radiusRatioForNumberDensity"].as<double>() * particleDistance;
-		radiusForGradient      = input["radiusRatioForGradient"].as<double>() * particleDistance;
-		radiusForLaplacian     = input["radiusRatioForLaplacian"].as<double>() * particleDistance;
+		re_forNumberDensity = input["radiusRatioForNumberDensity"].as<double>() * particleDistance;
+		re_forGradient      = input["radiusRatioForGradient"].as<double>() * particleDistance;
+		re_forLaplacian     = input["radiusRatioForLaplacian"].as<double>() * particleDistance;
+		reMax               = std::max({re_forNumberDensity, re_forGradient, re_forLaplacian});
 
 		// domain
 		domain.xMin    = input["domainMin"][0].as<double>();
