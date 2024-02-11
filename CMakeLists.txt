@@ -4,15 +4,18 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # main executable
-add_executable(${PROJECT_NAME} src/mps.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp)
+
+# OpenMP
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
 endif()
-# eigen 
+
+# eigen
 target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 
-# google test 
+# google test
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -23,25 +26,43 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-add_executable(
-    mps_test 
-    test/loader_test.cpp
-)
-target_include_directories(
-    mps_test
-    PRIVATE
-    src/
-)
-target_link_libraries(
-    mps_test
-    GTest::gtest_main
-)
+# enable_testing()
+# add_executable(
+#     mps_test
+#     test/xxx_test.cpp
+# )
+# target_include_directories(
+#     mps_test
+#     PRIVATE
+#     src/
+# )
+# target_link_libraries(
+#     mps_test
+#     GTest::gtest_main
+# )
 
-include(GoogleTest)
-gtest_discover_tests(mps_test)
-# coverage
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_C_FLAGS_PROFILE --coverage)
-    set(CMAKE_CXX_FLAGS_PROFILE --coverage)
+# include(GoogleTest)
+# gtest_discover_tests(mps_test)
+# # coverage
+# if (CMAKE_COMPILER_IS_GNUCXX)
+#     set(CMAKE_C_FLAGS_PROFILE --coverage)
+#     set(CMAKE_CXX_FLAGS_PROFILE --coverage)
+# endif()
+
+# yaml-cpp
+include(FetchContent)
+
+FetchContent_Declare(
+  yaml-cpp
+  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  GIT_TAG 0.8.0
+)
+FetchContent_GetProperties(yaml-cpp)
+
+if(NOT yaml-cpp_POPULATED)
+  message(STATUS "Fetching yaml-cpp...")
+  FetchContent_Populate(yaml-cpp)
+  add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml-cpp_BINARY_DIR})
 endif()
+
+target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)

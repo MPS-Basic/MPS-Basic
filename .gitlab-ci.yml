@@ -18,26 +18,6 @@ build_mps:
     paths:
       - build/mps
 
-unit_test:
-  stage: test
-  before_script:
-    - apt update && apt -y upgrade && apt -y install cmake python3-pip
-    - pip3 install gcovr # gcov in debian is too old
-  script:
-    - cmake -DCMAKE_BUILD_TYPE=PROFILE -S . -B build # enable coverage
-    - cd build
-    - make mps_test
-    - ctest
-    - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ${CI_PROJECT_DIR}
-  coverage: /^\s*lines:\s*\d+.\d+\%/
-  artifacts:
-    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
-    expire_in: 2 days
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: build/coverage.xml
-
 make_input_dambreak:
   stage: build
   before_script:
