@@ -1,15 +1,17 @@
+#pragma once
+
 #include "Eigen/Dense"
 #include "Eigen/Sparse"
 #include "bucket.hpp"
 #include "common.hpp"
 #include "domain.hpp"
-#include "loader.hpp"
 #include "output.hpp"
 #include "particle.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
 #include "system.hpp"
 #include "weight.hpp"
+#include "input.hpp"
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -48,12 +50,12 @@ public:
 	double courant;
 	FILE* logFile;
 
-	MPS(const Settings& settings, const vector<Particle>& particles, double initialTime) {
-		this->settings    = settings;
-		this->domain      = settings.domain;
-		this->particles   = particles;
-		this->initialTime = initialTime;
-		this->Time        = initialTime;
+	MPS(const Input& input) {
+		this->settings    = input.settings;
+		this->domain      = input.settings.domain;
+		this->particles   = input.particles;
+		this->initialTime = input.initialTime;
+		this->Time        = input.initialTime;
 	}
 
 	void run() {
