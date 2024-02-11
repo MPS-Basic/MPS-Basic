@@ -16,20 +16,20 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 
 # google test
-# include(FetchContent)
-# FetchContent_Declare(
-#   googletest
-#   # Specify the commit you depend on and update it regularly.
-#   URL https://github.com/google/googletest/archive/f8d7d77c06936315286eb55f8de22cd23c188571.zip
-# )
-# # For Windows: Prevent overriding the parent project's compiler/linker settings
-# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-# FetchContent_MakeAvailable(googletest)
-#
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/f8d7d77c06936315286eb55f8de22cd23c188571.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 # enable_testing()
 # add_executable(
 #     mps_test
-#     test/loader_test.cpp
+#     test/xxx_test.cpp
 # )
 # target_include_directories(
 #     mps_test
@@ -40,7 +40,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 #     mps_test
 #     GTest::gtest_main
 # )
-#
+
 # include(GoogleTest)
 # gtest_discover_tests(mps_test)
 # # coverage
@@ -55,7 +55,7 @@ include(FetchContent)
 FetchContent_Declare(
   yaml-cpp
   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-  GIT_TAG master # Can be a tag (yaml-cpp-x.x.x), a commit hash, or a branch name (master)
+  GIT_TAG 0.8.0
 )
 FetchContent_GetProperties(yaml-cpp)
 
