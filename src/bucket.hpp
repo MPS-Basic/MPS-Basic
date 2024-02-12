@@ -7,6 +7,10 @@
 #include "domain.hpp"
 #include "particle.hpp"
 
+///@brief Class for bucket for neighbor search
+///@details This class is used for neighbor search in particle method.
+/// In particle method, neighbor search is required for calculating interaction between particles.
+/// Each particle is stored in the bucket, bucket is used for searching neighbor particles.
 class Bucket {
 private:
 public:
@@ -31,6 +35,9 @@ public:
 		next.resize(particleSize);
 	}
 
+	/// @brief store particles in the bucket
+	/// @param particles partiles to be stored
+	/// @param domain domain of the simulation
 	void storeParticles(std::vector<Particle>& particles, const Domain& domain) {
 #pragma omp parallel for
 		rep(i, 0, num) {
