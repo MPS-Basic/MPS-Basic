@@ -6,6 +6,7 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 - Git
 - cmake (newer than 3.9)
 - C++ 17 compiler
+- OpenMP 5.0 and above (optional)
 
 ## Execution in Command Line
 - It's easier to do it in Visual Studio Code as shown later, but it's better to do it in command line for your understanding.
