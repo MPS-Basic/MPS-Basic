@@ -7,9 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(${PROJECT_NAME} src/main.cpp)
 
 # OpenMP
-find_package(OpenMP)
+find_package(OpenMP 5.0)
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+else()
+  message(WARNING "OpenMP not found. It runs on single thread.")
 endif()
 
 # eigen
