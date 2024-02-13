@@ -82,7 +82,8 @@ private:
 		std::ifstream ifs;
 		ifs.open(profPath);
 		if (ifs.fail()) {
-			std::cerr << "cannot read " << profPath << std::endl;
+			std::cerr << "cannot read prof file: " << std::filesystem::absolute(profPath) << std::endl;
+			std::exit(-1);
 		}
 
 		std::vector<Particle> particles;
