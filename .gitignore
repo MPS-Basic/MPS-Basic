@@ -2,6 +2,7 @@
 .vs/
 build/
 result/
+doxygen/
 *.exe
 *.prof
 *.vtu

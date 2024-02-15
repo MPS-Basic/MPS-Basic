@@ -3,10 +3,14 @@
 Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
 ## Requirements
+### Executing
 - Git
 - cmake (newer than 3.9)
 - C++ 17 compiler
 - OpenMP 5.0 and above (optional)
+
+### Development
+- Doxygen and Graphviz (optional, for building documents)
 
 ## Execution in Command Line
 - It's easier to do it in Visual Studio Code as shown later, but it's better to do it in command line for your understanding.
@@ -130,6 +134,13 @@ mkdir -p result/vtu # delete vtu files
 `2>result/error.log` makes the standard error output to be written in the file named `result/error.log`.
 Without it, both standartd output and standard error output would be displayed in the terminal.
 !-->
+
+## Build documents
+```bash
+doxygen Doxyfile
+```
+- You can see the documents in `doxygen/html/index.html`.
+- If you want PDF files, you can use `make` command in the `doxygen/latex` directory (LaTeX is required).
 
 ## Support
 Please ask the authors if you have any questions.
