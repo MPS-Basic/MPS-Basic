@@ -22,14 +22,12 @@ build_mps:
 make_input_dambreak:
   needs:
     - build_mps
-  before_script:
-    - mkdir -p result/dambreak
   script:
     - ./build/generator/generate_dambreak
   artifacts:
     paths:
-      - result/dambreak/input.prof
-      - result/dambreak/input.vtu
+      - input/dambreak/input.prof
+      - input/dambreak/input.vtu
 
 dambreak:
   stage: test
