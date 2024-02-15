@@ -8,7 +8,6 @@
 #include <yaml-cpp/yaml.h>
 /**
  * @brief Class for loading setting file and particle file
- * 
  */
 class Loader {
 public:
@@ -16,7 +15,7 @@ public:
 		Input input;
 
 		YAML::Node settingYaml = YAML::LoadFile(settingPath.string());
-		input.settings         = loadSettingYaml(settingYaml);
+		input.settings         = loadSettingYaml(settingYaml, settingPath.parent_path());
 
 		auto [initialTime, particles] = loadParticleProf(input.settings.profPath);
 		input.initialTime             = initialTime;
@@ -26,8 +25,10 @@ public:
 	}
 
 private:
-	Settings loadSettingYaml(const YAML::Node& yaml) {
+	Settings loadSettingYaml(const YAML::Node& yaml, const std::filesystem::path& yamlDir) {
+		assert(std::filesystem::is_directory(yamlDir));
 		Settings s;
+		std::cout << "setting dir: " << std::filesystem::absolute(yamlDir) << std::endl;
 
 		// computational conditions
 		s.dim              = yaml["dim"].as<int>();
@@ -76,7 +77,8 @@ private:
 		s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
 		// profpath
-		s.profPath = std::filesystem::path(yaml["profPath"].as<std::string>());
+		auto relativeProfPath = yaml["profPath"].as<std::string>();
+		s.profPath            = std::filesystem::weakly_canonical(yamlDir / relativeProfPath);
 
 		return s;
 	}

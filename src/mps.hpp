@@ -539,12 +539,12 @@ private:
 
 		if (Time - initialTime >= settings.outputPeriod * double(fileNumber)) {
 			std::stringstream ss;
-			ss << "result/prof/output_";
+			ss << "result/dambreak/prof/output_";
 			ss << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
 			writeProf(ss, Time, particles);
 
 			ss.str("");
-			ss << "result/vtu/output_";
+			ss << "result/dambreak/vtu/output_";
 			ss << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
 			writeVtu(ss, Time, particles);
 
