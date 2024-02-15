@@ -9,3 +9,4 @@ result/
 *.log
 *.bat
 *.ps1
+!scripts/windows.ps1
