@@ -6,18 +6,26 @@
 #include <iostream>
 #include <vector>
 #include <yaml-cpp/yaml.h>
+
+namespace fs = std::filesystem;
+
 /**
  * @brief Class for loading setting file and particle file
+ *
+ * @details This class is responsible for loading the input. It loads the
+ * settings and the particles from the file system. It uses the YAML library to
+ * load the settings from a YAML file. It also uses the std::filesystem library
+ * to load the particles from a file.
  */
 class Loader {
 public:
-	Input load(const std::filesystem::path& settingPath) {
+	Input load(const fs::path& settingPath) {
 		Input input;
 		input.settings = loadSettingYaml(settingPath);
 
-		auto [initialTime, particles] = loadParticleProf(input.settings.profPath);
-		input.initialTime             = initialTime;
-		input.particles               = particles;
+		auto [startTime, particles] = loadParticleProf(input.settings.profPath);
+		input.startTime             = startTime;
+		input.particles             = particles;
 
 		std::cout << "Output directory: " << input.settings.outputDirectory << std::endl;
 		std::filesystem::create_directories(input.settings.outputDirectory);
@@ -40,16 +48,16 @@ public:
 	}
 
 private:
-	Settings loadSettingYaml(const std::filesystem::path& settingPath) {
-
+	Settings loadSettingYaml(const fs::path& settingPath) {
 		YAML::Node yaml = YAML::LoadFile(settingPath.string());
+
 		Settings s;
 
 		// computational conditions
 		s.dim              = yaml["dim"].as<int>();
 		s.particleDistance = yaml["particleDistance"].as<double>();
 		s.dt               = yaml["dt"].as<double>();
-		s.finishTime       = yaml["finishTime"].as<double>();
+		s.endTime          = yaml["endTime"].as<double>();
 		s.outputPeriod     = yaml["outputPeriod"].as<double>();
 		s.cflCondition     = yaml["cflCondition"].as<double>();
 		s.numPhysicalCores = yaml["numPhysicalCores"].as<int>();
@@ -102,7 +110,7 @@ private:
 		return s;
 	}
 
-	std::pair<double, std::vector<Particle>> loadParticleProf(const std::filesystem::path& profPath) {
+	std::pair<double, std::vector<Particle>> loadParticleProf(const fs::path& profPath) {
 		std::ifstream ifs;
 		ifs.open(profPath);
 		if (ifs.fail()) {
@@ -111,9 +119,9 @@ private:
 		}
 
 		std::vector<Particle> particles;
-		double initialTime;
+		double startTime;
 		int particleSize;
-		ifs >> initialTime;
+		ifs >> startTime;
 		ifs >> particleSize;
 		for (int i = 0; i < particleSize; i++) {
 			int type_int;
@@ -132,6 +140,6 @@ private:
 		ifs.close();
 		ifs.clear();
 
-		return {initialTime, particles};
+		return {startTime, particles};
 	}
 };

@@ -27,16 +27,12 @@ cmake --build build # Execute build
 ### Execution
 #### Windows
 ```powershell
-del result/prof/*.prof # delete prof files
-del result/vtu/*.vtu # delete vtu files
 ./build/mps.exe 2>result/error.log # run simulation
 ```
 
 #### Linux
 ```bash
-mkdir -p result/prof # delete prof files
-mkdir -p result/vtu # delete vtu files
-./build/mps.exe 2>result/error.log # run simulation
+./build/mps 2>result/error.log # run simulation
 ```
 
 ## Execution in Visual Studio Code
@@ -102,6 +98,28 @@ mkdir -p result/vtu # delete vtu files
 
 	![tasks.json_3](fig/tasks_3.png)
 
+## I/O
+### Input
+To be written.
+
+### Output
+- The results are written in the following formats:
+	- `result/prof`: Profile data
+	- `result/vtu`: VTK data
+
+#### Profile data
+- The profile data is in the following format:
+
+```prof
+0  // time
+627  // number of particles
+3 -0.1 -0.1 0 0 0 0  // type x y z u v w
+3 -0.1 -0.075 0 0 0 0
+3 -0.1 -0.05 0 0 0 0
+...
+```
+
+
 ## Debugging in Visual Studio Code
 1. Open Cmake tab.
 2. Change `Configure` to `Debug`
@@ -144,10 +162,6 @@ doxygen Doxyfile
 
 ## Support
 Please ask the authors if you have any questions.
-
-## Roadmap
-- Basic MPS simulation code of C++
-- input/output
 
 
 ## Contribution

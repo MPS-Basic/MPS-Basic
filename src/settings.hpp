@@ -5,15 +5,20 @@
 #include <Eigen/Dense>
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 /**
  * @brief Struct for settings of calculation
+ *
+ * @details This struct contains the settings for the simulation. It is used to
+ * load the settings from the input file.
  */
 struct Settings {
 	// computational condition
 	int dim;                 ///< Dimension of the simulation
 	double particleDistance; ///< Initial distance between particles
 	double dt;               ///< Time step
-	double finishTime;       ///< Finish time of the simulation
+	double endTime;          ///< End time of the simulation
 	double outputPeriod;     ///< Output period of the simulation
 	double cflCondition;     ///< CFL condition
 	int numPhysicalCores;    ///< Number of cores to calculate
@@ -44,9 +49,7 @@ struct Settings {
 	double re_forLaplacian;     ///< Effective radius for Laplacian
 	double reMax;               ///< Maximum of effective radius
 
-	// profpath
-	std::filesystem::path profPath; ///< Path for input particle file
-
-	// output
-	std::filesystem::path outputDirectory; ///< Directory for output files
+	// i/o
+	fs::path profPath;  ///< Path for input particle file
+	fs::path outputDirectory; ///< Directory for output files
 };

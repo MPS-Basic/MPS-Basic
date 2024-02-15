@@ -46,7 +46,7 @@ doxygen:
   stage: build
   before_script:
     - apk update && apk add doxygen ttf-freefont graphviz
-  script: 
+  script:
     - mkdir doxygen
     - doxygen Doxyfile
   artifacts:
@@ -58,9 +58,9 @@ doxygen_latex:
   stage: build
   needs:
     - doxygen
-  script: 
+  script:
     - cd doxygen/latex
-    - make 
+    - make
   artifacts:
     paths:
       - doxygen/latex/refman.pdf

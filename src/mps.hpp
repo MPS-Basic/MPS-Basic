@@ -6,11 +6,9 @@
 #include "common.hpp"
 #include "domain.hpp"
 #include "input.hpp"
-#include "output.hpp"
 #include "particle.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
-#include "system.hpp"
 #include "weight.hpp"
 #include <cmath>
 #include <cstdio>
@@ -28,8 +26,12 @@
 
 using namespace std;
 using namespace Eigen;
+
 /**
  * @brief MPS simulation class
+ *
+ * @details Executes the MPS simulation. This class does not handle the
+ * simulation process itself, but only the calculation of the MPS method.
  */
 class MPS {
 public:
@@ -44,60 +46,41 @@ public:
 	VectorXd sourceTerm;                                     ///< Source term for pressure Poisson equation
 	VectorXd pressure;                                       ///< Solution of pressure Poisson equation
 
-	// simulation parameters
-	double initialTime; ///< Initial time of the simulation
-	double Time;        ///< Current time of the simulation
-	int timestep   = 0; ///< Current timestep of the simulation
-	int fileNumber = 0; ///< Number of output files
-	clock_t simStartTime, timestepStartTime, timestepEndTime;
 	double courant; ///< Maximum courant number among all particles
 	FILE* logFile;
 
+	MPS() = default;
+
 	MPS(const Input& input) {
-		this->settings    = input.settings;
-		this->domain      = input.settings.domain;
-		this->particles   = input.particles;
-		this->initialTime = input.initialTime;
-		this->Time        = input.initialTime;
-	}
+		this->settings  = input.settings;
+		this->domain    = input.settings.domain;
+		this->particles = input.particles;
+	};
 
-	void run() {
-		startSimulation(simStartTime);
-
-		// omp_set_num_threads(settings.numPhysicalCores);
+	void init() {
 		refValues.calc(settings.dim, settings.particleDistance, settings.re_forNumberDensity, settings.re_forGradient,
 		               settings.re_forLaplacian);
 		bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
-		writeData();
+	};
 
-		while (Time < settings.finishTime) {
-			timestepStartTime = std::clock();
+	void stepForward() {
+		bucket.storeParticles(particles, domain);
+		setNeighbors(settings.reMax);
+		calGravity();
+		calViscosity(settings.re_forLaplacian);
+		moveParticle();
 
-			bucket.storeParticles(particles, domain);
-			setNeighbors(settings.reMax);
-			calGravity();
-			calViscosity(settings.re_forLaplacian);
-			moveParticle();
+		bucket.storeParticles(particles, domain);
+		setNeighbors(settings.reMax);
+		collision();
 
-			bucket.storeParticles(particles, domain);
-			setNeighbors(settings.reMax);
-			collision();
+		bucket.storeParticles(particles, domain);
+		setNeighbors(settings.reMax);
+		calPressure();
+		calPressureGradient(settings.re_forGradient);
+		moveParticleUsingPressureGradient();
 
-			bucket.storeParticles(particles, domain);
-			setNeighbors(settings.reMax);
-			calPressure();
-			calPressureGradient(settings.re_forGradient);
-			moveParticleUsingPressureGradient();
-
-			calCourant();
-
-			timestep++;
-			Time += settings.dt;
-			timestepEndTime = std::clock();
-			writeData();
-		}
-
-		endSimulation(simStartTime, logFile);
+		calCourant();
 	};
 
 private:
@@ -498,58 +481,6 @@ private:
 		}
 	}
 
-	void writeData() {
-		int second, minute, hour;
-
-		char elapsed[256];
-		second = (double) (timestepEndTime - simStartTime) / CLOCKS_PER_SEC;
-		calSecondMinuteHour(second, minute, hour);
-		sprintf(elapsed, "elapsed=%dh %02dm %02ds", hour, minute, second);
-
-		double ave;
-		if (timestep == 0) {
-			ave = 0.0;
-		} else {
-			ave = ((double) (timestepEndTime - simStartTime) / CLOCKS_PER_SEC) / timestep;
-		}
-
-		char remain[256];
-		second = ((settings.finishTime - Time) / Time) * ave * timestep;
-		calSecondMinuteHour(second, minute, hour);
-		if (timestep == 0)
-			sprintf(remain, "remain=-h --m --s");
-		else
-			sprintf(remain, "remain=%dh %02dm %02ds", hour, minute, second);
-
-		double last = (double) (timestepEndTime - timestepStartTime) / CLOCKS_PER_SEC;
-
-		// terminal output
-		printf("%d: dt=%.gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
-		       "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
-		       timestep, settings.dt, Time, settings.finishTime, elapsed, remain, ave, last, fileNumber, courant);
-
-		// log output
-		// fprintf(logFile,
-		//         "%d: dt=%gs   t=%.3lfs   fin=%.1lfs   %s   %s   ave=%.3lfs/step   "
-		//         "last=%.3lfs/step   out=%dfiles   Courant=%.2lf\n",
-		//         timestep, settings.dt, Time, settings.finishTime, elapsed, remain, ave, last, fileNumber, courant);
-
-		// error output
-		fprintf(stderr, "%4d: t=%.3lfs\n", timestep, Time);
-
-		if (Time - initialTime >= settings.outputPeriod * double(fileNumber)) {
-			std::stringstream ss;
-			ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber;
-
-			auto path_vtu  = settings.outputDirectory / (ss.str() + ".vtu");
-			auto path_prof = settings.outputDirectory / (ss.str() + ".prof");
-			cout << "Output: " << path_vtu << endl;
-			writeVtu(path_vtu, Time, particles);
-			writeProf(path_prof, Time, particles);
-
-			fileNumber++;
-		}
-	}
 	/**
 	 * @brief search neighbors of each particle
 	 * @param re effective radius

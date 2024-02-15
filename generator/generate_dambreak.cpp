@@ -1,10 +1,12 @@
-#include "../src/output.hpp"
+#include "../src/particles_exporter.hpp"
 #include "../src/particle.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps);
 bool isInside(Eigen::Vector3d& position, std::vector<double>& x_range, std::vector<double>& y_range, double& eps);
@@ -66,8 +68,10 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	writeProf(std::filesystem::path("input/dambreak/input.prof"), 0.0, particles);
-	writeVtu(std::filesystem::path("input/dambreak/input.vtu"), 0.0, particles);
+	ParticlesExporter exporter;
+	exporter.setParticles(particles);
+	exporter.toProf(fs::path("input/dambreak/input.prof"), 0.0);
+	exporter.toVtu(fs::path("input/dambreak/input.vtu"), 0.0);
 }
 
 void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps) {
