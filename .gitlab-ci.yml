@@ -1,4 +1,4 @@
-image: gcc:11 # gcov is not available in gcc 12 yet
+image: gcc:latest
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -12,24 +12,24 @@ build_mps:
   before_script:
     - apt update && apt -y install ninja-build cmake
   script:
-    - cmake -S . -B build
-    - cd build && make mps
+    - cmake -G Ninja -S . -B build
+    - cmake --build build
   artifacts:
     paths:
       - build/mps
+      - build/generator/generate_dambreak
 
 make_input_dambreak:
-  stage: build
+  needs:
+    - build_mps
   before_script:
-    - apt update && apt -y install cmake
+    - mkdir -p result/dambreak
   script:
-    - cd input
-    - cmake -S . -B build
-    - cd build && make && cd ../
-    - ./build/make_input
+    - ./build/generator/generate_dambreak
   artifacts:
     paths:
-      - input/input.prof
+      - result/dambreak/input.prof
+      - result/dambreak/input.vtu
 
 dambreak:
   stage: test
@@ -37,13 +37,11 @@ dambreak:
     - build_mps
     - make_input_dambreak
   script:
-    - mkdir -p result/prof
-    - mkdir -p result/vtu
-    - ./build/mps
+    - ./scripts/linux.sh
   artifacts:
     paths:
-      - result/prof/*.prof
-      - result/vtu/*.vtu
+      - result/dambreak/*.prof
+      - result/dambreak/*.vtu
 
 doxygen:
   image: alpine
