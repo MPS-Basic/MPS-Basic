@@ -1,5 +1,6 @@
 #include "../src/output.hpp"
 #include "../src/particle.hpp"
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -65,11 +66,8 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	std::stringstream ss;
-	ss.str("result/dambreak/input.prof");
-	writeProf(ss, 0.0, particles);
-	ss.str("result/dambreak/input.vtu");
-	writeVtu(ss, 0.0, particles);
+	writeProf(std::filesystem::path("input/dambreak/input.prof"), 0.0, particles);
+	writeVtu(std::filesystem::path("input/dambreak/input.vtu"), 0.0, particles);
 }
 
 void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps) {
