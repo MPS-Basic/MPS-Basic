@@ -1,24 +1,23 @@
 #pragma once
 
 #include "input.hpp"
-#include <vector>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include <yaml-cpp/yaml.h>
-
 
 class Loader {
 public:
 	Input load(const std::filesystem::path& settingPath) {
 		Input input;
 
-		YAML::Node settingYaml = YAML::LoadFile(settingPath);
-		input.settings = loadSettingYaml(settingYaml);
+		YAML::Node settingYaml = YAML::LoadFile(settingPath.string());
+		input.settings         = loadSettingYaml(settingYaml);
 
 		auto [initialTime, particles] = loadParticleProf(input.settings.profPath);
-		input.initialTime = initialTime;
-		input.particles = particles;
+		input.initialTime             = initialTime;
+		input.particles               = particles;
 
 		return input;
 	}

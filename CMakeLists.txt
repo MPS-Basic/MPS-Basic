@@ -3,13 +3,18 @@ project(mps VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# particle generator
+add_subdirectory(input)
+
 # main executable
 add_executable(${PROJECT_NAME} src/main.cpp)
 
 # OpenMP
-find_package(OpenMP)
+find_package(OpenMP 5.0)
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+else()
+  message(WARNING "OpenMP not found. It runs on single thread.")
 endif()
 
 # eigen
@@ -19,8 +24,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  # Specify the commit you depend on and update it regularly.
-  URL https://github.com/google/googletest/archive/f8d7d77c06936315286eb55f8de22cd23c188571.zip
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG v1.14.0
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
