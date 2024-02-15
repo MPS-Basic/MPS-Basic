@@ -9,6 +9,7 @@
 
 /**
  * @brief Class for bucket for neighbor search
+ *
  * @details This class is used for neighbor search in particle method.
  * In particle method, neighbor search is required for calculating interaction between particles.
  * Each particle is stored in the bucket, bucket is used for searching neighbor particles.

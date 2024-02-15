@@ -1,7 +1,7 @@
-#include "input.hpp"
-#include "loader.hpp"
-#include "mps.hpp"
+#include "simulation.hpp"
 #include <filesystem>
+
+namespace fs = std::filesystem;
 
 /**
  * @brief entry point of the program
@@ -19,9 +19,8 @@ int main(int argc, char** argv) {
 	}
 
 	auto settingPath = std::filesystem::path(argv[1]);
-	Input input      = Loader().load(settingPath);
-	MPS mps          = MPS(input);
-	mps.run();
+	Simulation sim(settingPath);
+	sim.run();
 
 	return 0;
 }
