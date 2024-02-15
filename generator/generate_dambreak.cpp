@@ -66,9 +66,9 @@ int main(int argc, char** argv) {
 	}
 
 	std::stringstream ss;
-	ss.str("input.prof");
+	ss.str("result/dambreak/input.prof");
 	writeProf(ss, 0.0, particles);
-	ss.str("input.vtu");
+	ss.str("result/dambreak/input.vtu");
 	writeVtu(ss, 0.0, particles);
 }
 

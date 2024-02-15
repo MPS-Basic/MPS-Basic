@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # particle generator
-add_subdirectory(input)
+add_subdirectory(generator)
 
 # main executable
 add_executable(${PROJECT_NAME} src/main.cpp)
