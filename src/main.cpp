@@ -3,6 +3,13 @@
 #include "mps.hpp"
 #include <filesystem>
 
+/**
+ * @brief entry point of the program
+ *
+ * @param argc number of arguments
+ * @param argv array of arguments
+ * @return return code
+ */
 int main(int argc, char** argv) {
 	if (argc < 2) {
 		std::cout << "Usage" << std::endl << std::endl;

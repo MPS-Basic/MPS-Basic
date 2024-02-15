@@ -2,46 +2,48 @@
 
 #include "common.hpp"
 #include "domain.hpp"
-#include <filesystem>
 #include <Eigen/Dense>
+#include <filesystem>
 
+/**
+ * @brief Struct for settings of calculation
+ */
 struct Settings {
 	// computational condition
-	int dim;
-	double particleDistance;
-	double dt;
-	double finishTime;
-	double outputPeriod;
-	double cflCondition;
-	int numPhysicalCores;
+	int dim;                 ///< Dimension of the simulation
+	double particleDistance; ///< Initial distance between particles
+	double dt;               ///< Time step
+	double finishTime;       ///< Finish time of the simulation
+	double outputPeriod;     ///< Output period of the simulation
+	double cflCondition;     ///< CFL condition
+	int numPhysicalCores;    ///< Number of cores to calculate
 
-	// domain
-	Domain domain;
+	Domain domain; ///< domain of the simulation
 
 	// physical properties
-	double kinematicViscosity;
-	double fluidDensity;
+	double kinematicViscosity; ///< Kinematic viscosity
+	double fluidDensity;       ///< Fluid density
 
 	// gravity
-	Eigen::Vector3d gravity;
+	Eigen::Vector3d gravity; ///< Gravity
 
 	// free surface detection
-	double surfaceDetectionRatio;
+	double surfaceDetectionRatio; ///< Ratio for free surface detection
 
 	// parameters for pressure Poisson equation
-	double compressibility;
-	double relaxationCoefficientForPressure;
+	double compressibility;                  ///< Compressibility of the fluid
+	double relaxationCoefficientForPressure; ///< Relaxation coefficient for pressure
 
 	// collision
-	double collisionDistance;
-	double coefficientOfRestitution;
+	double collisionDistance;        ///< Distance for collision detection
+	double coefficientOfRestitution; ///< Coefficient of restitution
 
 	// effective radius
-	double re_forNumberDensity;
-	double re_forGradient;
-	double re_forLaplacian;
-	double reMax;
+	double re_forNumberDensity; ///< Effective radius for number density
+	double re_forGradient;      ///< Effective radius for gradient
+	double re_forLaplacian;     ///< Effective radius for Laplacian
+	double reMax;               ///< Maximum of effective radius
 
 	// profpath
-	std::filesystem::path profPath;
+	std::filesystem::path profPath; ///< Path for input particle file
 };

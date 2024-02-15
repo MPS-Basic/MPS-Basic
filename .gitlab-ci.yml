@@ -44,3 +44,27 @@ dambreak:
     paths:
       - result/prof/*.prof
       - result/vtu/*.vtu
+
+doxygen:
+  image: alpine
+  stage: build
+  before_script:
+    - apk update && apk add doxygen ttf-freefont graphviz
+  script: 
+    - mkdir doxygen
+    - doxygen Doxyfile
+  artifacts:
+    paths:
+      - doxygen/latex
+
+doxygen_latex:
+  image: texlive/texlive
+  stage: build
+  needs:
+    - doxygen
+  script: 
+    - cd doxygen/latex
+    - make 
+  artifacts:
+    paths:
+      - doxygen/latex/refman.pdf
