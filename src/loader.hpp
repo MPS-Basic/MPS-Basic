@@ -13,9 +13,7 @@ class Loader {
 public:
 	Input load(const std::filesystem::path& settingPath) {
 		Input input;
-
-		YAML::Node settingYaml = YAML::LoadFile(settingPath.string());
-		input.settings         = loadSettingYaml(settingYaml, settingPath.parent_path());
+		input.settings = loadSettingYaml(settingPath);
 
 		auto [initialTime, particles] = loadParticleProf(input.settings.profPath);
 		input.initialTime             = initialTime;
@@ -25,10 +23,10 @@ public:
 	}
 
 private:
-	Settings loadSettingYaml(const YAML::Node& yaml, const std::filesystem::path& yamlDir) {
-		assert(std::filesystem::is_directory(yamlDir));
+	Settings loadSettingYaml(const std::filesystem::path& settingPath) {
+
+		YAML::Node yaml = YAML::LoadFile(settingPath.string());
 		Settings s;
-		std::cout << "setting dir: " << std::filesystem::absolute(yamlDir) << std::endl;
 
 		// computational conditions
 		s.dim              = yaml["dim"].as<int>();
@@ -78,6 +76,7 @@ private:
 
 		// profpath
 		auto relativeProfPath = yaml["profPath"].as<std::string>();
+		auto yamlDir          = settingPath.parent_path();
 		s.profPath            = std::filesystem::weakly_canonical(yamlDir / relativeProfPath);
 
 		return s;
