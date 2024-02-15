@@ -7,8 +7,10 @@
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 
-
-/// @brief Class for loading setting file and particle file
+/**
+ * @brief Class for loading setting file and particle file
+ * 
+ */
 class Loader {
 public:
 	Input load(const std::filesystem::path& settingPath) {

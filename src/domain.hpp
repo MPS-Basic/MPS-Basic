@@ -1,7 +1,9 @@
 #pragma once
 #include "common.hpp"
 
-/// @brief represents the domain of the simulation
+/**
+ * @brief represents the domain of the simulation
+ */
 class Domain {
 private:
 public:

@@ -2,8 +2,9 @@
 #include "common.hpp"
 #include "weight.hpp"
 #include <cmath>
-
-/// @brief Struct for reference values of MPS method
+/**
+ *  @brief Struct for reference values of MPS method
+ */
 class RefValues {
 private:
 public:

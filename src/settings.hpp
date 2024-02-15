@@ -5,7 +5,9 @@
 #include <Eigen/Dense>
 #include <filesystem>
 
-/// @brief Struct for settings of calculation
+/**
+ * @brief Struct for settings of calculation
+ */
 struct Settings {
 	// computational condition
 	int dim;                 ///< Dimension of the simulation
