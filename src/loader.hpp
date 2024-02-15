@@ -8,25 +8,41 @@
 #include <yaml-cpp/yaml.h>
 /**
  * @brief Class for loading setting file and particle file
- * 
  */
 class Loader {
 public:
 	Input load(const std::filesystem::path& settingPath) {
 		Input input;
-
-		YAML::Node settingYaml = YAML::LoadFile(settingPath.string());
-		input.settings         = loadSettingYaml(settingYaml);
+		input.settings = loadSettingYaml(settingPath);
 
 		auto [initialTime, particles] = loadParticleProf(input.settings.profPath);
 		input.initialTime             = initialTime;
 		input.particles               = particles;
 
+		std::cout << "Output directory: " << input.settings.outputDirectory << std::endl;
+		std::filesystem::create_directories(input.settings.outputDirectory);
+
+		auto outputSettingPath = input.settings.outputDirectory / settingPath.filename();
+		if (std::filesystem::exists(outputSettingPath)) {
+			std::cerr << "setting file already exists in the output directory: " << outputSettingPath << std::endl;
+			std::exit(-1);
+		} else {
+			std::filesystem::copy_file(settingPath, outputSettingPath);
+		}
+		auto outputProfPath = input.settings.outputDirectory / input.settings.profPath.filename();
+		if (std::filesystem::exists(outputProfPath)) {
+			std::cerr << "prof file already exists in the output directory: " << outputProfPath << std::endl;
+			std::exit(-1);
+		} else {
+			std::filesystem::copy_file(input.settings.profPath, outputProfPath);
+		}
 		return input;
 	}
 
 private:
-	Settings loadSettingYaml(const YAML::Node& yaml) {
+	Settings loadSettingYaml(const std::filesystem::path& settingPath) {
+
+		YAML::Node yaml = YAML::LoadFile(settingPath.string());
 		Settings s;
 
 		// computational conditions
@@ -75,8 +91,13 @@ private:
 		s.domain.yLength = s.domain.yMax - s.domain.yMin;
 		s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
+		auto yamlDir = settingPath.parent_path();
+		// outputDirectory path
+		auto relativeOutputDirectory = yaml["outputDirectory"].as<std::string>();
+		s.outputDirectory            = std::filesystem::weakly_canonical(yamlDir / relativeOutputDirectory);
 		// profpath
-		s.profPath = std::filesystem::path(yaml["profPath"].as<std::string>());
+		auto relativeProfPath = yaml["profPath"].as<std::string>();
+		s.profPath            = std::filesystem::weakly_canonical(yamlDir / relativeProfPath);
 
 		return s;
 	}
@@ -85,7 +106,8 @@ private:
 		std::ifstream ifs;
 		ifs.open(profPath);
 		if (ifs.fail()) {
-			std::cerr << "cannot read " << profPath << std::endl;
+			std::cerr << "cannot read prof file: " << std::filesystem::absolute(profPath) << std::endl;
+			std::exit(-1);
 		}
 
 		std::vector<Particle> particles;

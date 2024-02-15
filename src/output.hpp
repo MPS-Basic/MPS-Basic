@@ -1,16 +1,15 @@
 #pragma once
+#include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 #include "particle.hpp"
 
-void writeProf(const std::stringstream& ss, const double& time, const std::vector<Particle>& particles) {
-	std::ofstream ofs(ss.str());
+void writeProf(const std::filesystem::path& dst, const double& time, const std::vector<Particle>& particles) {
+	std::ofstream ofs(dst);
 	if (ofs.fail()) {
-		std::cerr << "cannot write " << ss.str() << std::endl;
+		std::cerr << "cannot write " << std::filesystem::absolute(dst) << std::endl;
 		std::exit(-1);
 	}
 
@@ -36,10 +35,10 @@ void dataArrayEnd(std::ofstream& ofs) {
 	ofs << "</DataArray>" << std::endl;
 }
 
-void writeVtu(const std::stringstream& ss, const double& time, const std::vector<Particle> particles) {
-	std::ofstream ofs(ss.str());
+void writeVtu(const std::filesystem::path& dst, const double& time, const std::vector<Particle> particles) {
+	std::ofstream ofs(dst);
 	if (ofs.fail()) {
-		std::cerr << "cannot write " << ss.str() << std::endl;
+		std::cerr << "cannot write " << std::filesystem::absolute(dst) << std::endl;
 		std::exit(-1);
 	}
 

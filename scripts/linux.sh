@@ -1,3 +1,4 @@
-mkdir -p result/prof # delete prof files
-mkdir -p result/vtu # delete vtu files
-./build/mps 2>result/error.log # run simulation
+#!/bin/bash
+cd $(dirname $0)/.. # go to root directory
+mkdir -p result/dambreak/
+./build/mps input/dambreak/settings.yml 2>result/dambreak/error.log # run simulation

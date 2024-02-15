@@ -46,4 +46,7 @@ struct Settings {
 
 	// profpath
 	std::filesystem::path profPath; ///< Path for input particle file
+
+	// output
+	std::filesystem::path outputDirectory; ///< Directory for output files
 };

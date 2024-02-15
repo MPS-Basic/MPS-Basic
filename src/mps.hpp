@@ -539,14 +539,13 @@ private:
 
 		if (Time - initialTime >= settings.outputPeriod * double(fileNumber)) {
 			std::stringstream ss;
-			ss << "result/prof/output_";
-			ss << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
-			writeProf(ss, Time, particles);
+			ss << "output_" << std::setfill('0') << std::setw(4) << fileNumber;
 
-			ss.str("");
-			ss << "result/vtu/output_";
-			ss << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
-			writeVtu(ss, Time, particles);
+			auto path_vtu  = settings.outputDirectory / (ss.str() + ".vtu");
+			auto path_prof = settings.outputDirectory / (ss.str() + ".prof");
+			cout << "Output: " << path_vtu << endl;
+			writeVtu(path_vtu, Time, particles);
+			writeProf(path_prof, Time, particles);
 
 			fileNumber++;
 		}

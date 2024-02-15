@@ -1,10 +1,11 @@
 .vscode/
 .vs/
 build/
-result/
 doxygen/
+result/
 *.exe
 *.prof
 *.vtu
+*.log
 *.bat
 *.ps1

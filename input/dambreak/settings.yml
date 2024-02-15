@@ -35,4 +35,6 @@ radiusRatioForGradient: 2.1
 radiusRatioForLaplacian: 3.1
 
 # profpath
-profPath: input/input.prof # relative path from the project root directory
+profPath: ./input.prof # relative path from the project root directory
+
+outputDirectory: ../../result/dambreak
