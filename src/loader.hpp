@@ -19,6 +19,23 @@ public:
 		input.initialTime             = initialTime;
 		input.particles               = particles;
 
+		std::cout << "Output directory: " << input.settings.outputDirectory << std::endl;
+		std::filesystem::create_directories(input.settings.outputDirectory);
+
+		auto outputSettingPath = input.settings.outputDirectory / settingPath.filename();
+		if (std::filesystem::exists(outputSettingPath)) {
+			std::cerr << "setting file already exists in the output directory: " << outputSettingPath << std::endl;
+			std::exit(-1);
+		} else {
+			std::filesystem::copy_file(settingPath, outputSettingPath);
+		}
+		auto outputProfPath = input.settings.outputDirectory / input.settings.profPath.filename();
+		if (std::filesystem::exists(outputProfPath)) {
+			std::cerr << "prof file already exists in the output directory: " << outputProfPath << std::endl;
+			std::exit(-1);
+		} else {
+			std::filesystem::copy_file(input.settings.profPath, outputProfPath);
+		}
 		return input;
 	}
 
@@ -74,9 +91,12 @@ private:
 		s.domain.yLength = s.domain.yMax - s.domain.yMin;
 		s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
+		auto yamlDir = settingPath.parent_path();
+		// outputDirectory path
+		auto relativeOutputDirectory = yaml["outputDirectory"].as<std::string>();
+		s.outputDirectory            = std::filesystem::weakly_canonical(yamlDir / relativeOutputDirectory);
 		// profpath
 		auto relativeProfPath = yaml["profPath"].as<std::string>();
-		auto yamlDir          = settingPath.parent_path();
 		s.profPath            = std::filesystem::weakly_canonical(yamlDir / relativeProfPath);
 
 		return s;
