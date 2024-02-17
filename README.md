@@ -94,7 +94,7 @@ cmake --build build # Execute build
 
 	![tasks.json_2](fig/tasks_2.png)
 
-- You can set a keyboard showtcut to run test task. To do so, open Command Palette and move on to `Preferences: Keyboard Shortcuts`. Search `Tasks: Run Test Task` and set any keybinding you want. `Ctrl + Shift + T` is a suggestion of the writer.
+- You can set a keyboard shortcut to run test task. To do so, open Command Palette and move on to `Preferences: Keyboard Shortcuts`. Search `Tasks: Run Test Task` and set any keybinding you want. `Ctrl + Shift + T` is a suggestion of the writer.
 
 	![tasks.json_3](fig/tasks_3.png)
 
@@ -150,7 +150,7 @@ mkdir -p result/vtu # delete vtu files
 ./build/mps.exe 2>result/error.log # run simulation
 ```
 `2>result/error.log` makes the standard error output to be written in the file named `result/error.log`.
-Without it, both standartd output and standard error output would be displayed in the terminal.
+Without it, both standard output and standard error output would be displayed in the terminal.
 !-->
 
 ## Build documents
