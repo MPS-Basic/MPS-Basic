@@ -62,10 +62,10 @@ mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
 The output of a c++ program includes standard output and standard error output.
 The standard output comes from `std::cout` or `printf()`, 
 while the standard error output comes from `std::cerr` or `fprintf(stderr, )`.
-Both error outputs will be shown in the console.
+By default, both the standard output and the standard error output will be shown in the console.
 Changing the output destination is called "redirect", and can be accomplished with the `>` command.
 
-For example, the standard output of the execution of the command below 
+For example, the standard output of the command below 
 will be written to `result.log`. 
 The standard error output will be shown in the console as usual.
 ```bash
@@ -84,8 +84,16 @@ and the standard error output will be written to `error.log`.
 
 `tee` command allows us to show the standard output in the console
 and save them into a file at the same time.
+
 > it sends the output of a command in two directions (like the letter T)
-<cite>[Microsoft Docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/tee-object?view=powershell-7.4&viewFallbackFrom=powershell-7.1)</cite>
+> 
+> <cite>[Microsoft Docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/tee-object?view=powershell-7.4&viewFallbackFrom=powershell-7.1)</cite>
+
+Foe example, the standard output of the command below will be shown in the console 
+and will be written to `result.log` at the same time.
+```bash
+./test.exe | tee result.log
+```
 
 ## Execution in Visual Studio Code
 - Install CMake Tools.
