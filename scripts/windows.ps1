@@ -1,3 +1,2 @@
-del result\prof\*.prof
-del result\vtu\*.vtu
-.\build\mps.exe 2>result\error.log
+Get-ChildItem result/dambreak -Include *.* -Recurse | del # remove all folders/files in result/dambreak
+./build/mps.exe input/dambreak/settings.yml 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
