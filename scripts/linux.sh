@@ -1,4 +1,5 @@
-#!/bin/bash # Shebang: to run the script with bash, not other shell like sh
+#!/bin/bash 
+# Shebang: The first row is for running the script with bash, not other shell like sh
 
 # go to root directory so that we can activate the script from any directory
 cd $(dirname $0)/.. 
