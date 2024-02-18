@@ -2,7 +2,7 @@
 
 Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
-See [Documentation](doxygen/html/index.html) for more information.
+Open [Documentation](doxygen/html/index.html) in your browser for more information.
 
 ## I/O
 ### Input
