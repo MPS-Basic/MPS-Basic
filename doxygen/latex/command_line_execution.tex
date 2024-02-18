@@ -1,0 +1,93 @@
+\chapter{Command Line Execution}
+\hypertarget{command_line_execution}{}\label{command_line_execution}\index{Command Line Execution@{Command Line Execution}}
+
+\begin{DoxyItemize}
+\item It\textquotesingle{}s easier to do it in Visual Studio Code as shown later, but it\textquotesingle{}s better to do it in command line for your understanding.
+\end{DoxyItemize}\hypertarget{command_line_execution_autotoc_md0}{}\doxysubsection{\texorpdfstring{Build}{Build}}\label{command_line_execution_autotoc_md0}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ build\ \#\ Generate\ build\ system}
+\DoxyCodeLine{\#\ -\/S:\ Source\ tree.\ The\ location\ of\ CMakeLists.txt}
+\DoxyCodeLine{\#\ -\/B:\ Build\ tree.\ Directory\ for\ storing\ products\ for\ builds}
+\DoxyCodeLine{cmake\ -\/-\/build\ build\ \#\ Execute\ build}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyItemize}
+\item You don\textquotesingle{}t have to make {\ttfamily build} directory ({\ttfamily mkdir build}) and move to the directory ({\ttfamily cd build}), thanks to the {\ttfamily -\/B build} option. The {\ttfamily build} directory will be automatically generated if you don\textquotesingle{}t have one.
+\end{DoxyItemize}\hypertarget{command_line_execution_autotoc_md1}{}\doxysubsubsection{\texorpdfstring{Execution}{Execution}}\label{command_line_execution_autotoc_md1}
+\hypertarget{command_line_execution_autotoc_md2}{}\doxyparagraph{\texorpdfstring{Windows}{Windows}}\label{command_line_execution_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Get-\/ChildItem\ result/dambreak\ -\/Include\ *.*\ -\/Recurse\ |\ del\ \#\ remove\ all\ folders/files\ in\ result/dambreak}
+\DoxyCodeLine{./build/mps.exe\ input/dambreak/settings.yml\ 2>\ result/dambreak/error.log\ |\ Tee-\/Object\ -\/FilePath\ "{}result/dambreak/console.log"{}\ \#\ run\ simulation}
+
+\end{DoxyCode}
+ The execution command consists of three parts.
+\begin{DoxyEnumerate}
+\item Pass the location of the input file and execute. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./build/mps.exe\ input/dambreak/settings.yml}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Change standard error output to the specified file. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{2>\ result/dambreak/error.log}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Save the console output to the specified file. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Tee-\/Object\ -\/Filepath\ "{}result/dambreak/console.log"{}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}\hypertarget{command_line_execution_autotoc_md3}{}\doxyparagraph{\texorpdfstring{Linux}{Linux}}\label{command_line_execution_autotoc_md3}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{mkdir\ -\/p\ result/dambreak/\ \#\ remove\ all\ folders/files\ in\ result/dambreak}
+\DoxyCodeLine{./build/mps\ input/dambreak/settings.yml\ 2>\ result/dambreak/error.log\ |\ tee\ result/dambreak/console.log\ \#\ run\ simulation}
+
+\end{DoxyCode}
+\hypertarget{command_line_execution_autotoc_md4}{}\doxyparagraph{\texorpdfstring{Note}{Note}}\label{command_line_execution_autotoc_md4}
+(1). Standard (Error) Output
+
+The output of a c++ program includes standard output and standard error output. The standard output comes from {\ttfamily std\+::cout} or {\ttfamily printf()}, while the standard error output comes from {\ttfamily std\+::cerr} or {\ttfamily fprintf(stderr, )}. By default, both the standard output and the standard error output will be shown in the console. Changing the output destination is called \"{}redirect\"{}, and can be accomplished with the {\ttfamily \texorpdfstring{$>$}{>}} command.
+
+For example, the standard output of the command below will be written to {\ttfamily result.\+log}. The standard error output will be shown in the console as usual. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./test.exe\ >\ resut.log}
+
+\end{DoxyCode}
+
+
+In the next example, the standard output will be written to {\ttfamily result.\+log}, and the standard error output will be written to {\ttfamily error.\+log}. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./test.exe\ 1>\ result.log\ 2>\ error.log}
+\DoxyCodeLine{\#\ "{}1"{}\ can\ be\ omitted\ like\ below.}
+\DoxyCodeLine{\#\ ./test.exe\ >\ result.log\ 2>\ error.log}
+
+\end{DoxyCode}
+
+
+(2). {\ttfamily tee} command
+
+{\ttfamily tee} command allows us to show the standard output in the console and save them into a file at the same time.
+
+\begin{quote}
+it sends the output of a command in two directions (like the letter T)
+
+{\itshape \href{https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/tee-object?view=powershell-7.4&viewFallbackFrom=powershell-7.1}{\texttt{ Microsoft Docs}}} \end{quote}
+Foe example, the standard output of the command below will be shown in the console and will be written to {\ttfamily result.\+log} at the same time. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./test.exe\ |\ tee\ result.log}
+
+\end{DoxyCode}
+ 

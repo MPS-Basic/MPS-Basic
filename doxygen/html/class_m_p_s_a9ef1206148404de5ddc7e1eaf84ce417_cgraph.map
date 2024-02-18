@@ -1,0 +1,5 @@
+<map id="MPS::collision" name="MPS::collision">
+<area shape="rect" id="Node000001" title="calculate collision between particles when they are too close" alt="" coords="5,5,111,32"/>
+<area shape="rect" id="Node000002" href="$class_particle.html#aaf04b310f05eb587bb2ab2f2cb155783" title="calculate inverse of density" alt="" coords="159,5,316,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,16,144,16,144,21,111,21"/>
+</map>

@@ -1,0 +1,21 @@
+\chapter{Basic Code Documentation}
+\hypertarget{index}{}\label{index}\index{Basic Code Documentation@{Basic Code Documentation}}
+\label{index_mainpage}%
+\Hypertarget{index_mainpage}%
+ Modernized Moving \doxylink{class_particle}{Particle} Semi-\/implicit/\+Simulation code written in C++.\hypertarget{index_autotoc_md18}{}\doxysection{\texorpdfstring{Coding guide}{Coding guide}}\label{index_autotoc_md18}
+
+\begin{DoxyItemize}
+\item C++ standard\+: C++17
+\item Do {\bfseries{NOT}} use Exceptions
+\item Macros
+\begin{DoxyItemize}
+\item Defined in {\ttfamily \doxylink{common_8hpp}{common.\+hpp}}
+\item Excessive use should be avoided
+\item You can use {\ttfamily \doxylink{common_8hpp_a1c4620dddf53fb23b8643fc21ced3dde}{rep(i, a, b)}} if you need to write {\ttfamily for (int i = a; i \texorpdfstring{$<$}{<} b; i++)}
+\begin{DoxyItemize}
+\item However, {\bfseries{use range-\/based for {\ttfamily for (auto\& e \+: v)} instead whenever it is possible}}
+\end{DoxyItemize}
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{index_autotoc_md19}{}\doxysection{\texorpdfstring{License}{License}}\label{index_autotoc_md19}
+MIT License\hypertarget{index_autotoc_md20}{}\doxysection{\texorpdfstring{Project status}{Project status}}\label{index_autotoc_md20}
+This project is under development. 

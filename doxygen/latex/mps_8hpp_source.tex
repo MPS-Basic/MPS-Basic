@@ -1,0 +1,434 @@
+\doxysection{mps.\+hpp}
+\hypertarget{mps_8hpp_source}{}\label{mps_8hpp_source}\index{src/mps.hpp@{src/mps.hpp}}
+\mbox{\hyperlink{mps_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}Eigen/Dense"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}Eigen/Sparse"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{bucket_8hpp}{bucket.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{common_8hpp}{common.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{domain_8hpp}{domain.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{input_8hpp}{input.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{particle_8hpp}{particle.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00010}00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{refvalues_8hpp}{refvalues.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00011}00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{settings_8hpp}{settings.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{weight_8hpp}{weight.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <cstdio>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00016}00016\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00017}00017\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00018}00018\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00019}00019\ \textcolor{preprocessor}{\#include\ <omp.h>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00020}00020\ \textcolor{preprocessor}{\#include\ <queue>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00021}00021\ \textcolor{preprocessor}{\#include\ <set>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00022}00022\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00023}00023\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00024}00024\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00025}00025\ \textcolor{preprocessor}{\#include\ <yaml-\/cpp/yaml.h>}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00027}00027\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00028}00028\ \textcolor{keyword}{using\ namespace\ }Eigen;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00036}\mbox{\hyperlink{class_m_p_s}{00036}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_m_p_s}{MPS}}\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00037}00037\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00038}\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{00038}}\ \ \ \ \ \mbox{\hyperlink{struct_settings}{Settings}}\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00039}\mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{00039}}\ \ \ \ \ \mbox{\hyperlink{class_ref_values}{RefValues}}\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00040}\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{00040}}\ \ \ \ \ vector<Particle>\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}};\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00041}\mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{00041}}\ \ \ \ \ \mbox{\hyperlink{class_bucket}{Bucket}}\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00042}\mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{00042}}\ \ \ \ \ \mbox{\hyperlink{class_domain}{Domain}}\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00044}00044\ \ \ \ \ \textcolor{comment}{//\ pressure\ Poisson\ equation}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00045}\mbox{\hyperlink{class_m_p_s_a76fc67a6aebaf6a9316ea1c1ad39e454}{00045}}\ \ \ \ \ SparseMatrix<double,\ Eigen::RowMajor>\ \mbox{\hyperlink{class_m_p_s_a76fc67a6aebaf6a9316ea1c1ad39e454}{coefficientMatrix}};\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00046}\mbox{\hyperlink{class_m_p_s_abe420b9a8ab12bce1ec40c77eb1fc56e}{00046}}\ \ \ \ \ VectorXd\ \mbox{\hyperlink{class_m_p_s_abe420b9a8ab12bce1ec40c77eb1fc56e}{sourceTerm}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00047}\mbox{\hyperlink{class_m_p_s_ae9ae97d3b9cc79fe5dc88aa1130a31d3}{00047}}\ \ \ \ \ VectorXd\ \mbox{\hyperlink{class_m_p_s_ae9ae97d3b9cc79fe5dc88aa1130a31d3}{pressure}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00049}\mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{00049}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{courant}};\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00050}\mbox{\hyperlink{class_m_p_s_a63fc7ef7401815d29f28b82c46e9b138}{00050}}\ \ \ \ \ FILE*\ \mbox{\hyperlink{class_m_p_s_a63fc7ef7401815d29f28b82c46e9b138}{logFile}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00052}\mbox{\hyperlink{class_m_p_s_a3d24e435209ec65d3ddc7fed699580ac}{00052}}\ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a3d24e435209ec65d3ddc7fed699580ac}{MPS}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00054}\mbox{\hyperlink{class_m_p_s_a719b1bab794263ab40d62df150f221d9}{00054}}\ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a719b1bab794263ab40d62df150f221d9}{MPS}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_input}{Input}}\&\ input)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00055}00055\ \ \ \ \ \ \ \ \ this-\/>settings\ \ =\ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00056}00056\ \ \ \ \ \ \ \ \ this-\/>domain\ \ \ \ =\ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_af3cd0d5dc8ca911ece86b0df7deed350}{domain}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00057}00057\ \ \ \ \ \ \ \ \ this-\/>particles\ =\ input.\mbox{\hyperlink{struct_input_aa1e111753c0ef8b7f3c31504f4cded79}{particles}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00058}00058\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00060}\mbox{\hyperlink{class_m_p_s_a82b98cfbec3d44a835a49e7cbf450c81}{00060}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a82b98cfbec3d44a835a49e7cbf450c81}{init}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00061}00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_a71d30fdbb911bdb22bd844234af42cfd}{calc}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{dim}},\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a4efbd869c69cf91f5a620eb777fce8f7}{particleDistance}},\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a80732a572412e5d0ccd1177f66036b85}{re\_forNumberDensity}},\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_addf081560df074610e6de84a03169cd3}{re\_forGradient}},}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_afc3f6210bad35eff814ffd21753c96da}{re\_forLaplacian}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00063}00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_a814966faf6c36767fe6b08ab0441715e}{set}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a11a8ac570c6863ef348dcb9180c80f3c}{reMax}},\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ab2f4295ff4eedc87307496f037ae30c1}{cflCondition}},\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}},\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size());}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00064}00064\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00066}\mbox{\hyperlink{class_m_p_s_a14af7aa9a9b12e69573a345b6bd9e2fc}{00066}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a14af7aa9a9b12e69573a345b6bd9e2fc}{stepForward}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00067}00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_aee5671d48e069137954edfccc0611b80}{storeParticles}}(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}},\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00068}00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_aebc09c85dee628318c4b756f5bd5a5fb}{setNeighbors}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a11a8ac570c6863ef348dcb9180c80f3c}{reMax}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00069}00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_ae446ff4dfca3f3931ec03e40705030bc}{calGravity}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00070}00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a1aef09dfefb6bed3722f7fab70036020}{calViscosity}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_afc3f6210bad35eff814ffd21753c96da}{re\_forLaplacian}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00071}00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a611ebb97cc77c13aada5bfd2e5cfad4c}{moveParticle}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00073}00073\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_aee5671d48e069137954edfccc0611b80}{storeParticles}}(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}},\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00074}00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_aebc09c85dee628318c4b756f5bd5a5fb}{setNeighbors}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a11a8ac570c6863ef348dcb9180c80f3c}{reMax}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00075}00075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a9ef1206148404de5ddc7e1eaf84ce417}{collision}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00077}00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_aee5671d48e069137954edfccc0611b80}{storeParticles}}(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}},\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00078}00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_aebc09c85dee628318c4b756f5bd5a5fb}{setNeighbors}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a11a8ac570c6863ef348dcb9180c80f3c}{reMax}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00079}00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a453d54aac9444a03f4eb0e5669c47ecc}{calPressure}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a3cfe127146bc99fa5c01aa7645435532}{calPressureGradient}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_addf081560df074610e6de84a03169cd3}{re\_forGradient}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00081}00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a2c84df62724f22dd2d3f2379ae0c7238}{moveParticleUsingPressureGradient}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00083}00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a9c368cb50383581f4eef311bca1c513a}{calCourant}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00084}00084\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00085}00085\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00086}00086\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00090}\mbox{\hyperlink{class_m_p_s_ae446ff4dfca3f3931ec03e40705030bc}{00090}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_ae446ff4dfca3f3931ec03e40705030bc}{calGravity}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00091}00091\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.acceleration\ +=\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a03e5a92fc8bfe8a22f6a8fc22099463d}{gravity}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00095}00095\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00096}00096\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.acceleration.setZero();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00098}00098\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00099}00099\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00100}00100\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00101}00101\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00111}\mbox{\hyperlink{class_m_p_s_a1aef09dfefb6bed3722f7fab70036020}{00111}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a1aef09dfefb6bed3722f7fab70036020}{calViscosity}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ n0\ \ \ \ \ =\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}{n0\_forLaplacian}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00113}00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ lambda\ =\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}{lambda}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00114}00114\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ a\ \ \ \ \ \ =\ (\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_aafe442716f18b5255f60461e424318f4}{kinematicViscosity}})\ *\ (2.0\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{dim}})\ /\ (n0\ *\ lambda);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00115}00115\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00116}00116\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00118}00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ !=\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00119}00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00120}00120\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ Eigen::Vector3d\ viscosityTerm\ =\ Eigen::Vector3d::Zero();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00122}00122\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ neighbor\ :\ pi.neighbors)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ pj\ =\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}[neighbor.id];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00125}00125\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (neighbor.distance\ <\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_afc3f6210bad35eff814ffd21753c96da}{re\_forLaplacian}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ w\ =\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(neighbor.distance,\ re);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00128}00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ viscosityTerm\ +=\ (pj.velocity\ -\/\ pi.velocity)\ *\ w;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00129}00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00130}00130\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00131}00131\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ viscosityTerm\ *=\ a;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ pi.acceleration\ +=\ viscosityTerm;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00134}00134\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00135}00135\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00144}\mbox{\hyperlink{class_m_p_s_a611ebb97cc77c13aada5bfd2e5cfad4c}{00144}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a611ebb97cc77c13aada5bfd2e5cfad4c}{moveParticle}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00145}00145\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00146}00146\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00147}00147\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.velocity\ +=\ p.acceleration\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.position\ +=\ p.velocity\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00150}00150\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00151}00151\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00152}00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.acceleration.setZero();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00153}00153\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00154}00154\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00155}00155\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00156}00156\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00160}\mbox{\hyperlink{class_m_p_s_a9ef1206148404de5ddc7e1eaf84ce417}{00160}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a9ef1206148404de5ddc7e1eaf84ce417}{collision}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00161}00161\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00162}00162\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ !=\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00163}00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00165}00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ neighbor\ :\ pi.neighbors)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00166}00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particle}{Particle}}\&\ pj\ =\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}[neighbor.id];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00167}00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pj.\mbox{\hyperlink{class_particle_abd8b570239b18eb394b692834b5b4453}{type}}\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}}\ \&\&\ pj.\mbox{\hyperlink{class_particle_a544b202775517f8ba05efcb9e0a21bee}{id}}\ >=\ pi.id)}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00168}00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00169}00169\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00170}00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (neighbor.distance\ <\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a3c43fb080366e4ed27dd5f5c2577ce68}{collisionDistance}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00171}00171\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00172}00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ invMi\ =\ pi.inverseDensity(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{fluidDensity}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ invMj\ =\ pj.\mbox{\hyperlink{class_particle_aaf04b310f05eb587bb2ab2f2cb155783}{inverseDensity}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{fluidDensity}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00174}00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ mass\ \ =\ 1.0\ /\ (invMi\ +\ invMj);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00175}00175\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00176}00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Eigen::Vector3d\ normal\ =\ (pj.\mbox{\hyperlink{class_particle_a302f050b0320dcc4b580d08131d8781b}{position}}\ -\/\ pi.position).normalized();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00177}00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ relVel\ \ \ \ \ \ \ \ \ \ =\ (pj.\mbox{\hyperlink{class_particle_ababe1f4b7ea49c3a197c62b44b61a2b6}{velocity}}\ -\/\ pi.velocity).dot(normal);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00178}00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ impulse\ \ \ \ \ \ \ \ \ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00179}00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (relVel\ <\ 0.0)}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00180}00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ impulse\ =\ -\/(1\ +\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_abd1a0a50ce3901dd2a2c9921fd87bd49}{coefficientOfRestitution}})\ *\ relVel\ *\ mass;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.velocity\ -\/=\ impulse\ *\ invMi\ *\ normal;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj.\mbox{\hyperlink{class_particle_ababe1f4b7ea49c3a197c62b44b61a2b6}{velocity}}\ +=\ impulse\ *\ invMj\ *\ normal;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00183}00183\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00184}00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ depth\ \ \ \ \ \ \ \ \ \ \ =\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a3c43fb080366e4ed27dd5f5c2577ce68}{collisionDistance}}\ -\/\ neighbor.distance;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ positionImpulse\ =\ depth\ *\ mass;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00186}00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.position\ -\/=\ positionImpulse\ *\ invMi\ *\ normal;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj.\mbox{\hyperlink{class_particle_a302f050b0320dcc4b580d08131d8781b}{position}}\ +=\ positionImpulse\ *\ invMj\ *\ normal;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00188}00188\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00189}00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ std::cerr\ <<\ "{}WARNING:\ Collision\ between\ particles\ "{}\ <<\ pi.id\ <<\ "{}\ and\ "{}\ <<\ pj.id\ <<\ "{}\ occurred."{}}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00190}00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <<\ std::endl;}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00191}00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00192}00192\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00193}00193\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00194}00194\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00195}00195\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00199}\mbox{\hyperlink{class_m_p_s_a453d54aac9444a03f4eb0e5669c47ecc}{00199}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a453d54aac9444a03f4eb0e5669c47ecc}{calPressure}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00200}00200\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_acb3466be30f7205c48777f22fd14b2f2}{calNumberDensity}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a80732a572412e5d0ccd1177f66036b85}{re\_forNumberDensity}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00201}00201\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a81e9cd20a573658ffcf48745c4ee9fb0}{setBoundaryCondition}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00202}00202\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_ac08551eabe3b8f90a3bae8b036e028ca}{setSourceTerm}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00203}00203\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_ad5bb5f20c065ff76079498324156ecca}{setMatrix}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_afc3f6210bad35eff814ffd21753c96da}{re\_forLaplacian}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00204}00204\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a70a3fe360f32d958a94bf0f4ee771e23}{solveSimultaneousEquations}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00205}00205\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a94e40c9d47fababe9746085209882b98}{removeNegativePressure}}();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00206}00206\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a11655a6dd010f2aafb7fbadec69a7bd8}{setMinimumPressure}}(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_addf081560df074610e6de84a03169cd3}{re\_forGradient}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00207}00207\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00208}00208\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00213}\mbox{\hyperlink{class_m_p_s_acb3466be30f7205c48777f22fd14b2f2}{00213}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_acb3466be30f7205c48777f22fd14b2f2}{calNumberDensity}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00214}00214\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00215}00215\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00216}00216\ \ \ \ \ \ \ \ \ \ \ \ \ pi.numberDensity\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00217}00217\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00218}00218\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00219}00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00220}00220\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00221}00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ neighbor\ :\ pi.neighbors)}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.numberDensity\ +=\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(neighbor.distance,\ re);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00223}00223\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00224}00224\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00228}\mbox{\hyperlink{class_m_p_s_a81e9cd20a573658ffcf48745c4ee9fb0}{00228}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a81e9cd20a573658ffcf48745c4ee9fb0}{setBoundaryCondition}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00229}00229\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ n0\ \ \ =\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c}{n0\_forNumberDensity}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00230}00230\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ beta\ =\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a1bc155804e2a1199dd25300a587e1264}{surfaceDetectionRatio}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00231}00231\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00232}00232\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00233}00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00234}00234\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}}\ ||\ pi.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a9da8991e93d730874cddc8c250e09196}{ParticleType::DummyWall}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00235}00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.boundaryCondition\ =\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791ad96143ba1b15645919cea00ec9d1be62}{FluidState::Ignored}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00236}00236\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00237}00237\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (pi.numberDensity\ <\ beta\ *\ n0)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00238}00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.boundaryCondition\ =\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791ac55ccf367c0ba696739520ab137a1ce1}{FluidState::FreeSurface}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00239}00239\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00240}00240\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00241}00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.boundaryCondition\ =\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791aa1684698ac3d8ffda353d0458c30b1e7}{FluidState::Inner}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00242}00242\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00243}00243\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00244}00244\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00245}00245\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00254}\mbox{\hyperlink{class_m_p_s_ac08551eabe3b8f90a3bae8b036e028ca}{00254}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_ac08551eabe3b8f90a3bae8b036e028ca}{setSourceTerm}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00255}00255\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ n0\ \ \ \ =\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c}{n0\_forNumberDensity}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00256}00256\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ gamma\ =\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a7f273ed7d24bea05e579638d81c05705}{relaxationCoefficientForPressure}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00257}00257\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00258}00258\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00259}00259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00260}00260\ \ \ \ \ \ \ \ \ \ \ \ \ pi.sourceTerm\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00261}00261\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.boundaryCondition\ ==\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791aa1684698ac3d8ffda353d0458c30b1e7}{FluidState::Inner}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00262}00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.sourceTerm\ =\ gamma\ *\ (1.0\ /\ (\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}}\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}}))\ *\ ((pi.numberDensity\ -\/\ n0)\ /\ n0);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00263}00263\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00264}00264\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00265}00265\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00275}\mbox{\hyperlink{class_m_p_s_ad5bb5f20c065ff76079498324156ecca}{00275}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_ad5bb5f20c065ff76079498324156ecca}{setMatrix}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00276}00276\ \ \ \ \ \ \ \ \ std::vector<Eigen::Triplet<double>>\ triplets;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00277}00277\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ n0\ =\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}{n0\_forLaplacian}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00278}00278\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ a\ \ =\ 2.0\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{dim}}\ /\ (n0\ *\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}{lambda}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00279}00279\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a76fc67a6aebaf6a9316ea1c1ad39e454}{coefficientMatrix}}.resize(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size(),\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size());}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00280}00280\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00281}00281\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00282}00282\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.boundaryCondition\ !=\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791aa1684698ac3d8ffda353d0458c30b1e7}{FluidState::Inner}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00283}00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00284}00284\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00285}00285\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ coefficient\_ii\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00286}00286\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ neighbor\ :\ pi.neighbors)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00287}00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particle}{Particle}}\&\ pj\ =\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}[neighbor.id];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00288}00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pj.\mbox{\hyperlink{class_particle_a07bf046a3f40091141a6812f4a144732}{boundaryCondition}}\ ==\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791ad96143ba1b15645919cea00ec9d1be62}{FluidState::Ignored}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00289}00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00290}00290\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00291}00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (neighbor.distance\ <\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00292}00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ coefficient\_ij\ =\ a\ *\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(neighbor.distance,\ re)\ /\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{fluidDensity}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00293}00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ triplets.emplace\_back(pi.id,\ pj.\mbox{\hyperlink{class_particle_a544b202775517f8ba05efcb9e0a21bee}{id}},\ -\/1.0\ *\ coefficient\_ij);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00294}00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ coefficient\_ii\ +=\ coefficient\_ij;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00295}00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00296}00296\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00297}00297\ \ \ \ \ \ \ \ \ \ \ \ \ coefficient\_ii\ +=\ (\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a365f66cf0f2979b8de21a62487efbefd}{compressibility}})\ /\ (\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}}\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00298}00298\ \ \ \ \ \ \ \ \ \ \ \ \ triplets.emplace\_back(pi.id,\ pi.id,\ coefficient\_ii);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00299}00299\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00300}00300\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a76fc67a6aebaf6a9316ea1c1ad39e454}{coefficientMatrix}}.setFromTriplets(triplets.begin(),\ triplets.end());}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00301}00301\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00302}00302\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ exceptionalProcessingForBoundaryCondition();}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00303}00303\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00304}00304\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00305}\mbox{\hyperlink{class_m_p_s_a595cb40d0d0559775c32e2ce4578a755}{00305}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a595cb40d0d0559775c32e2ce4578a755}{exceptionalProcessingForBoundaryCondition}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00306}00306\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ If\ there\ is\ no\ Dirichlet\ boundary\ condition\ on\ the\ fluid,}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00307}00307\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ increase\ the\ diagonal\ terms\ of\ the\ matrix\ for\ an\ exception.\ This}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00308}00308\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ allows\ us\ to\ solve\ the\ matrix\ without\ Dirichlet\ boundary\ conditions.}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00309}00309\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00310}00310\ \ \ \ \ \ \ \ \ std::vector<bool>\ checked(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size(),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00311}00311\ \ \ \ \ \ \ \ \ std::vector<bool>\ connected(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size(),\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00312}00312\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00313}00313\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00314}00314\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.boundaryCondition\ ==\ \mbox{\hyperlink{particle_8hpp_a4de979302c7bfe449e0ebca28023f791ac55ccf367c0ba696739520ab137a1ce1}{FluidState::FreeSurface}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ connected[pi.id]\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00316}00316\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (connected[pi.id])}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00317}00317\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00318}00318\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ BFS\ for\ connected\ components}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00319}00319\ \ \ \ \ \ \ \ \ \ \ \ \ std::queue<size\_t>\ queue;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00320}00320\ \ \ \ \ \ \ \ \ \ \ \ \ queue.push(pi.id);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00321}00321\ \ \ \ \ \ \ \ \ \ \ \ \ checked[pi.id]\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00322}00322\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (!queue.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00323}00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pop\ front\ element}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00324}00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ v\ =\ queue.front();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00325}00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ queue.pop();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00326}00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ search\ for\ adjacent\ nodes}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00327}00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (Eigen::SparseMatrix<double,\ Eigen::RowMajor>::InnerIterator\ it(\mbox{\hyperlink{class_m_p_s_a76fc67a6aebaf6a9316ea1c1ad39e454}{coefficientMatrix}},\ v);\ it;\ ++it)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00328}00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ nv\ =\ it.col();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00329}00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!checked[nv])\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00330}00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (connected[nv])\ \{\ \textcolor{comment}{//\ connected\ to\ boundary}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00331}00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ connected[v]\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00332}00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ checked[v]\ \ \ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00333}00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00334}00334\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00335}00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00336}00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ queue.push(nv);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00337}00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ checked[nv]\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00338}00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00339}00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00340}00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00341}00341\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00342}00342\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00343}00343\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00349}\mbox{\hyperlink{class_m_p_s_a70a3fe360f32d958a94bf0f4ee771e23}{00349}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a70a3fe360f32d958a94bf0f4ee771e23}{solveSimultaneousEquations}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00350}00350\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_abe420b9a8ab12bce1ec40c77eb1fc56e}{sourceTerm}}.resize(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size());}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00351}00351\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_ae9ae97d3b9cc79fe5dc88aa1130a31d3}{pressure}}.resize(\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}.size());}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00352}00352\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00353}00353\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00354}00354\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00355}00355\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_abe420b9a8ab12bce1ec40c77eb1fc56e}{sourceTerm}}[pi.id]\ =\ pi.sourceTerm;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00356}00356\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00357}00357\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00358}00358\ \ \ \ \ \ \ \ \ Eigen::BiCGSTAB<Eigen::SparseMatrix<double,\ Eigen::RowMajor>>\ solver;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00359}00359\ \ \ \ \ \ \ \ \ solver.compute(\mbox{\hyperlink{class_m_p_s_a76fc67a6aebaf6a9316ea1c1ad39e454}{coefficientMatrix}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00360}00360\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_ae9ae97d3b9cc79fe5dc88aa1130a31d3}{pressure}}\ =\ solver.solve(\mbox{\hyperlink{class_m_p_s_abe420b9a8ab12bce1ec40c77eb1fc56e}{sourceTerm}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00361}00361\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (solver.info()\ !=\ Eigen::Success)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00362}00362\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Pressure\ calculation\ failed."{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00363}00363\ \ \ \ \ \ \ \ \ \ \ \ \ std::exit(-\/1);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00364}00364\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00365}00365\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00366}00366\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00367}00367\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00368}00368\ \ \ \ \ \ \ \ \ \ \ \ \ pi.pressure\ =\ \mbox{\hyperlink{class_m_p_s_ae9ae97d3b9cc79fe5dc88aa1130a31d3}{pressure}}[pi.id];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00369}00369\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00370}00370\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00374}\mbox{\hyperlink{class_m_p_s_a94e40c9d47fababe9746085209882b98}{00374}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a94e40c9d47fababe9746085209882b98}{removeNegativePressure}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00375}00375\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00376}00376\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00377}00377\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.pressure\ <\ 0.0)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00378}00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.pressure\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00379}00379\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00380}00380\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00381}00381\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00386}\mbox{\hyperlink{class_m_p_s_a11655a6dd010f2aafb7fbadec69a7bd8}{00386}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a11655a6dd010f2aafb7fbadec69a7bd8}{setMinimumPressure}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00387}00387\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00388}00388\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00389}00389\ \ \ \ \ \ \ \ \ \ \ \ \ p.minimumPressure\ =\ p.pressure;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00390}00390\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00391}00391\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00392}00392\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00393}00393\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}}\ ||\ pi.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a9da8991e93d730874cddc8c250e09196}{ParticleType::DummyWall}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00394}00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00395}00395\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00396}00396\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ neighbor\ :\ pi.neighbors)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00397}00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particle}{Particle}}\&\ pj\ =\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}[neighbor.id];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00398}00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pj.\mbox{\hyperlink{class_particle_abd8b570239b18eb394b692834b5b4453}{type}}\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}}\ ||\ pj.\mbox{\hyperlink{class_particle_abd8b570239b18eb394b692834b5b4453}{type}}\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a9da8991e93d730874cddc8c250e09196}{ParticleType::DummyWall}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00399}00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00400}00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pj.\mbox{\hyperlink{class_particle_a544b202775517f8ba05efcb9e0a21bee}{id}}\ >\ pi.id)}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00401}00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00402}00402\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00403}00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (neighbor.distance\ <\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00404}00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.minimumPressure\ =\ std::min(pi.minimumPressure,\ pj.\mbox{\hyperlink{class_particle_a39e27ebf8bbfd348252b89e1c4db3b92}{pressure}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00405}00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pj.\mbox{\hyperlink{class_particle_ab63c4b7ac8641d36b68aded7a1fe2953}{minimumPressure}}\ =\ std::min(pj.\mbox{\hyperlink{class_particle_ab63c4b7ac8641d36b68aded7a1fe2953}{minimumPressure}},\ pi.pressure);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00406}00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00407}00407\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00408}00408\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00409}00409\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00420}\mbox{\hyperlink{class_m_p_s_a3cfe127146bc99fa5c01aa7645435532}{00420}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a3cfe127146bc99fa5c01aa7645435532}{calPressureGradient}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00421}00421\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ a\ =\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{dim}}\ /\ \mbox{\hyperlink{class_m_p_s_a79c31492815a6099b360e963dafad6f6}{refValues}}.\mbox{\hyperlink{class_ref_values_a9fa89ba33f4391ca6448cd749612a0d7}{n0\_forGradient}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00422}00422\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00423}00423\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00424}00424\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00425}00425\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ !=\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00426}00426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00427}00427\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00428}00428\ \ \ \ \ \ \ \ \ \ \ \ \ Eigen::Vector3d\ grad\ =\ Eigen::Vector3d::Zero();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00429}00429\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ neighbor\ :\ pi.neighbors)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00430}00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particle}{Particle}}\&\ pj\ =\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}[neighbor.id];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00431}00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pj.\mbox{\hyperlink{class_particle_abd8b570239b18eb394b692834b5b4453}{type}}\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}}\ ||\ pj.\mbox{\hyperlink{class_particle_abd8b570239b18eb394b692834b5b4453}{type}}\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a9da8991e93d730874cddc8c250e09196}{ParticleType::DummyWall}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00432}00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00433}00433\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00434}00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (neighbor.distance\ <\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00435}00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ w\ =\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(neighbor.distance,\ re);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00436}00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ double\ dist2\ =\ pow(neighbor.distance,\ 2);}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00437}00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dist2\ =\ (pj.\mbox{\hyperlink{class_particle_a302f050b0320dcc4b580d08131d8781b}{position}}\ -\/\ pi.position).squaredNorm();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00438}00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ pij\ \ \ =\ (pj.\mbox{\hyperlink{class_particle_a39e27ebf8bbfd348252b89e1c4db3b92}{pressure}}\ -\/\ pi.minimumPressure)\ /\ dist2;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00439}00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ grad\ +=\ (pj.\mbox{\hyperlink{class_particle_a302f050b0320dcc4b580d08131d8781b}{position}}\ -\/\ pi.position)\ *\ pij\ *\ w;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00440}00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00441}00441\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00442}00442\ \ \ \ \ \ \ \ \ \ \ \ \ grad\ *=\ a;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00443}00443\ \ \ \ \ \ \ \ \ \ \ \ \ pi.acceleration\ -\/=\ grad\ *\ pi.inverseDensity(\mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{fluidDensity}});}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00444}00444\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00445}00445\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00454}\mbox{\hyperlink{class_m_p_s_a2c84df62724f22dd2d3f2379ae0c7238}{00454}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a2c84df62724f22dd2d3f2379ae0c7238}{moveParticleUsingPressureGradient}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00455}00455\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00456}00456\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\&\ p\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00457}00457\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (p.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00458}00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.velocity\ +=\ p.acceleration\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00459}00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ p.position\ +=\ p.acceleration\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}}\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00460}00460\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00461}00461\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00462}00462\ \ \ \ \ \ \ \ \ \ \ \ \ p.acceleration.setZero();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00463}00463\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00464}00464\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00468}\mbox{\hyperlink{class_m_p_s_a9c368cb50383581f4eef311bca1c513a}{00468}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_a9c368cb50383581f4eef311bca1c513a}{calCourant}}()\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00469}00469\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{courant}}\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00470}00470\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00471}00471\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00472}00472\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ !=\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6ac2e7db5ac7ab74ea4bb9a7a89d251f3a}{ParticleType::Fluid}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00473}00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00474}00474\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00475}00475\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ iCourant\ =\ (pi.velocity.norm()\ *\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}})\ /\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_a4efbd869c69cf91f5a620eb777fce8f7}{particleDistance}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00476}00476\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{courant}}\ \ \ \ \ \ \ \ \ =\ std::max(\mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{courant}},\ iCourant);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00477}00477\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00478}00478\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00479}00479\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{courant}}\ >\ \mbox{\hyperlink{class_m_p_s_a2ef53fe62cdefa4c5d031c725ff3d568}{settings}}.\mbox{\hyperlink{struct_settings_ab2f4295ff4eedc87307496f037ae30c1}{cflCondition}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00480}00480\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}ERROR:\ Courant\ number\ is\ larger\ than\ CFL\ condition.\ Courant\ =\ "{}}\ <<\ \mbox{\hyperlink{class_m_p_s_a3a67bb2944e7f0ae45e9431b0d7e781f}{courant}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00481}00481\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00482}00482\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00483}00483\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00488}\mbox{\hyperlink{class_m_p_s_aebc09c85dee628318c4b756f5bd5a5fb}{00488}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_m_p_s_aebc09c85dee628318c4b756f5bd5a5fb}{setNeighbors}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00489}00489\ \textcolor{preprocessor}{\#pragma\ omp\ parallel\ for}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00490}00490\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ pi\ :\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00491}00491\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pi.type\ ==\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}})}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00492}00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00493}00493\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00494}00494\ \ \ \ \ \ \ \ \ \ \ \ \ pi.neighbors.clear();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00495}00495\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00496}00496\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ix\ =\ (int)\ ((pi.position.x()\ -\/\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}}.\mbox{\hyperlink{class_domain_a7f77b2d54ba8c9d6ec50c1a130ea88df}{xMin}})\ /\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_a8514c021ccf8da27960093f22eb81abf}{length}})\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00497}00497\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iy\ =\ (int)\ ((pi.position.y()\ -\/\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}}.\mbox{\hyperlink{class_domain_a9372bc6152311dae4809c961602584fb}{yMin}})\ /\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_a8514c021ccf8da27960093f22eb81abf}{length}})\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00498}00498\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iz\ =\ (int)\ ((pi.position.z()\ -\/\ \mbox{\hyperlink{class_m_p_s_afa5ce14841858d96878eaded8b7e4b7e}{domain}}.\mbox{\hyperlink{class_domain_a7162dee9e75483dc62248a31a6e1fc55}{zMin}})\ /\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_a8514c021ccf8da27960093f22eb81abf}{length}})\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00499}00499\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00500}00500\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ jx\ =\ ix\ -\/\ 1;\ jx\ <=\ ix\ +\ 1;\ jx++)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00501}00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ jy\ =\ iy\ -\/\ 1;\ jy\ <=\ iy\ +\ 1;\ jy++)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00502}00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ jz\ =\ iz\ -\/\ 1;\ jz\ <=\ iz\ +\ 1;\ jz++)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00503}00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ jBucket\ =\ jx\ +\ jy\ *\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_af2a16ef88efa12780d6b5fb1effa029e}{numX}}\ +\ jz\ *\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_af2a16ef88efa12780d6b5fb1effa029e}{numX}}\ *\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_a694406021047bc750977908bbb92364a}{numY}};}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00504}00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ j\ \ \ \ \ \ \ =\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_ae0bf8c4d7cda66033e46c74d446cb530}{first}}[jBucket];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00505}00505\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00506}00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (j\ !=\ -\/1)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00507}00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particle}{Particle}}\&\ pj\ =\ \mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}}[j];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00508}00508\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00509}00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dist\ =\ (pj.\mbox{\hyperlink{class_particle_a302f050b0320dcc4b580d08131d8781b}{position}}\ -\/\ pi.position).norm();}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00510}00510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (j\ !=\ pi.id\ \&\&\ dist\ <\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00511}00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pi.neighbors.emplace\_back(j,\ dist);}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00512}00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00513}00513\ }
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00514}00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ j\ =\ \mbox{\hyperlink{class_m_p_s_acf5a5aef898355313e7c574eb248560f}{bucket}}.\mbox{\hyperlink{class_bucket_a63f2db7677b4e97032835f5d03a5e650}{next}}[j];}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00515}00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00516}00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00517}00517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00518}00518\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00519}00519\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00520}00520\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mps_8hpp_source_l00521}00521\ \};}
+
+\end{DoxyCode}

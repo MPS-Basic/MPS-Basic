@@ -1,0 +1,55 @@
+\doxysection{settings.\+hpp}
+\hypertarget{settings_8hpp_source}{}\label{settings_8hpp_source}\index{src/settings.hpp@{src/settings.hpp}}
+\mbox{\hyperlink{settings_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{common_8hpp}{common.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{domain_8hpp}{domain.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <Eigen/Dense>}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <filesystem>}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00008}00008\ \textcolor{keyword}{namespace\ }fs\ =\ std::filesystem;}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00016}\mbox{\hyperlink{struct_settings}{00016}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_settings}{Settings}}\ \{}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00017}00017\ \ \ \ \ \textcolor{comment}{//\ computational\ condition}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00018}\mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{00018}}\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{dim}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00019}\mbox{\hyperlink{struct_settings_a4efbd869c69cf91f5a620eb777fce8f7}{00019}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a4efbd869c69cf91f5a620eb777fce8f7}{particleDistance}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00020}\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{00020}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00021}\mbox{\hyperlink{struct_settings_a73cd9110793ede99e9ebe409e5e115fd}{00021}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a73cd9110793ede99e9ebe409e5e115fd}{endTime}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00022}\mbox{\hyperlink{struct_settings_a141dd04de9ff6d85d920615b8c7721c8}{00022}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a141dd04de9ff6d85d920615b8c7721c8}{outputPeriod}};\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00023}\mbox{\hyperlink{struct_settings_ab2f4295ff4eedc87307496f037ae30c1}{00023}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_ab2f4295ff4eedc87307496f037ae30c1}{cflCondition}};\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00024}\mbox{\hyperlink{struct_settings_a451e7992a5396258d59634d34c08f73f}{00024}}\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_settings_a451e7992a5396258d59634d34c08f73f}{numPhysicalCores}};\ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00026}\mbox{\hyperlink{struct_settings_af3cd0d5dc8ca911ece86b0df7deed350}{00026}}\ \ \ \ \ \mbox{\hyperlink{class_domain}{Domain}}\ \mbox{\hyperlink{struct_settings_af3cd0d5dc8ca911ece86b0df7deed350}{domain}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00028}00028\ \ \ \ \ \textcolor{comment}{//\ physical\ properties}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00029}\mbox{\hyperlink{struct_settings_aafe442716f18b5255f60461e424318f4}{00029}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_aafe442716f18b5255f60461e424318f4}{kinematicViscosity}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00030}\mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{00030}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{fluidDensity}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00032}00032\ \ \ \ \ \textcolor{comment}{//\ gravity}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00033}\mbox{\hyperlink{struct_settings_a03e5a92fc8bfe8a22f6a8fc22099463d}{00033}}\ \ \ \ \ Eigen::Vector3d\ \mbox{\hyperlink{struct_settings_a03e5a92fc8bfe8a22f6a8fc22099463d}{gravity}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00035}00035\ \ \ \ \ \textcolor{comment}{//\ free\ surface\ detection}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00036}\mbox{\hyperlink{struct_settings_a1bc155804e2a1199dd25300a587e1264}{00036}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a1bc155804e2a1199dd25300a587e1264}{surfaceDetectionRatio}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00038}00038\ \ \ \ \ \textcolor{comment}{//\ parameters\ for\ pressure\ Poisson\ equation}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00039}\mbox{\hyperlink{struct_settings_a365f66cf0f2979b8de21a62487efbefd}{00039}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a365f66cf0f2979b8de21a62487efbefd}{compressibility}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00040}\mbox{\hyperlink{struct_settings_a7f273ed7d24bea05e579638d81c05705}{00040}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a7f273ed7d24bea05e579638d81c05705}{relaxationCoefficientForPressure}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00042}00042\ \ \ \ \ \textcolor{comment}{//\ collision}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00043}\mbox{\hyperlink{struct_settings_a3c43fb080366e4ed27dd5f5c2577ce68}{00043}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a3c43fb080366e4ed27dd5f5c2577ce68}{collisionDistance}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00044}\mbox{\hyperlink{struct_settings_abd1a0a50ce3901dd2a2c9921fd87bd49}{00044}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_abd1a0a50ce3901dd2a2c9921fd87bd49}{coefficientOfRestitution}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{comment}{//\ effective\ radius}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00047}\mbox{\hyperlink{struct_settings_a80732a572412e5d0ccd1177f66036b85}{00047}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a80732a572412e5d0ccd1177f66036b85}{re\_forNumberDensity}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00048}\mbox{\hyperlink{struct_settings_addf081560df074610e6de84a03169cd3}{00048}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_addf081560df074610e6de84a03169cd3}{re\_forGradient}};\ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00049}\mbox{\hyperlink{struct_settings_afc3f6210bad35eff814ffd21753c96da}{00049}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_afc3f6210bad35eff814ffd21753c96da}{re\_forLaplacian}};\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00050}\mbox{\hyperlink{struct_settings_a11a8ac570c6863ef348dcb9180c80f3c}{00050}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_settings_a11a8ac570c6863ef348dcb9180c80f3c}{reMax}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00052}00052\ \ \ \ \ \textcolor{comment}{//\ i/o}}
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00053}\mbox{\hyperlink{struct_settings_a7eb2b2b8133e027047fd9cb98374dd34}{00053}}\ \ \ \ \ fs::path\ \mbox{\hyperlink{struct_settings_a7eb2b2b8133e027047fd9cb98374dd34}{profPath}};\ \ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00054}\mbox{\hyperlink{struct_settings_ad69555dd03731a1b8e45c50223a79063}{00054}}\ \ \ \ \ fs::path\ \mbox{\hyperlink{struct_settings_ad69555dd03731a1b8e45c50223a79063}{outputDirectory}};\ }
+\DoxyCodeLine{\Hypertarget{settings_8hpp_source_l00055}00055\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,231 @@
+\chapter{Execution}
+\hypertarget{execution}{}\label{execution}\index{Execution@{Execution}}
+\hypertarget{execution_autotoc_md0}{}\doxysubsection{\texorpdfstring{Requirements}{Requirements}}\label{execution_autotoc_md0}
+\hypertarget{execution_autotoc_md1}{}\doxysubsubsection{\texorpdfstring{Execution}{Execution}}\label{execution_autotoc_md1}
+
+\begin{DoxyItemize}
+\item Git
+\item cmake (newer than 3.\+9)
+\item C++ 17 compiler
+\item Open\+MP 5.\+0 and above (optional)
+\end{DoxyItemize}\hypertarget{execution_autotoc_md2}{}\doxysubsubsection{\texorpdfstring{Development}{Development}}\label{execution_autotoc_md2}
+
+\begin{DoxyItemize}
+\item Doxygen and Graphviz (optional, for building documents)
+\end{DoxyItemize}\hypertarget{execution_autotoc_md3}{}\doxysubsubsection{\texorpdfstring{Dependencies}{Dependencies}}\label{execution_autotoc_md3}
+
+\begin{DoxyItemize}
+\item Install dependencies as follows before the first build. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git\ submodule\ update\ -\/-\/init\ eigen}
+
+\end{DoxyCode}
+
+\end{DoxyItemize}\hypertarget{execution_autotoc_md4}{}\doxysubsection{\texorpdfstring{Command Line Execution}{Command Line Execution}}\label{execution_autotoc_md4}
+
+\begin{DoxyItemize}
+\item It\textquotesingle{}s easier to do it in Visual Studio Code as shown later, but it\textquotesingle{}s better to do it in command line for your understanding.
+\end{DoxyItemize}\hypertarget{execution_autotoc_md5}{}\doxysubsubsection{\texorpdfstring{Build}{Build}}\label{execution_autotoc_md5}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/S\ .\ -\/B\ build\ \#\ Generate\ build\ system}
+\DoxyCodeLine{\#\ -\/S:\ Source\ tree.\ The\ location\ of\ CMakeLists.txt}
+\DoxyCodeLine{\#\ -\/B:\ Build\ tree.\ Directory\ for\ storing\ products\ for\ builds}
+\DoxyCodeLine{cmake\ -\/-\/build\ build\ \#\ Execute\ build}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyItemize}
+\item You don\textquotesingle{}t have to make {\ttfamily build} directory ({\ttfamily mkdir build}) and move to the directory ({\ttfamily cd build}), thanks to the {\ttfamily -\/B build} option. The {\ttfamily build} directory will be automatically generated if you don\textquotesingle{}t have one.
+\end{DoxyItemize}\hypertarget{execution_autotoc_md6}{}\doxysubsubsection{\texorpdfstring{Execution}{Execution}}\label{execution_autotoc_md6}
+\hypertarget{execution_autotoc_md7}{}\doxyparagraph{\texorpdfstring{Windows}{Windows}}\label{execution_autotoc_md7}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Get-\/ChildItem\ result/dambreak\ -\/Include\ *.*\ -\/Recurse\ |\ del\ \#\ remove\ all\ folders/files\ in\ result/dambreak}
+\DoxyCodeLine{./build/mps.exe\ input/dambreak/settings.yml\ 2>\ result/dambreak/error.log\ |\ Tee-\/Object\ -\/FilePath\ "{}result/dambreak/console.log"{}\ \#\ run\ simulation}
+
+\end{DoxyCode}
+ The execution command consists of three parts.
+\begin{DoxyEnumerate}
+\item Pass the location of the input file and execute. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./build/mps.exe\ input/dambreak/settings.yml}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Change standard error output to the specified file. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{2>\ result/dambreak/error.log}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Save the console output to the specified file. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Tee-\/Object\ -\/Filepath\ "{}result/dambreak/console.log"{}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}\hypertarget{execution_autotoc_md8}{}\doxyparagraph{\texorpdfstring{Linux}{Linux}}\label{execution_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{mkdir\ -\/p\ result/dambreak/\ \#\ remove\ all\ folders/files\ in\ result/dambreak}
+\DoxyCodeLine{./build/mps\ input/dambreak/settings.yml\ 2>\ result/dambreak/error.log\ |\ tee\ result/dambreak/console.log\ \#\ run\ simulation}
+
+\end{DoxyCode}
+\hypertarget{execution_autotoc_md9}{}\doxyparagraph{\texorpdfstring{Note}{Note}}\label{execution_autotoc_md9}
+(1). Standard (Error) Output
+
+The output of a c++ program includes standard output and standard error output. The standard output comes from {\ttfamily std\+::cout} or {\ttfamily printf()}, while the standard error output comes from {\ttfamily std\+::cerr} or {\ttfamily fprintf(stderr, )}. By default, both the standard output and the standard error output will be shown in the console. Changing the output destination is called \"{}redirect\"{}, and can be accomplished with the {\ttfamily \texorpdfstring{$>$}{>}} command.
+
+For example, the standard output of the command below will be written to {\ttfamily result.\+log}. The standard error output will be shown in the console as usual. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./test.exe\ >\ resut.log}
+
+\end{DoxyCode}
+
+
+In the next example, the standard output will be written to {\ttfamily result.\+log}, and the standard error output will be written to {\ttfamily error.\+log}. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./test.exe\ 1>\ result.log\ 2>\ error.log}
+\DoxyCodeLine{\#\ "{}1"{}\ can\ be\ omitted\ like\ below.}
+\DoxyCodeLine{\#\ ./test.exe\ >\ result.log\ 2>\ error.log}
+
+\end{DoxyCode}
+
+
+(2). {\ttfamily tee} command
+
+{\ttfamily tee} command allows us to show the standard output in the console and save them into a file at the same time.
+
+\begin{quote}
+it sends the output of a command in two directions (like the letter T)
+
+{\itshape \href{https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/tee-object?view=powershell-7.4&viewFallbackFrom=powershell-7.1}{\texttt{ Microsoft Docs}}} \end{quote}
+Foe example, the standard output of the command below will be shown in the console and will be written to {\ttfamily result.\+log} at the same time. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./test.exe\ |\ tee\ result.log}
+
+\end{DoxyCode}
+ \hypertarget{execution_autotoc_md10}{}\doxysubsection{\texorpdfstring{Execution in Visual Studio Code}{Execution in Visual Studio Code}}\label{execution_autotoc_md10}
+
+\begin{DoxyItemize}
+\item Install CMake Tools.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{CMake_Tools.png}}
+\end{DoxyImageNoCaption}
+   \hypertarget{execution_autotoc_md11}{}\doxysubsubsection{\texorpdfstring{Build}{Build}}\label{execution_autotoc_md11}
+
+\begin{DoxyEnumerate}
+\item Open Cmake tab.
+\item Change {\ttfamily Configure} to {\ttfamily Release}
+\item Execute {\ttfamily Build}
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{release_build.png}}
+\end{DoxyImageNoCaption}
+   \hypertarget{execution_autotoc_md12}{}\doxysubsubsection{\texorpdfstring{Execution}{Execution}}\label{execution_autotoc_md12}
+
+\begin{DoxyItemize}
+\item Execute in the same way as the command line.
+\item Script files are prepared in the {\ttfamily scripts} folder. You can just call it.
+\item Don\textquotesingle{}t use the {\ttfamily Launch} button on the CMake tab. It will launch the program in a wrong directory, and it won\textquotesingle{}t delete existing files.
+\end{DoxyItemize}\hypertarget{execution_autotoc_md13}{}\doxyparagraph{\texorpdfstring{Windows}{Windows}}\label{execution_autotoc_md13}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./scripts/windows.ps1}
+
+\end{DoxyCode}
+\hypertarget{execution_autotoc_md14}{}\doxyparagraph{\texorpdfstring{Linux}{Linux}}\label{execution_autotoc_md14}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./scripts/linux.sh}
+
+\end{DoxyCode}
+\hypertarget{execution_autotoc_md15}{}\doxyparagraph{\texorpdfstring{Note}{Note}}\label{execution_autotoc_md15}
+
+\begin{DoxyItemize}
+\item You can configure {\ttfamily tasks} to do it easily.
+\end{DoxyItemize}
+\begin{DoxyEnumerate}
+\item Create {\ttfamily .vscode/tasks.\+json} file.
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{tasks.png}}
+\end{DoxyImageNoCaption}
+   
+
+
+\begin{DoxyEnumerate}
+\item An example for Windows\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ "{}tasks"{}:\ [}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ "{}label"{}:\ "{}Execute"{},}
+\DoxyCodeLine{\ \ \ \ "{}type"{}:\ "{}shell"{},}
+\DoxyCodeLine{\ \ \ \ "{}command"{}:\ "{}./scripts/windows.ps1"{},}
+\DoxyCodeLine{\ \ \ \ "{}options"{}:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ "{}cwd"{}:\ "{}\$\{workspaceFolder\}"{}}
+\DoxyCodeLine{\ \ \ \ \},}
+\DoxyCodeLine{\ \ \ \ "{}group"{}:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ "{}kind"{}:\ "{}test"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ "{}isDefault"{}:\ true}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \},}
+\DoxyCodeLine{],}
+\DoxyCodeLine{"{}version"{}:\ "{}2.0.0"{}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Open Command Palette ({\ttfamily Ctrl + Shift + P} or {\ttfamily F1}). Search and execute {\ttfamily Tasks\+: Run Test Task}. It does the same thing as calling the script in the terminal.
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{tasks_2.png}}
+\end{DoxyImageNoCaption}
+   
+
+
+\begin{DoxyItemize}
+\item You can set a keyboard shortcut to run test task. To do so, open Command Palette and move on to {\ttfamily Preferences\+: Keyboard Shortcuts}. Search {\ttfamily Tasks\+: Run Test Task} and set any keybinding you want. {\ttfamily Ctrl + Shift + T} is a suggestion of the writer.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{tasks_3.png}}
+\end{DoxyImageNoCaption}
+   \hypertarget{execution_autotoc_md16}{}\doxysubsection{\texorpdfstring{Debugging in Visual Studio Code}{Debugging in Visual Studio Code}}\label{execution_autotoc_md16}
+
+\begin{DoxyEnumerate}
+\item Open Cmake tab.
+\item Change {\ttfamily Configure} to {\ttfamily Debug}
+\item Execute {\ttfamily Debug}
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{debug.png}}
+\end{DoxyImageNoCaption}
+   
+
+
+\begin{DoxyItemize}
+\item Unlike the {\ttfamily launch} button in the previous section, the {\ttfamily debug} button will execute the code in the correct directory. Also, there is no need to delete existing files when debugging. So you can just press it this time. 
+\end{DoxyItemize}

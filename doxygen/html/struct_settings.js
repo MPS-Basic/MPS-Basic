@@ -1,0 +1,25 @@
+var struct_settings =
+[
+    [ "dim", "struct_settings.html#a7ccc3a993adfd0dd8686cf2a5e0052fa", null ],
+    [ "particleDistance", "struct_settings.html#a4efbd869c69cf91f5a620eb777fce8f7", null ],
+    [ "dt", "struct_settings.html#ae5d62fd011e489241c0bb81cd6129880", null ],
+    [ "endTime", "struct_settings.html#a73cd9110793ede99e9ebe409e5e115fd", null ],
+    [ "outputPeriod", "struct_settings.html#a141dd04de9ff6d85d920615b8c7721c8", null ],
+    [ "cflCondition", "struct_settings.html#ab2f4295ff4eedc87307496f037ae30c1", null ],
+    [ "numPhysicalCores", "struct_settings.html#a451e7992a5396258d59634d34c08f73f", null ],
+    [ "domain", "struct_settings.html#af3cd0d5dc8ca911ece86b0df7deed350", null ],
+    [ "kinematicViscosity", "struct_settings.html#aafe442716f18b5255f60461e424318f4", null ],
+    [ "fluidDensity", "struct_settings.html#a82533e4fd56cc3a975b8c0de3b4861c8", null ],
+    [ "gravity", "struct_settings.html#a03e5a92fc8bfe8a22f6a8fc22099463d", null ],
+    [ "surfaceDetectionRatio", "struct_settings.html#a1bc155804e2a1199dd25300a587e1264", null ],
+    [ "compressibility", "struct_settings.html#a365f66cf0f2979b8de21a62487efbefd", null ],
+    [ "relaxationCoefficientForPressure", "struct_settings.html#a7f273ed7d24bea05e579638d81c05705", null ],
+    [ "collisionDistance", "struct_settings.html#a3c43fb080366e4ed27dd5f5c2577ce68", null ],
+    [ "coefficientOfRestitution", "struct_settings.html#abd1a0a50ce3901dd2a2c9921fd87bd49", null ],
+    [ "re_forNumberDensity", "struct_settings.html#a80732a572412e5d0ccd1177f66036b85", null ],
+    [ "re_forGradient", "struct_settings.html#addf081560df074610e6de84a03169cd3", null ],
+    [ "re_forLaplacian", "struct_settings.html#afc3f6210bad35eff814ffd21753c96da", null ],
+    [ "reMax", "struct_settings.html#a11a8ac570c6863ef348dcb9180c80f3c", null ],
+    [ "profPath", "struct_settings.html#a7eb2b2b8133e027047fd9cb98374dd34", null ],
+    [ "outputDirectory", "struct_settings.html#ad69555dd03731a1b8e45c50223a79063", null ]
+];

@@ -1,0 +1,46 @@
+\doxysection{saver.\+hpp}
+\hypertarget{saver_8hpp_source}{}\label{saver_8hpp_source}\index{src/saver.hpp@{src/saver.hpp}}
+\mbox{\hyperlink{saver_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{mps_8hpp}{mps.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{particles__exporter_8hpp}{particles\_exporter.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <filesystem>}}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00007}00007\ \textcolor{keyword}{namespace\ }fs\ =\ std::filesystem;}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00017}\mbox{\hyperlink{class_saver}{00017}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_saver}{Saver}}\ \{}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00018}00018\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00019}\mbox{\hyperlink{class_saver_afd483f88703ea27f07fed681535eca37}{00019}}\ \ \ \ \ \mbox{\hyperlink{class_particles_exporter}{ParticlesExporter}}\ \mbox{\hyperlink{class_saver_afd483f88703ea27f07fed681535eca37}{exporter}};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00020}\mbox{\hyperlink{class_saver_abc2e304b37e8af3d95c55f7eec26cf97}{00020}}\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_saver_abc2e304b37e8af3d95c55f7eec26cf97}{fileNumber}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00021}\mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{00021}}\ \ \ \ \ fs::path\ \mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00023}\mbox{\hyperlink{class_saver_aa1d32123aa848a6970d808914b5b34c9}{00023}}\ \ \ \ \ \mbox{\hyperlink{class_saver_aa1d32123aa848a6970d808914b5b34c9}{Saver}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00025}\mbox{\hyperlink{class_saver_ad1b45ecfd4f49a7f0039e62873709c91}{00025}}\ \ \ \ \ \mbox{\hyperlink{class_saver_ad1b45ecfd4f49a7f0039e62873709c91}{Saver}}(\textcolor{keyword}{const}\ fs::path\&\ \mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}})\ \{}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00026}00026\ \ \ \ \ \ \ \ \ this-\/>dir\ =\ \mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00027}00027\ \ \ \ \ \ \ \ \ fs::create\_directories(\mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}}\ /\ \textcolor{stringliteral}{"{}prof"{}});}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00028}00028\ \ \ \ \ \ \ \ \ fs::create\_directories(\mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}}\ /\ \textcolor{stringliteral}{"{}vtu"{}});}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00029}00029\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00031}\mbox{\hyperlink{class_saver_ac4c19af16becbcb947ecf11e8d2eaade}{00031}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_saver_ac4c19af16becbcb947ecf11e8d2eaade}{save}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_m_p_s}{MPS}}\&\ mps,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ time)\ \{}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00032}00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_saver_afd483f88703ea27f07fed681535eca37}{exporter}}.\mbox{\hyperlink{class_particles_exporter_a3bb3afaef4e496390e78b82811df6390}{setParticles}}(mps.\mbox{\hyperlink{class_m_p_s_aaf01fd7eadc5b2471edb9ee1a0b53df8}{particles}});}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00034}00034\ \ \ \ \ \ \ \ \ std::stringstream\ profName;}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00035}00035\ \ \ \ \ \ \ \ \ profName\ <<\ \textcolor{stringliteral}{"{}output\_"{}}\ <<\ std::setfill(\textcolor{charliteral}{'0'})\ <<\ std::setw(4)\ <<\ \mbox{\hyperlink{class_saver_abc2e304b37e8af3d95c55f7eec26cf97}{fileNumber}}\ <<\ \textcolor{stringliteral}{"{}.prof"{}};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00036}00036\ \ \ \ \ \ \ \ \ fs::path\ profPath\ =\ \mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}}\ /\ \textcolor{stringliteral}{"{}prof"{}}\ /\ profName.str();}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00037}00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_saver_afd483f88703ea27f07fed681535eca37}{exporter}}.\mbox{\hyperlink{class_particles_exporter_acc9cdc92743d2506d9fba346d173093c}{toProf}}(profPath,\ time);}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00039}00039\ \ \ \ \ \ \ \ \ std::stringstream\ vtuName;}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00040}00040\ \ \ \ \ \ \ \ \ vtuName\ <<\ \textcolor{stringliteral}{"{}output\_"{}}\ <<\ std::setfill(\textcolor{charliteral}{'0'})\ <<\ std::setw(4)\ <<\ \mbox{\hyperlink{class_saver_abc2e304b37e8af3d95c55f7eec26cf97}{fileNumber}}\ <<\ \textcolor{stringliteral}{"{}.vtu"{}};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00041}00041\ \ \ \ \ \ \ \ \ fs::path\ vtuPath\ =\ \mbox{\hyperlink{class_saver_a335c657a5fc383cc577b57b2582e243e}{dir}}\ /\ \textcolor{stringliteral}{"{}vtu"{}}\ /\ vtuName.str();}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00042}00042\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_saver_afd483f88703ea27f07fed681535eca37}{exporter}}.\mbox{\hyperlink{class_particles_exporter_af4aa3853fe5668e4343220426704052f}{toVtu}}(vtuPath,\ time);}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00044}00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_saver_abc2e304b37e8af3d95c55f7eec26cf97}{fileNumber}}++;}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00045}00045\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00047}00047\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{saver_8hpp_source_l00048}00048\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,102 @@
+\chapter{Visual Studio Code Execution}
+\hypertarget{vscode_execution}{}\label{vscode_execution}\index{Visual Studio Code Execution@{Visual Studio Code Execution}}
+\hypertarget{vscode_execution_autotoc_md25}{}\doxysubsection{\texorpdfstring{Execution in Visual Studio Code}{Execution in Visual Studio Code}}\label{vscode_execution_autotoc_md25}
+
+\begin{DoxyItemize}
+\item Install CMake Tools.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{CMake_Tools.png}}
+\end{DoxyImageNoCaption}
+   \hypertarget{vscode_execution_autotoc_md26}{}\doxysubsubsection{\texorpdfstring{Build}{Build}}\label{vscode_execution_autotoc_md26}
+
+\begin{DoxyEnumerate}
+\item Open Cmake tab.
+\item Change {\ttfamily Configure} to {\ttfamily Release}
+\item Execute {\ttfamily Build}
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{release_build.png}}
+\end{DoxyImageNoCaption}
+   \hypertarget{vscode_execution_autotoc_md27}{}\doxysubsubsection{\texorpdfstring{Execution}{Execution}}\label{vscode_execution_autotoc_md27}
+
+\begin{DoxyItemize}
+\item Execute in the same way as the command line.
+\item Script files are prepared in the {\ttfamily scripts} folder. You can just call it.
+\item Don\textquotesingle{}t use the {\ttfamily Launch} button on the CMake tab. It will launch the program in a wrong directory, and it won\textquotesingle{}t delete existing files.
+\end{DoxyItemize}\hypertarget{vscode_execution_autotoc_md28}{}\doxyparagraph{\texorpdfstring{Windows}{Windows}}\label{vscode_execution_autotoc_md28}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./scripts/windows.ps1}
+
+\end{DoxyCode}
+\hypertarget{vscode_execution_autotoc_md29}{}\doxyparagraph{\texorpdfstring{Linux}{Linux}}\label{vscode_execution_autotoc_md29}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./scripts/linux.sh}
+
+\end{DoxyCode}
+\hypertarget{vscode_execution_autotoc_md30}{}\doxyparagraph{\texorpdfstring{Note}{Note}}\label{vscode_execution_autotoc_md30}
+
+\begin{DoxyItemize}
+\item You can configure {\ttfamily tasks} to do it easily.
+\end{DoxyItemize}
+\begin{DoxyEnumerate}
+\item Create {\ttfamily .vscode/tasks.\+json} file.
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{tasks.png}}
+\end{DoxyImageNoCaption}
+   
+
+
+\begin{DoxyEnumerate}
+\item An example for Windows\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ "{}tasks"{}:\ [}
+\DoxyCodeLine{\ \ \ \ \{}
+\DoxyCodeLine{\ \ \ \ "{}label"{}:\ "{}Execute"{},}
+\DoxyCodeLine{\ \ \ \ "{}type"{}:\ "{}shell"{},}
+\DoxyCodeLine{\ \ \ \ "{}command"{}:\ "{}./scripts/windows.ps1"{},}
+\DoxyCodeLine{\ \ \ \ "{}options"{}:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ "{}cwd"{}:\ "{}\$\{workspaceFolder\}"{}}
+\DoxyCodeLine{\ \ \ \ \},}
+\DoxyCodeLine{\ \ \ \ "{}group"{}:\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ "{}kind"{}:\ "{}test"{},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ "{}isDefault"{}:\ true}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \},}
+\DoxyCodeLine{],}
+\DoxyCodeLine{"{}version"{}:\ "{}2.0.0"{}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Open Command Palette ({\ttfamily Ctrl + Shift + P} or {\ttfamily F1}). Search and execute {\ttfamily Tasks\+: Run Test Task}. It does the same thing as calling the script in the terminal.
+\end{DoxyEnumerate}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{tasks_2.png}}
+\end{DoxyImageNoCaption}
+   
+
+
+\begin{DoxyItemize}
+\item You can set a keyboard shortcut to run test task. To do so, open Command Palette and move on to {\ttfamily Preferences\+: Keyboard Shortcuts}. Search {\ttfamily Tasks\+: Run Test Task} and set any keybinding you want. {\ttfamily Ctrl + Shift + T} is a suggestion of the writer.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImageNoCaption}
+  \mbox{\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{tasks_3.png}}
+\end{DoxyImageNoCaption}
+    

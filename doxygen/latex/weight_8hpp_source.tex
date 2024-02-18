@@ -1,0 +1,18 @@
+\doxysection{weight.\+hpp}
+\hypertarget{weight_8hpp_source}{}\label{weight_8hpp_source}\index{src/weight.hpp@{src/weight.hpp}}
+\mbox{\hyperlink{weight_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{common_8hpp}{common.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00009}\mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{00009}}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(\textcolor{keywordtype}{double}\ dis,\ \textcolor{keywordtype}{double}\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00010}00010\ \ \ \ \ assert(dis\ >\ 0.0);}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00012}00012\ \ \ \ \ \textcolor{keywordflow}{if}\ (dis\ >=\ re)\ \{}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00013}00013\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.0;}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00015}00015\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00016}00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (re\ /\ dis)\ -\/\ 1.0;}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00017}00017\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{weight_8hpp_source_l00018}00018\ \}}
+
+\end{DoxyCode}

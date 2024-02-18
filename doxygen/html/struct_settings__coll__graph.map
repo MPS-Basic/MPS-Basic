@@ -1,0 +1,5 @@
+<map id="Settings" name="Settings">
+<area shape="rect" id="Node000001" title="Struct for settings of calculation." alt="" coords="5,96,75,123"/>
+<area shape="rect" id="Node000002" href="$class_domain.html" title="represents the domain of the simulation" alt="" coords="7,5,73,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="43,47,43,95,37,95,37,47"/>
+</map>

@@ -1,0 +1,230 @@
+\doxysection{Loader Class Reference}
+\hypertarget{class_loader}{}\label{class_loader}\index{Loader@{Loader}}
+
+
+Class for loading setting file and particle file.  
+
+
+
+
+{\ttfamily \#include $<$loader.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_input}{Input}} \mbox{\hyperlink{class_loader_a5edd4cd4cecc1077dacf543835c9493d}{load}} (const fs\+::path \&setting\+Path)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_settings}{Settings}} \mbox{\hyperlink{class_loader_afebd7f3d342c12f11e7741e9cf30982f}{load\+Setting\+Yaml}} (const fs\+::path \&setting\+Path)
+\item 
+std\+::pair$<$ double, std\+::vector$<$ \mbox{\hyperlink{class_particle}{Particle}} $>$ $>$ \mbox{\hyperlink{class_loader_a07b29f07a52384358c24bf6398950da9}{load\+Particle\+Prof}} (const fs\+::path \&prof\+Path)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for loading setting file and particle file. 
+
+This class is responsible for loading the input. It loads the settings and the particles from the file system. It uses the YAML library to load the settings from a YAML file. It also uses the std\+::filesystem library to load the particles from a file. 
+
+Definition at line \mbox{\hyperlink{loader_8hpp_source_l00020}{20}} of file \mbox{\hyperlink{loader_8hpp_source}{loader.\+hpp}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_loader_a5edd4cd4cecc1077dacf543835c9493d}\label{class_loader_a5edd4cd4cecc1077dacf543835c9493d} 
+\index{Loader@{Loader}!load@{load}}
+\index{load@{load}!Loader@{Loader}}
+\doxysubsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_input}{Input}} Loader\+::load (\begin{DoxyParamCaption}\item[{const fs\+::path \&}]{setting\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{loader_8hpp_source_l00022}{22}} of file \mbox{\hyperlink{loader_8hpp_source}{loader.\+hpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_input}{Input}}\ input;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}\ =\ \mbox{\hyperlink{class_loader_afebd7f3d342c12f11e7741e9cf30982f}{loadSettingYaml}}(settingPath);}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ [startTime,\ particles]\ =\ \mbox{\hyperlink{class_loader_a07b29f07a52384358c24bf6398950da9}{loadParticleProf}}(input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_a7eb2b2b8133e027047fd9cb98374dd34}{profPath}});}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ input.\mbox{\hyperlink{struct_input_a7aa2d9b1ceba57bf119044a84c71b1ed}{startTime}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ startTime;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ input.\mbox{\hyperlink{struct_input_aa1e111753c0ef8b7f3c31504f4cded79}{particles}}\ \ \ \ \ \ \ \ \ \ \ \ \ =\ particles;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Output\ directory:\ "{}}\ <<\ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_ad69555dd03731a1b8e45c50223a79063}{outputDirectory}}\ <<\ std::endl;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ std::filesystem::create\_directories(input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_ad69555dd03731a1b8e45c50223a79063}{outputDirectory}});}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ outputSettingPath\ =\ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_ad69555dd03731a1b8e45c50223a79063}{outputDirectory}}\ /\ settingPath.filename();}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::filesystem::exists(outputSettingPath))\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}setting\ file\ already\ exists\ in\ the\ output\ directory:\ "{}}\ <<\ outputSettingPath\ <<\ std::endl;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ std::exit(-\/1);}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ std::filesystem::copy\_file(settingPath,\ outputSettingPath);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ outputProfPath\ =\ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_ad69555dd03731a1b8e45c50223a79063}{outputDirectory}}\ /\ input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_a7eb2b2b8133e027047fd9cb98374dd34}{profPath}}.filename();}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::filesystem::exists(outputProfPath))\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}prof\ file\ already\ exists\ in\ the\ output\ directory:\ "{}}\ <<\ outputProfPath\ <<\ std::endl;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ std::exit(-\/1);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ std::filesystem::copy\_file(input.\mbox{\hyperlink{struct_input_a543f51c76db7bc78db6385830fb49448}{settings}}.\mbox{\hyperlink{struct_settings_a7eb2b2b8133e027047fd9cb98374dd34}{profPath}},\ outputProfPath);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ input;}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+
+\end{DoxyCode}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=308pt]{class_loader_a5edd4cd4cecc1077dacf543835c9493d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=299pt]{class_loader_a5edd4cd4cecc1077dacf543835c9493d_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_loader_afebd7f3d342c12f11e7741e9cf30982f}\label{class_loader_afebd7f3d342c12f11e7741e9cf30982f} 
+\index{Loader@{Loader}!loadSettingYaml@{loadSettingYaml}}
+\index{loadSettingYaml@{loadSettingYaml}!Loader@{Loader}}
+\doxysubsubsection{\texorpdfstring{loadSettingYaml()}{loadSettingYaml()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_settings}{Settings}} Loader\+::load\+Setting\+Yaml (\begin{DoxyParamCaption}\item[{const fs\+::path \&}]{setting\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{loader_8hpp_source_l00051}{51}} of file \mbox{\hyperlink{loader_8hpp_source}{loader.\+hpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ YAML::Node\ yaml\ =\ YAML::LoadFile(settingPath.string());}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_settings}{Settings}}\ s;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ computational\ conditions}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a7ccc3a993adfd0dd8686cf2a5e0052fa}{dim}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}dim"{}}].as<\textcolor{keywordtype}{int}>();}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a4efbd869c69cf91f5a620eb777fce8f7}{particleDistance}}\ =\ yaml[\textcolor{stringliteral}{"{}particleDistance"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_ae5d62fd011e489241c0bb81cd6129880}{dt}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}dt"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a73cd9110793ede99e9ebe409e5e115fd}{endTime}}\ \ \ \ \ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}endTime"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a141dd04de9ff6d85d920615b8c7721c8}{outputPeriod}}\ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}outputPeriod"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_ab2f4295ff4eedc87307496f037ae30c1}{cflCondition}}\ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}cflCondition"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a451e7992a5396258d59634d34c08f73f}{numPhysicalCores}}\ =\ yaml[\textcolor{stringliteral}{"{}numPhysicalCores"{}}].as<\textcolor{keywordtype}{int}>();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ physical\ properties}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a82533e4fd56cc3a975b8c0de3b4861c8}{fluidDensity}}\ \ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}fluidDensity"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_aafe442716f18b5255f60461e424318f4}{kinematicViscosity}}\ =\ yaml[\textcolor{stringliteral}{"{}kinematicViscosity"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ gravity}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a03e5a92fc8bfe8a22f6a8fc22099463d}{gravity}}[0]\ =\ yaml[\textcolor{stringliteral}{"{}gravity"{}}][0].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a03e5a92fc8bfe8a22f6a8fc22099463d}{gravity}}[1]\ =\ yaml[\textcolor{stringliteral}{"{}gravity"{}}][1].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a03e5a92fc8bfe8a22f6a8fc22099463d}{gravity}}[2]\ =\ yaml[\textcolor{stringliteral}{"{}gravity"{}}][2].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ free\ surface\ detection}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a1bc155804e2a1199dd25300a587e1264}{surfaceDetectionRatio}}\ =\ yaml[\textcolor{stringliteral}{"{}surfaceDetectionRatio"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ pressure\ Poisson\ equation}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a365f66cf0f2979b8de21a62487efbefd}{compressibility}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}compressibility"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a7f273ed7d24bea05e579638d81c05705}{relaxationCoefficientForPressure}}\ =\ yaml[\textcolor{stringliteral}{"{}relaxationCoefficientForPressure"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ collision}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ s.\mbox{\hyperlink{struct_settings_a3c43fb080366e4ed27dd5f5c2577ce68}{collisionDistance}}\ \ \ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}collisionDistanceRatio"{}}].as<\textcolor{keywordtype}{double}>()\ *\ s.\mbox{\hyperlink{struct_settings_a4efbd869c69cf91f5a620eb777fce8f7}{particleDistance}};}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ s.coefficientOfRestitution\ =\ yaml[\textcolor{stringliteral}{"{}coefficientOfRestitution"{}}].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ effective\ radius}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ s.re\_forNumberDensity\ =\ yaml[\textcolor{stringliteral}{"{}radiusRatioForNumberDensity"{}}].as<\textcolor{keywordtype}{double}>()\ *\ s.particleDistance;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ s.re\_forGradient\ \ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}radiusRatioForGradient"{}}].as<\textcolor{keywordtype}{double}>()\ *\ s.particleDistance;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ s.re\_forLaplacian\ \ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}radiusRatioForLaplacian"{}}].as<\textcolor{keywordtype}{double}>()\ *\ s.particleDistance;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ s.reMax\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ std::max(\{s.re\_forNumberDensity,\ s.re\_forGradient,\ s.re\_forLaplacian\});}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ domain}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ s.domain.xMin\ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}domainMin"{}}][0].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ s.domain.xMax\ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}domainMax"{}}][0].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ s.domain.yMin\ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}domainMin"{}}][1].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ s.domain.yMax\ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}domainMax"{}}][1].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ s.domain.zMin\ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}domainMin"{}}][2].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ s.domain.zMax\ \ \ \ =\ yaml[\textcolor{stringliteral}{"{}domainMax"{}}][2].as<\textcolor{keywordtype}{double}>();}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ s.domain.xLength\ =\ s.domain.xMax\ -\/\ s.domain.xMin;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ s.domain.yLength\ =\ s.domain.yMax\ -\/\ s.domain.yMin;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ s.domain.zLength\ =\ s.domain.zMax\ -\/\ s.domain.zMin;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ yamlDir\ =\ settingPath.parent\_path();}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ outputDirectory\ path}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ relativeOutputDirectory\ =\ yaml[\textcolor{stringliteral}{"{}outputDirectory"{}}].as<std::string>();}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ s.outputDirectory\ \ \ \ \ \ \ \ \ \ \ \ =\ std::filesystem::weakly\_canonical(yamlDir\ /\ relativeOutputDirectory);}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ profpath}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ relativeProfPath\ =\ yaml[\textcolor{stringliteral}{"{}profPath"{}}].as<std::string>();}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ s.profPath\ \ \ \ \ \ \ \ \ \ \ \ =\ std::filesystem::weakly\_canonical(yamlDir\ /\ relativeProfPath);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ s;}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+
+\end{DoxyCode}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_loader_afebd7f3d342c12f11e7741e9cf30982f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_loader_a07b29f07a52384358c24bf6398950da9}\label{class_loader_a07b29f07a52384358c24bf6398950da9} 
+\index{Loader@{Loader}!loadParticleProf@{loadParticleProf}}
+\index{loadParticleProf@{loadParticleProf}!Loader@{Loader}}
+\doxysubsubsection{\texorpdfstring{loadParticleProf()}{loadParticleProf()}}
+{\footnotesize\ttfamily std\+::pair$<$ double, std\+::vector$<$ \mbox{\hyperlink{class_particle}{Particle}} $>$ $>$ Loader\+::load\+Particle\+Prof (\begin{DoxyParamCaption}\item[{const fs\+::path \&}]{prof\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{loader_8hpp_source_l00113}{113}} of file \mbox{\hyperlink{loader_8hpp_source}{loader.\+hpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ std::ifstream\ ifs;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ ifs.open(profPath);}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ifs.fail())\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}cannot\ read\ prof\ file:\ "{}}\ <<\ std::filesystem::absolute(profPath)\ <<\ std::endl;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ std::exit(-\/1);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ std::vector<Particle>\ particles;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ startTime;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ particleSize;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ ifs\ >>\ startTime;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ ifs\ >>\ particleSize;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ particleSize;\ i++)\ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type\_int;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6}{ParticleType}}\ type;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ Eigen::Vector3d\ pos,\ vel;}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ ifs\ >>\ type\_int;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ ifs\ >>\ pos.x()\ >>\ pos.y()\ >>\ pos.z();}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ ifs\ >>\ vel.x()\ >>\ vel.y()\ >>\ vel.z();}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ type\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6}{ParticleType}}\textcolor{keyword}{>}(type\_int);}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type\ !=\ \mbox{\hyperlink{particle_8hpp_aded321cd7610a60bfbc018a66067a3d6a401357e57c765967393ba391a338e89b}{ParticleType::Ghost}})\ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ particles.emplace\_back(particles.size(),\ type,\ pos,\ vel);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ ifs.close();}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ ifs.clear();}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \{startTime,\ particles\};}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+
+\end{DoxyCode}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_loader_a07b29f07a52384358c24bf6398950da9_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{loader_8hpp}{loader.\+hpp}}\end{DoxyCompactItemize}

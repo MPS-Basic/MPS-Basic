@@ -1,0 +1,45 @@
+\chapter{support}
+\hypertarget{_markdown}{}\label{_markdown}\index{support@{support}}
+\href{https://daringfireball.net/projects/markdown/}{\texttt{ Markdown}} support was introduced in doxygen version 1.\+8.\+0. It is a plain text formatting syntax written by John Gruber, with the following underlying design goal\+:
+
+\begin{quote}
+The design goal for Markdown\textquotesingle{}s formatting syntax is to make it as readable as possible. The idea is that a Markdown-\/formatted document should be publishable as-\/is, as plain text, without looking like it\textquotesingle{}s been marked up with tags or formatting instructions. While Markdown\textquotesingle{}s syntax has been influenced by several existing text-\/to-\/\+HTML filters, the single biggest source of inspiration for Markdown\textquotesingle{}s syntax is the format of plain text email. \end{quote}
+In the \doxysectlink{_markdown_markdown_std}{next section}{1} the standard Markdown features are briefly discussed. The reader is referred to the \href{https://daringfireball.net/projects/markdown/}{\texttt{ Markdown site}} for more details.
+
+Some enhancements were made, for instance \href{https://michelf.ca/projects/php-markdown/extra/}{\texttt{ PHP Markdown Extra}}, and \href{https://github.github.com/github-flavored-markdown/}{\texttt{ Git\+Hub flavored Markdown}}. The section markdown\+\_\+extra discusses the extensions that doxygen supports.
+
+Finally section markdown\+\_\+dox discusses some specifics for doxygen\textquotesingle{}s implementation of the Markdown standard.\hypertarget{_markdown_markdown_std}{}\doxysection{\texorpdfstring{Standard Markdown}{Standard Markdown}}\label{_markdown_markdown_std}
+\hypertarget{_markdown_md_para}{}\doxysubsection{\texorpdfstring{Paragraphs}{Paragraphs}}\label{_markdown_md_para}
+Even before doxygen had Markdown support it supported the same way of paragraph handling as Markdown\+: to make a paragraph you just separate consecutive lines of text by one or more blank lines.
+
+An example\+: \begin{DoxyVerb}Here is text for one paragraph.
+
+We continue with more text in another paragraph.
+\end{DoxyVerb}
+ \hypertarget{_markdown_md_headers}{}\doxysubsection{\texorpdfstring{Headers}{Headers}}\label{_markdown_md_headers}
+Just like Markdown, doxygen supports two types of headers
+
+Level 1 or 2 headers can be made as the follows \begin{DoxyVerb}This is a level 1 header
+========================
+
+This is a level 2 header
+------------------------
+\end{DoxyVerb}
+ A header is followed by a line containing only =\textquotesingle{}s or -\/\textquotesingle{}s. Note that the exact amount of =\textquotesingle{}s or -\/\textquotesingle{}s is not important as long as there are at least two.
+
+Alternatively, you can use \#\textquotesingle{}s at the start of a line to make a header. The number of \#\textquotesingle{}s at the start of the line determines the level (up to 6 levels are supported). You can end a header by any number of \#\textquotesingle{}s.
+
+Here is an example\+: \begin{DoxyVerb}# This is a level 1 header
+
+### This is level 3 header #######
+\end{DoxyVerb}
+ \hypertarget{_markdown_md_blockquotes}{}\doxysubsection{\texorpdfstring{Block quotes}{Block quotes}}\label{_markdown_md_blockquotes}
+Block quotes can be created by starting each line with one or more \texorpdfstring{$>$}{>}\textquotesingle{}s, similar to what is used in text-\/only emails. \begin{DoxyVerb}> This is a block quote
+> spanning multiple lines
+\end{DoxyVerb}
+ Lists and code blocks (see below) can appear inside a quote block. Quote blocks can also be nested.
+
+Note that doxygen requires that you put a space after the (last) \texorpdfstring{$>$}{>} character to avoid false positives, i.\+e. when writing \begin{DoxyVerb}0  if OK\n
+>1 if NOK
+\end{DoxyVerb}
+ the second line will not be seen as a block quote. 

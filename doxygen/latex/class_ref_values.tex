@@ -1,0 +1,180 @@
+\doxysection{Ref\+Values Class Reference}
+\hypertarget{class_ref_values}{}\label{class_ref_values}\index{RefValues@{RefValues}}
+
+
+Struct for reference values of \doxylink{class_m_p_s}{MPS} method.  
+
+
+
+
+{\ttfamily \#include $<$refvalues.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_ref_values_a71d30fdbb911bdb22bd844234af42cfd}{calc}} (int dim, double particle\+Distance, double re\+\_\+for\+Number\+Density, double re\+\_\+for\+Gradient, double re\+\_\+for\+Laplacian)
+\begin{DoxyCompactList}\small\item\em calculate reference values for \doxylink{class_m_p_s}{MPS} method \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c}{n0\+\_\+for\+Number\+Density}}
+\begin{DoxyCompactList}\small\item\em reference value of number density for source term of pressure Poisson equation \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_ref_values_a9fa89ba33f4391ca6448cd749612a0d7}{n0\+\_\+for\+Gradient}}
+\begin{DoxyCompactList}\small\item\em reference value of number density for gradient \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}{n0\+\_\+for\+Laplacian}}
+\begin{DoxyCompactList}\small\item\em reference value of number density for laplacian \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}{lambda}}
+\begin{DoxyCompactList}\small\item\em coefficient for laplacian \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Struct for reference values of \doxylink{class_m_p_s}{MPS} method. 
+
+Definition at line \mbox{\hyperlink{refvalues_8hpp_source_l00008}{8}} of file \mbox{\hyperlink{refvalues_8hpp_source}{refvalues.\+hpp}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_ref_values_a71d30fdbb911bdb22bd844234af42cfd}\label{class_ref_values_a71d30fdbb911bdb22bd844234af42cfd} 
+\index{RefValues@{RefValues}!calc@{calc}}
+\index{calc@{calc}!RefValues@{RefValues}}
+\doxysubsubsection{\texorpdfstring{calc()}{calc()}}
+{\footnotesize\ttfamily void Ref\+Values\+::calc (\begin{DoxyParamCaption}\item[{int}]{dim,  }\item[{double}]{particle\+Distance,  }\item[{double}]{re\+\_\+for\+Number\+Density,  }\item[{double}]{re\+\_\+for\+Gradient,  }\item[{double}]{re\+\_\+for\+Laplacian }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+calculate reference values for \doxylink{class_m_p_s}{MPS} method 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dim} & dimension of the simulation \\
+\hline
+{\em particle\+Distance} & initial particle distance \\
+\hline
+{\em re\+\_\+for\+Number\+Density} & effective radius when calculating number density \\
+\hline
+{\em re\+\_\+for\+Gradient} & effective radius when calculating gradient \\
+\hline
+{\em re\+\_\+for\+Laplacian} & effective radius when calculating laplacian \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{refvalues_8hpp_source_l00026}{26}} of file \mbox{\hyperlink{refvalues_8hpp_source}{refvalues.\+hpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ iZ\_start,\ iZ\_end;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (dim\ ==\ 2)\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ iZ\_start\ =\ 0;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ iZ\_end\ \ \ =\ 1;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ iZ\_start\ =\ -\/4;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ iZ\_end\ \ \ =\ 5;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c}{n0\_forNumberDensity}}\ =\ 0.0;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_a9fa89ba33f4391ca6448cd749612a0d7}{n0\_forGradient}}\ \ \ \ \ \ =\ 0.0;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}{n0\_forLaplacian}}\ \ \ \ \ =\ 0.0;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}{lambda}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0.0;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iX\ =\ -\/4;\ iX\ <\ 5;\ iX++)\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iY\ =\ -\/4;\ iY\ <\ 5;\ iY++)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ iZ\ =\ iZ\_start;\ iZ\ <\ iZ\_end;\ iZ++)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((iX\ ==\ 0)\ \&\&\ (iY\ ==\ 0))\ \&\&\ (iZ\ ==\ 0))}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ xj\ \ \ =\ particleDistance\ *\ (double)\ (iX);}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ yj\ \ \ =\ particleDistance\ *\ (double)\ (iY);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ zj\ \ \ =\ particleDistance\ *\ (double)\ (iZ);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dis2\ =\ xj\ *\ xj\ +\ yj\ *\ yj\ +\ zj\ *\ zj;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dis\ \ =\ sqrt(dis2);}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c}{n0\_forNumberDensity}}\ +=\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(dis,\ re\_forNumberDensity);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_a9fa89ba33f4391ca6448cd749612a0d7}{n0\_forGradient}}\ +=\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(dis,\ re\_forGradient);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}{n0\_forLaplacian}}\ +=\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(dis,\ re\_forLaplacian);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}{lambda}}\ +=\ dis2\ *\ \mbox{\hyperlink{weight_8hpp_aff5c38d6ca294d8c3338e6dd617b5f7b}{weight}}(dis,\ re\_forLaplacian);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ this-\/>\mbox{\hyperlink{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}{lambda}}\ /=\ this-\/>\mbox{\hyperlink{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}{n0\_forLaplacian}};}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+
+\end{DoxyCode}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=244pt]{class_ref_values_a71d30fdbb911bdb22bd844234af42cfd_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ref_values_a71d30fdbb911bdb22bd844234af42cfd_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c}\label{class_ref_values_a099cb5378fb6efa0f6e6c23ad717bb3c} 
+\index{RefValues@{RefValues}!n0\_forNumberDensity@{n0\_forNumberDensity}}
+\index{n0\_forNumberDensity@{n0\_forNumberDensity}!RefValues@{RefValues}}
+\doxysubsubsection{\texorpdfstring{n0\_forNumberDensity}{n0\_forNumberDensity}}
+{\footnotesize\ttfamily double Ref\+Values\+::n0\+\_\+for\+Number\+Density}
+
+
+
+reference value of number density for source term of pressure Poisson equation 
+
+
+
+Definition at line \mbox{\hyperlink{refvalues_8hpp_source_l00011}{11}} of file \mbox{\hyperlink{refvalues_8hpp_source}{refvalues.\+hpp}}.
+
+\Hypertarget{class_ref_values_a9fa89ba33f4391ca6448cd749612a0d7}\label{class_ref_values_a9fa89ba33f4391ca6448cd749612a0d7} 
+\index{RefValues@{RefValues}!n0\_forGradient@{n0\_forGradient}}
+\index{n0\_forGradient@{n0\_forGradient}!RefValues@{RefValues}}
+\doxysubsubsection{\texorpdfstring{n0\_forGradient}{n0\_forGradient}}
+{\footnotesize\ttfamily double Ref\+Values\+::n0\+\_\+for\+Gradient}
+
+
+
+reference value of number density for gradient 
+
+
+
+Definition at line \mbox{\hyperlink{refvalues_8hpp_source_l00012}{12}} of file \mbox{\hyperlink{refvalues_8hpp_source}{refvalues.\+hpp}}.
+
+\Hypertarget{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468}\label{class_ref_values_a8b0c882e85501a6438d7194bdc2a3468} 
+\index{RefValues@{RefValues}!n0\_forLaplacian@{n0\_forLaplacian}}
+\index{n0\_forLaplacian@{n0\_forLaplacian}!RefValues@{RefValues}}
+\doxysubsubsection{\texorpdfstring{n0\_forLaplacian}{n0\_forLaplacian}}
+{\footnotesize\ttfamily double Ref\+Values\+::n0\+\_\+for\+Laplacian}
+
+
+
+reference value of number density for laplacian 
+
+
+
+Definition at line \mbox{\hyperlink{refvalues_8hpp_source_l00013}{13}} of file \mbox{\hyperlink{refvalues_8hpp_source}{refvalues.\+hpp}}.
+
+\Hypertarget{class_ref_values_ac7064084b5d2783113d0f15f998af0ab}\label{class_ref_values_ac7064084b5d2783113d0f15f998af0ab} 
+\index{RefValues@{RefValues}!lambda@{lambda}}
+\index{lambda@{lambda}!RefValues@{RefValues}}
+\doxysubsubsection{\texorpdfstring{lambda}{lambda}}
+{\footnotesize\ttfamily double Ref\+Values\+::lambda}
+
+
+
+coefficient for laplacian 
+
+
+
+Definition at line \mbox{\hyperlink{refvalues_8hpp_source_l00014}{14}} of file \mbox{\hyperlink{refvalues_8hpp_source}{refvalues.\+hpp}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{refvalues_8hpp}{refvalues.\+hpp}}\end{DoxyCompactItemize}

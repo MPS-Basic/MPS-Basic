@@ -1,0 +1,146 @@
+\doxysection{particles\+\_\+exporter.\+hpp}
+\hypertarget{particles__exporter_8hpp_source}{}\label{particles__exporter_8hpp_source}\index{src/particles\_exporter.hpp@{src/particles\_exporter.hpp}}
+\mbox{\hyperlink{particles__exporter_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{particle_8hpp}{particle.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <filesystem>}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00010}00010\ \textcolor{keyword}{namespace\ }fs\ =\ std::filesystem;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00021}\mbox{\hyperlink{class_particles_exporter}{00021}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_particles_exporter}{ParticlesExporter}}\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00022}00022\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00023}\mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{00023}}\ \ \ \ \ std::vector<Particle>\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00025}\mbox{\hyperlink{class_particles_exporter_a3bb3afaef4e496390e78b82811df6390}{00025}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_particles_exporter_a3bb3afaef4e496390e78b82811df6390}{setParticles}}(\textcolor{keyword}{const}\ std::vector<Particle>\&\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00026}00026\ \ \ \ \ \ \ \ \ this-\/>particles\ =\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00027}00027\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00029}\mbox{\hyperlink{class_particles_exporter_acc9cdc92743d2506d9fba346d173093c}{00029}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_particles_exporter_acc9cdc92743d2506d9fba346d173093c}{toProf}}(\textcolor{keyword}{const}\ fs::path\&\ path,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ time)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00030}00030\ \ \ \ \ \ \ \ \ std::ofstream\ ofs(path);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00031}00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ofs.fail())\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00032}00032\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}cannot\ write\ "{}}\ <<\ path\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00033}00033\ \ \ \ \ \ \ \ \ \ \ \ \ std::exit(-\/1);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00034}00034\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00036}00036\ \ \ \ \ \ \ \ \ ofs\ <<\ time\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00037}00037\ \ \ \ \ \ \ \ \ ofs\ <<\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}}.size()\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00038}00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ static\_cast<int>(p.type)\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00040}00040\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.position.x()\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ p.position.y()\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ p.position.z()\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00041}00041\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.velocity.x()\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ p.velocity.y()\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ p.velocity.z();}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00043}00043\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00044}00044\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00046}\mbox{\hyperlink{class_particles_exporter_af4aa3853fe5668e4343220426704052f}{00046}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_particles_exporter_af4aa3853fe5668e4343220426704052f}{toVtu}}(\textcolor{keyword}{const}\ fs::path\&\ path,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\&\ time)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00047}00047\ \ \ \ \ \ \ \ \ std::ofstream\ ofs(path);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00048}00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ofs.fail())\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}cannot\ write\ "{}}\ <<\ path\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ std::exit(-\/1);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00051}00051\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00053}00053\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Header\ -\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00055}00055\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00056}00056\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<?xml\ version='1.0'\ encoding='UTF-\/8'?>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00057}00057\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<VTKFile\ xmlns='VTK'\ byte\_order='LittleEndian'\ version='0.1'\ "{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00058}00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}type\ "{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00059}00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}=\ 'UnstructuredGrid'\ >"{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00060}00060\ \ \ \ \ \ \ \ \ \ \ \ \ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00061}00061\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<UnstructuredGrid>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00062}00062\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<Piece\ NumberOfCells='"{}}\ <<\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}}.size()\ <<\ \textcolor{stringliteral}{"{}'\ NumberOfPoints='"{}}\ <<\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}}.size()\ <<\ \textcolor{stringliteral}{"{}'>"{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00068}00068\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<Points>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00069}00069\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<DataArray\ NumberOfComponents='3'\ type='Float64'\ "{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00070}00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Name='position'\ format='ascii'>"{}}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00072}00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.position.x()\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.position.y()\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.position.z()\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00076}00076\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00077}00077\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</DataArray>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00078}00078\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</Points>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00081}00081\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ PointData\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00082}00082\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00083}00083\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<PointData>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00085}00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_aeaa47fe9ac615fc881bf6957f89c882c}{dataArrayBegin}}(ofs,\ \textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}Int32"{}},\ \textcolor{stringliteral}{"{}Particle\ Type"{}});}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ static\_cast<int>(p.type)\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00088}00088\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00089}00089\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_ae810569eea70af7090f4a896fbb75b69}{dataArrayEnd}}(ofs);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00091}00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_aeaa47fe9ac615fc881bf6957f89c882c}{dataArrayBegin}}(ofs,\ \textcolor{stringliteral}{"{}3"{}},\ \textcolor{stringliteral}{"{}Float64"{}},\ \textcolor{stringliteral}{"{}Velocity"{}});}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.velocity.x()\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.velocity.y()\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00095}00095\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ 0.0\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00096}00096\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00097}00097\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_ae810569eea70af7090f4a896fbb75b69}{dataArrayEnd}}(ofs);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00099}00099\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_aeaa47fe9ac615fc881bf6957f89c882c}{dataArrayBegin}}(ofs,\ \textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}Float64"{}},\ \textcolor{stringliteral}{"{}Pressure"{}});}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00100}00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.pressure\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00102}00102\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_ae810569eea70af7090f4a896fbb75b69}{dataArrayEnd}}(ofs);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00103}00103\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00104}00104\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_aeaa47fe9ac615fc881bf6957f89c882c}{dataArrayBegin}}(ofs,\ \textcolor{stringliteral}{"{}1"{}},\ \textcolor{stringliteral}{"{}Float64"{}},\ \textcolor{stringliteral}{"{}Number\ Density"{}});}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00105}00105\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ p\ :\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}})}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ p.numberDensity\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00107}00107\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_particles_exporter_ae810569eea70af7090f4a896fbb75b69}{dataArrayEnd}}(ofs);}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00108}00108\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00109}00109\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</PointData>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00111}00111\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ Cells\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00113}00113\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00114}00114\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<Cells>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00115}00115\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<DataArray\ type='Int32'\ Name='connectivity'\ format='ascii'>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00116}00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}}.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ i\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00118}00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00119}00119\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</DataArray>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00120}00120\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<DataArray\ type='Int32'\ Name='offsets'\ format='ascii'>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}}.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ i\ +\ 1\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00124}00124\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</DataArray>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00125}00125\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<DataArray\ type='UInt8'\ Name='types'\ format='ascii'>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ \mbox{\hyperlink{class_particles_exporter_aa24fb54f6a2546947a93f74ccacc8106}{particles}}.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}1"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00128}00128\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00129}00129\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</DataArray>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00130}00130\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</Cells>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00131}00131\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00133}00133\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/\ Footer\ -\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00134}00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00135}00135\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</Piece>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00136}00136\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</UnstructuredGrid>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00137}00137\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</VTKFile>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00138}00138\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00140}00140\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00141}\mbox{\hyperlink{class_particles_exporter_aeaa47fe9ac615fc881bf6957f89c882c}{00141}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_particles_exporter_aeaa47fe9ac615fc881bf6957f89c882c}{dataArrayBegin}}(std::ofstream\&\ ofs,}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ numberOfComponents,}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00143}00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ type,}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00145}00145\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}<DataArray\ NumberOfComponents='"{}}\ <<\ numberOfComponents\ <<\ \textcolor{stringliteral}{"{}'\ type='"{}}\ <<\ type\ <<\ \textcolor{stringliteral}{"{}'\ Name='"{}}\ <<\ name}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}'\ format='ascii'>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00147}00147\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00148}00148\ }
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00149}\mbox{\hyperlink{class_particles_exporter_ae810569eea70af7090f4a896fbb75b69}{00149}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_particles_exporter_ae810569eea70af7090f4a896fbb75b69}{dataArrayEnd}}(std::ofstream\&\ ofs)\ \{}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00150}00150\ \ \ \ \ \ \ \ \ ofs\ <<\ \textcolor{stringliteral}{"{}</DataArray>"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00151}00151\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{particles__exporter_8hpp_source_l00152}00152\ \};}
+
+\end{DoxyCode}
