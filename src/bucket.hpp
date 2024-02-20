@@ -44,12 +44,12 @@ public:
 	 */
 	void storeParticles(std::vector<Particle>& particles, const Domain& domain) {
 #pragma omp parallel for
-		rep(i, 0, num) {
+		for (int i = 0; i < num; i++) {
 			first[i] = -1;
 			last[i]  = -1;
 		}
 #pragma omp parallel for
-		rep(i, 0, particles.size()) {
+		for (int i = 0; i < particles.size(); i++) {
 			next[i] = -1;
 		}
 
