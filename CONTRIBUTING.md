@@ -17,8 +17,7 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
 - **Macros**:
   - Defined in `common.hpp`.
   - Excessive use should be avoided.
-  - You can use `rep(i, a, b)` if you need to write `for (int i = a; i < b; i++)`.
-    - However, **use range-based for `for (auto& e : v)` instead whenever it is possible**.
+  - **use range-based for `for (auto& e : v)` instead whenever it is possible**.
 
 ## Issue Creation
 
