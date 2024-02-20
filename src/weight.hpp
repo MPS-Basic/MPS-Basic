@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include <cassert>
 /**
  * @brief Wight function for MPS method presented by [Koshizuka and Oka, 1996](https://doi.org/10.13182/nse96-a24205)
  * @param dis distance of each particle \f$r\f$. It must be positive.
