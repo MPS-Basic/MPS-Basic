@@ -7,7 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(generator)
 
 # main executable
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} 
+  src/bucket.cpp
+  src/loader.cpp
+  src/main.cpp
+  src/mps.cpp
+  src/particle.cpp
+  src/particles_exporter.cpp
+  src/refvalues.cpp
+  src/saver.cpp
+  src/simulation.cpp
+  src/weight.cpp
+)
 
 # OpenMP
 find_package(OpenMP 5.0)
