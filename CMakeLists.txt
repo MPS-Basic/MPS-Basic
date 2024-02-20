@@ -3,9 +3,6 @@ project(mps VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# particle generator
-add_subdirectory(generator)
-
 # main executable
 add_executable(${PROJECT_NAME} 
   src/bucket.cpp
@@ -85,3 +82,11 @@ if(NOT yaml-cpp_POPULATED)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
+
+# particle generator
+add_subdirectory(generator)
+add_library(particles SHARED
+  src/particle.cpp
+  src/particles_exporter.cpp
+)
+target_include_directories(particles PUBLIC eigen)
