@@ -31,23 +31,23 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# enable_testing()
-# add_executable(
-#     mps_test
-#     test/xxx_test.cpp
-# )
-# target_include_directories(
-#     mps_test
-#     PRIVATE
-#     src/
-# )
-# target_link_libraries(
-#     mps_test
-#     GTest::gtest_main
-# )
+enable_testing()
+add_executable(
+    mps_test
+    test/weight_test.cpp
+)
+target_include_directories(
+    mps_test
+    PRIVATE
+    src/
+)
+target_link_libraries(
+    mps_test
+    GTest::gtest_main
+)
 
-# include(GoogleTest)
-# gtest_discover_tests(mps_test)
+include(GoogleTest)
+gtest_discover_tests(mps_test)
 # # coverage
 # if (CMAKE_COMPILER_IS_GNUCXX)
 #     set(CMAKE_C_FLAGS_PROFILE --coverage)
