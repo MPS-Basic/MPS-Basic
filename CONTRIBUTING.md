@@ -7,7 +7,7 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
 1. Create an issue and assign yourself.
 2. Clone the repository and make your changes.
 3. Create a new branch with the issue number included in the branch name in the format `1-fix-description`.
-4. Submit a pull request. Include references to the issue in the pull request description.
+4. Submit a pull request. Include references to the issue in the pull request description. Assign yourself as the assignee.
 5. Your pull request will be reviewed and merged if at least one maintainer approves it.
 
 ## Guidelines
