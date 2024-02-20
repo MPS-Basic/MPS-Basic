@@ -48,7 +48,7 @@ The execution command consists of three parts.
 1. Save the console output to the specified file.
 	```bash
 	Tee-Object -Filepath "result/dambreak/console.log"
-	``` 
+	```
 
 #### Linux
 ```bash
@@ -60,19 +60,19 @@ mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
 (1). Standard (Error) Output
 
 The output of a c++ program includes standard output and standard error output.
-The standard output comes from `std::cout` or `printf()`, 
+The standard output comes from `std::cout` or `printf()`,
 while the standard error output comes from `std::cerr` or `fprintf(stderr, )`.
 By default, both the standard output and the standard error output will be shown in the console.
 Changing the output destination is called "redirect", and can be accomplished with the `>` command.
 
-For example, the standard output of the command below 
-will be written to `result.log`. 
+For example, the standard output of the command below
+will be written to `result.log`.
 The standard error output will be shown in the console as usual.
 ```bash
 ./test.exe > resut.log
 ```
 
-In the next example, the standard output will be written to `result.log`, 
+In the next example, the standard output will be written to `result.log`,
 and the standard error output will be written to `error.log`.
 ```bash
 ./test.exe 1> result.log 2> error.log
@@ -86,10 +86,10 @@ and the standard error output will be written to `error.log`.
 and save them into a file at the same time.
 
 > it sends the output of a command in two directions (like the letter T)
-> 
+>
 > <cite>[Microsoft Docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/tee-object?view=powershell-7.4&viewFallbackFrom=powershell-7.1)</cite>
 
-Foe example, the standard output of the command below will be shown in the console 
+Foe example, the standard output of the command below will be shown in the console
 and will be written to `result.log` at the same time.
 ```bash
 ./test.exe | tee result.log
@@ -202,14 +202,7 @@ Please ask the authors if you have any questions.
 
 
 ## Contribution
-### Coding guide
-- C++ standard: C++17
-- Do **NOT** use Exceptions
-- Macros
-	- Defined in `common.hpp`
-    - Excessive use should be avoided
-	- You can use `rep(i, a, b)` if you need to write `for (int i = a; i < b; i++)`
-		- However, **use range-based for `for (auto& e : v)` instead whenever it is possible**
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
 MIT License
