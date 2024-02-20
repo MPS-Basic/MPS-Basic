@@ -38,7 +38,7 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Install OpenMP library
-      if: matrix.os == 'Linux' && matrix.c_compiler == 'clang' 
+      if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install -y libomp-dev # Install OpenMP library
 
     - name: Configure CMake
