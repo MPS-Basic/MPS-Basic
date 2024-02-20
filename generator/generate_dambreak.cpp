@@ -1,5 +1,5 @@
-#include "../src/particles_exporter.hpp"
 #include "../src/particle.hpp"
+#include "../src/particles_exporter.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -21,10 +21,10 @@ int main(int argc, char** argv) {
 	std::vector<double> fluid_y_range{0.0, 0.6};
 	check_fluid_range(fluid_x_range, fluid_y_range, l0, eps);
 
-	int ix_begin = round(fluid_x_range.at(0) / l0) - 4;
-	int ix_end   = round(fluid_x_range.at(1) / l0) + 4;
-	int iy_begin = round(fluid_y_range.at(0) / l0) - 4;
-	int iy_end   = round(fluid_y_range.at(1) / l0) + 4;
+	int ix_begin = int(round(fluid_x_range.at(0) / l0)) - 4;
+	int ix_end   = int(round(fluid_x_range.at(1) / l0)) + 4;
+	int iy_begin = int(round(fluid_y_range.at(0) / l0)) - 4;
+	int iy_end   = int(round(fluid_y_range.at(1) / l0)) + 4;
 	for (int ix = ix_begin; ix <= ix_end; ix++) {
 		for (int iy = iy_begin; iy <= iy_end; iy++) {
 			Eigen::Vector3d pos((double) (ix) *l0, (double) iy * l0, 0.0);
