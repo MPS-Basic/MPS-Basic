@@ -1,7 +1,0 @@
-<map id="ParticlesExporter::toVtu" name="ParticlesExporter::toVtu">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,39,135,81"/>
-<area shape="rect" id="Node000002" href="$class_particles_exporter.html#aeaa47fe9ac615fc881bf6957f89c882c" title=" " alt="" coords="183,5,312,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="134,45,167,39,168,44,135,50"/>
-<area shape="rect" id="Node000003" href="$class_particles_exporter.html#ae810569eea70af7090f4a896fbb75b69" title=" " alt="" coords="183,72,312,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="135,70,168,76,167,81,134,75"/>
-</map>

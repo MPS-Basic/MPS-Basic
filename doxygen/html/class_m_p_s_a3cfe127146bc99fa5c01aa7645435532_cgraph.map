@@ -1,5 +1,0 @@
-<map id="MPS::calPressureGradient" name="MPS::calPressureGradient">
-<area shape="rect" id="Node000001" title="calculate pressure gradient term" alt="" coords="5,5,182,32"/>
-<area shape="rect" id="Node000002" href="$weight_8hpp.html#aff5c38d6ca294d8c3338e6dd617b5f7b" title="Wight function for MPS method presented by Koshizuka and Oka, 1996" alt="" coords="230,5,288,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,16,215,16,215,21,182,21"/>
-</map>

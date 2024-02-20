@@ -1,7 +1,0 @@
-<map id="Loader::load" name="Loader::load">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,98,57"/>
-<area shape="rect" id="Node000002" href="$class_loader.html#a07b29f07a52384358c24bf6398950da9" title=" " alt="" coords="148,5,307,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,35,133,30,134,35,99,40"/>
-<area shape="rect" id="Node000003" href="$class_loader.html#afebd7f3d342c12f11e7741e9cf30982f" title=" " alt="" coords="146,56,309,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="99,48,131,53,131,58,98,53"/>
-</map>
