@@ -1,10 +1,9 @@
 #pragma once
 
+#include "common.hpp"
 #include "mps.hpp"
 #include "particles_exporter.hpp"
 #include <filesystem>
-
-namespace fs = std::filesystem;
 
 /**
  * Saver class

@@ -57,7 +57,7 @@ public:
 	double sourceTerm            = 0;                   ///< source term of the particle
 	double minimumPressure       = 0;                   ///< minimum pressure of the particle
 
-	std::vector<Neighbor> neighbors; ///< neighbors of the particle
+	vector<Neighbor> neighbors; ///< neighbors of the particle
 
 	/**
 	 * @brief constructor

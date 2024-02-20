@@ -19,7 +19,7 @@ private:
 public:
 	int num, numX, numY;
 	double length;
-	std::vector<int> next, first, last;
+	vector<int> next, first, last;
 
 	void generate(const int& particleNum) {
 		next.resize(particleNum);
@@ -42,7 +42,7 @@ public:
 	 * @param particles partiles to be stored
 	 * @param domain domain of the simulation
 	 */
-	void storeParticles(std::vector<Particle>& particles, const Domain& domain) {
+	void storeParticles(vector<Particle>& particles, const Domain& domain) {
 #pragma omp parallel for
 		rep(i, 0, num) {
 			first[i] = -1;
@@ -65,10 +65,10 @@ public:
 			if (p.position.z() < domain.zMin || domain.zMax < p.position.z())
 				isInDomain = false;
 			if (!isInDomain) {
-				std::cerr << "WARNING: particle " << p.id << " is out of domain." << std::endl;
-				std::cerr << "x = " << p.position.x() << " ";
-				std::cerr << "y = " << p.position.y() << " ";
-				std::cerr << "z = " << p.position.z() << std::endl;
+				cerr << "WARNING: particle " << p.id << " is out of domain." << endl;
+				cerr << "x = " << p.position.x() << " ";
+				cerr << "y = " << p.position.y() << " ";
+				cerr << "z = " << p.position.z() << endl;
 				p.type = ParticleType::Ghost;
 				continue;
 				// std::exit(-1);

@@ -24,9 +24,6 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
-using namespace std;
-using namespace Eigen;
-
 /**
  * @brief MPS simulation class
  *
@@ -42,9 +39,10 @@ public:
 	Domain domain;              ///< Domain of the simulation
 
 	// pressure Poisson equation
-	SparseMatrix<double, Eigen::RowMajor> coefficientMatrix; ///< Coefficient matrix for pressure Poisson equation
-	VectorXd sourceTerm;                                     ///< Source term for pressure Poisson equation
-	VectorXd pressure;                                       ///< Solution of pressure Poisson equation
+	Eigen::SparseMatrix<double, Eigen::RowMajor>
+	    coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
+	Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
+	Eigen::VectorXd pressure;   ///< Solution of pressure Poisson equation
 
 	double courant; ///< Maximum courant number among all particles
 	FILE* logFile;
@@ -186,8 +184,8 @@ private:
 					pi.position -= positionImpulse * invMi * normal;
 					pj.position += positionImpulse * invMj * normal;
 
-					// std::cerr << "WARNING: Collision between particles " << pi.id << " and " << pj.id << " occurred."
-					// << std::endl;
+					// cerr << "WARNING: Collision between particles " << pi.id << " and " << pj.id << " occurred."
+					// << endl;
 				}
 			}
 		}
@@ -273,7 +271,7 @@ private:
 	 * \f]
 	 */
 	void setMatrix(const double& re) {
-		std::vector<Eigen::Triplet<double>> triplets;
+		vector<Eigen::Triplet<double>> triplets;
 		auto n0 = refValues.n0_forLaplacian;
 		auto a  = 2.0 * settings.dim / (n0 * refValues.lambda);
 		coefficientMatrix.resize(particles.size(), particles.size());
@@ -307,8 +305,8 @@ private:
 		   increase the diagonal terms of the matrix for an exception. This
 		   allows us to solve the matrix without Dirichlet boundary conditions.
 		 */
-		std::vector<bool> checked(particles.size(), false);
-		std::vector<bool> connected(particles.size(), false);
+		vector<bool> checked(particles.size(), false);
+		vector<bool> connected(particles.size(), false);
 
 		for (auto& pi : particles) {
 			if (pi.boundaryCondition == FluidState::FreeSurface)
@@ -359,7 +357,7 @@ private:
 		solver.compute(coefficientMatrix);
 		pressure = solver.solve(sourceTerm);
 		if (solver.info() != Eigen::Success) {
-			std::cerr << "Pressure calculation failed." << std::endl;
+			cerr << "Pressure calculation failed." << endl;
 			std::exit(-1);
 		}
 
@@ -477,7 +475,7 @@ private:
 		}
 
 		if (courant > settings.cflCondition) {
-			std::cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << std::endl;
+			cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << endl;
 		}
 	}
 
