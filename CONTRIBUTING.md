@@ -17,7 +17,13 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
 - **Macros**:
   - Defined in `common.hpp`.
   - Excessive use should be avoided.
-  - **use range-based for `for (auto& e : v)` instead whenever it is possible**.
+  - **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
+- **Declaration of namespace**:
+  - Defined in `common.hpp`.
+  - Should be minimum to prevent conflicts.
+  - Do **not** declare entire name space. `using namespace std; // not good`
+  - You can declare a function if that's commonly used. `using std::cout; // not bad`
+  - You are **recommended** to rename long namespace, instead of declaring it. `namespace fs = std::filesystem; // very good`
 
 ## Issue Creation
 
