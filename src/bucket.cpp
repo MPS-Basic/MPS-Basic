@@ -1,5 +1,8 @@
 #include "bucket.hpp"
 
+using std::cerr;
+using std::endl;
+
 void Bucket::generate(const int& particleNum) {
 	next.resize(particleNum);
 }
@@ -18,7 +21,7 @@ void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, c
 	next.resize(particleSize);
 }
 
-void Bucket::storeParticles(vector<Particle>& particles, const Domain& domain) {
+void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& domain) {
 
 #pragma omp parallel for
 	for (int i = 0; i < num; i++) {

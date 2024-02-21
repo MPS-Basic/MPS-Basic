@@ -4,7 +4,11 @@
 #include <iostream>
 #include <sstream>
 
-void ParticlesExporter::setParticles(const vector<Particle>& particles) {
+using std::cerr;
+using std::endl;
+namespace fs = std::filesystem;
+
+void ParticlesExporter::setParticles(const std::vector<Particle>& particles) {
 	this->particles = particles;
 }
 

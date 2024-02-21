@@ -3,7 +3,10 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace std;
+using std::cout;
+using std::endl;
+namespace fs     = std::filesystem;
+namespace chrono = std::chrono;
 
 Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);

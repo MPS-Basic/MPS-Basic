@@ -1,11 +1,10 @@
-
 #include "mps.hpp"
 #include "particle.hpp"
 #include "weight.hpp"
 #include <queue>
 
-using namespace std;
-using namespace Eigen;
+using std::cerr;
+using std::endl;
 
 MPS::MPS(const Input& input) {
 	this->settings  = input.settings;
@@ -169,7 +168,7 @@ void MPS::setSourceTerm() {
 }
 
 void MPS::setMatrix(const double& re) {
-	vector<Eigen::Triplet<double>> triplets;
+	std::vector<Eigen::Triplet<double>> triplets;
 	auto n0 = refValues.n0_forLaplacian;
 	auto a  = 2.0 * settings.dim / (n0 * refValues.lambda);
 	coefficientMatrix.resize(particles.size(), particles.size());
@@ -198,8 +197,8 @@ void MPS::setMatrix(const double& re) {
 	// exceptionalProcessingForBoundaryCondition();
 }
 void MPS::exceptionalProcessingForBoundaryCondition() {
-	vector<bool> checked(particles.size(), false);
-	vector<bool> connected(particles.size(), false);
+	std::vector<bool> checked(particles.size(), false);
+	std::vector<bool> connected(particles.size(), false);
 
 	for (auto& pi : particles) {
 		if (pi.boundaryCondition == FluidState::FreeSurface)

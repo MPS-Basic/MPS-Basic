@@ -18,11 +18,11 @@
  */
 class MPS {
 public:
-	Settings settings;          ///< Settings for the simulation
-	RefValues refValues;        ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
-	vector<Particle> particles; ///< Particles in the simulation
-	Bucket bucket;              ///< Bucket for neighbor search
-	Domain domain;              ///< Domain of the simulation
+	Settings settings;               ///< Settings for the simulation
+	RefValues refValues;             ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
+	std::vector<Particle> particles; ///< Particles in the simulation
+	Bucket bucket;                   ///< Bucket for neighbor search
+	Domain domain;                   ///< Domain of the simulation
 
 	// pressure Poisson equation
 	Eigen::SparseMatrix<double, Eigen::RowMajor>

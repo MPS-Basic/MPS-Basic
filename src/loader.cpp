@@ -3,6 +3,11 @@
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 
+using std::cerr;
+using std::cout;
+using std::endl;
+namespace fs = std::filesystem;
+
 Input Loader::load(const fs::path& settingPath) {
 	Input input;
 	input.settings = loadSettingYaml(settingPath);
@@ -93,7 +98,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
 	return s;
 }
 
-std::pair<double, vector<Particle>> Loader::loadParticleProf(const fs::path& profPath) {
+std::pair<double, std::vector<Particle>> Loader::loadParticleProf(const fs::path& profPath) {
 	std::ifstream ifs;
 	ifs.open(profPath);
 	if (ifs.fail()) {
@@ -101,7 +106,7 @@ std::pair<double, vector<Particle>> Loader::loadParticleProf(const fs::path& pro
 		std::exit(-1);
 	}
 
-	vector<Particle> particles;
+	std::vector<Particle> particles;
 	double startTime;
 	int particleSize;
 	ifs >> startTime;

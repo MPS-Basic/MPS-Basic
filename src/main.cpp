@@ -2,6 +2,10 @@
 #include "simulation.hpp"
 #include <filesystem>
 
+using std::cout;
+using std::endl;
+namespace fs = std::filesystem;
+
 /**
  * @brief entry point of the program
  *

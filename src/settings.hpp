@@ -5,7 +5,6 @@
 #include <Eigen/Dense>
 #include <filesystem>
 
-
 /**
  * @brief Struct for settings of calculation
  *
@@ -49,6 +48,6 @@ struct Settings {
 	double reMax;               ///< Maximum of effective radius
 
 	// i/o
-	fs::path profPath;        ///< Path for input particle file
-	fs::path outputDirectory; ///< Directory for output files
+	std::filesystem::path profPath;        ///< Path for input particle file
+	std::filesystem::path outputDirectory; ///< Directory for output files
 };

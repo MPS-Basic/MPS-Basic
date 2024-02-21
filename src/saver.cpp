@@ -1,5 +1,7 @@
 #include "saver.hpp"
 
+namespace fs = std::filesystem;
+
 Saver::Saver(const fs::path& dir) {
 	this->dir = dir;
 	fs::create_directories(dir / "prof");

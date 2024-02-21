@@ -6,7 +6,6 @@
 #include <iostream>
 #include <vector>
 
-
 /**
  * @brief Class for bucket for neighbor search
  *
@@ -19,7 +18,7 @@ private:
 public:
 	int num, numX, numY;
 	double length;
-	vector<int> next, first, last;
+	std::vector<int> next, first, last;
 
 	void generate(const int& particleNum);
 	void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
@@ -28,5 +27,5 @@ public:
 	 * @param particles partiles to be stored
 	 * @param domain domain of the simulation
 	 */
-	void storeParticles(vector<Particle>& particles, const Domain& domain);
+	void storeParticles(std::vector<Particle>& particles, const Domain& domain);
 };
