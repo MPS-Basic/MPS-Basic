@@ -1,6 +1,9 @@
+#include "common.hpp"
 #include "simulation.hpp"
 #include <filesystem>
 
+using std::cout;
+using std::endl;
 namespace fs = std::filesystem;
 
 /**
@@ -12,13 +15,13 @@ namespace fs = std::filesystem;
  */
 int main(int argc, char** argv) {
 	if (argc < 2) {
-		std::cout << "Usage" << std::endl << std::endl;
-		std::cout << "  mps <path-to-settings>" << std::endl << std::endl;
-		std::cout << "Specify a settings for simulation." << std::endl;
+		cout << "Usage" << endl << endl;
+		cout << "  mps <path-to-settings>" << endl << endl;
+		cout << "Specify a settings for simulation." << endl;
 		return 0;
 	}
 
-	auto settingPath = std::filesystem::path(argv[1]);
+	auto settingPath = fs::path(argv[1]);
 	Simulation sim(settingPath);
 	sim.run();
 

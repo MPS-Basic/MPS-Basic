@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Eigen/Dense"
 #include "common.hpp"
 

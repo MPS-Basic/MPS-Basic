@@ -1,11 +1,10 @@
-
 #include "mps.hpp"
 #include "particle.hpp"
 #include "weight.hpp"
 #include <queue>
 
-using namespace std;
-using namespace Eigen;
+using std::cerr;
+using std::endl;
 
 MPS::MPS(const Input& input) {
 	this->settings  = input.settings;
@@ -119,8 +118,8 @@ void MPS::collision() {
 				pi.position -= positionImpulse * invMi * normal;
 				pj.position += positionImpulse * invMj * normal;
 
-				// std::cerr << "WARNING: Collision between particles " << pi.id << " and " << pj.id << " occurred."
-				// << std::endl;
+				// cerr << "WARNING: Collision between particles " << pi.id << " and " << pj.id << " occurred."
+				// << endl;
 			}
 		}
 	}
@@ -246,7 +245,7 @@ void MPS::solveSimultaneousEquations() {
 	solver.compute(coefficientMatrix);
 	pressure = solver.solve(sourceTerm);
 	if (solver.info() != Eigen::Success) {
-		std::cerr << "Pressure calculation failed." << std::endl;
+		cerr << "Pressure calculation failed." << endl;
 		std::exit(-1);
 	}
 
@@ -343,7 +342,7 @@ void MPS::calCourant() {
 	}
 
 	if (courant > settings.cflCondition) {
-		std::cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << std::endl;
+		cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << endl;
 	}
 }
 
