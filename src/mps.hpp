@@ -19,10 +19,10 @@
 class MPS {
 public:
 	Settings settings;               ///< Settings for the simulation
-	RefValues refValues;             ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
+	RefValues refValues{};           ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
 	std::vector<Particle> particles; ///< Particles in the simulation
 	Bucket bucket;                   ///< Bucket for neighbor search
-	Domain domain;                   ///< Domain of the simulation
+	Domain domain{};                 ///< Domain of the simulation
 
 	// pressure Poisson equation
 	Eigen::SparseMatrix<double, Eigen::RowMajor>
@@ -30,7 +30,7 @@ public:
 	Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 	Eigen::VectorXd pressure;   ///< Solution of pressure Poisson equation
 
-	double courant; ///< Maximum courant number among all particles
+	double courant{}; ///< Maximum courant number among all particles
 
 	MPS() = default;
 

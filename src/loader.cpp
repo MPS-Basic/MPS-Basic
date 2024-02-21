@@ -1,6 +1,7 @@
 #include "loader.hpp"
 #include <fstream>
 #include <iostream>
+#include <cmath>
 #include <yaml-cpp/yaml.h>
 
 using std::cerr;
@@ -107,12 +108,12 @@ std::pair<double, std::vector<Particle>> Loader::loadParticleProf(const fs::path
 	}
 
 	std::vector<Particle> particles;
-	double startTime;
-	int particleSize;
+	double startTime = NAN;
+	int particleSize = 0;
 	ifs >> startTime;
 	ifs >> particleSize;
 	for (int i = 0; i < particleSize; i++) {
-		int type_int;
+		int type_int = 0;
 		ParticleType type;
 		Eigen::Vector3d pos, vel;
 

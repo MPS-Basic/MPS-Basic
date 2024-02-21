@@ -16,8 +16,8 @@
 class Bucket {
 private:
 public:
-	int num, numX, numY;
-	double length;
+	int num{}, numX{}, numY{};
+	double length{};
 	std::vector<int> next, first, last;
 
 	void generate(const int& particleNum);

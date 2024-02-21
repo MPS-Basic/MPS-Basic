@@ -5,7 +5,7 @@
 void RefValues::calc(
     int dim, double particleDistance, double re_forNumberDensity, double re_forGradient, double re_forLaplacian) {
 
-	int iZ_start, iZ_end;
+	int iZ_start = 0, iZ_end = 0;
 	if (dim == 2) {
 		iZ_start = 0;
 		iZ_end   = 1;

@@ -11,5 +11,5 @@
 struct Input {
 	Settings settings;               ///< Settings for the simulation
 	std::vector<Particle> particles; ///< Initial particles arrangement in the simulation
-	double startTime;                ///< Start time of the simulation
+	double startTime{};              ///< Start time of the simulation
 };
