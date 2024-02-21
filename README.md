@@ -1,8 +1,5 @@
 # BasicCode
 
-![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/build-cmake.yml/badge.svg)  
-![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/doxygen-pages.yml/badge.svg)
-
 Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
 ## Requirements
