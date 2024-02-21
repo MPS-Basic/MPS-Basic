@@ -1,0 +1,22 @@
+name: Build & clang-tidy
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true  # Fetch submodules: true
+    - name: CMake
+      env:
+        CC: clang
+        CXX: clang++
+      run: cmake -B ./build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    - name: reviewdog with clang-tidy
+      uses: arkedge/action-clang-tidy
+      with:
+        workdir: ./build
+    - name: Build
+      run: cmake --build ./build
