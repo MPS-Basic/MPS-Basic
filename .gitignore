@@ -1,8 +1,8 @@
 .vscode/
 .vs/
 build/
-doxygen/
 result/
+doxygen/
 *.exe
 *.prof
 *.vtu
