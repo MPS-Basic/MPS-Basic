@@ -3,11 +3,19 @@ project(mps VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# particle generator
-add_subdirectory(generator)
-
 # main executable
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} 
+  src/bucket.cpp
+  src/loader.cpp
+  src/main.cpp
+  src/mps.cpp
+  src/particle.cpp
+  src/particles_exporter.cpp
+  src/refvalues.cpp
+  src/saver.cpp
+  src/simulation.cpp
+  src/weight.cpp
+)
 
 # OpenMP
 find_package(OpenMP 5.0)
@@ -31,23 +39,26 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# enable_testing()
-# add_executable(
-#     mps_test
-#     test/xxx_test.cpp
-# )
-# target_include_directories(
-#     mps_test
-#     PRIVATE
-#     src/
-# )
-# target_link_libraries(
-#     mps_test
-#     GTest::gtest_main
-# )
+enable_testing()
+add_executable(
+    mps_test
+    src/refvalues.cpp  
+    test/refvalues_test.cpp
+    src/weight.cpp
+    test/weight_test.cpp
+)
+target_include_directories(
+    mps_test
+    PRIVATE
+    src/
+)
+target_link_libraries(
+    mps_test
+    GTest::gtest_main
+)
 
-# include(GoogleTest)
-# gtest_discover_tests(mps_test)
+include(GoogleTest)
+gtest_discover_tests(mps_test)
 # # coverage
 # if (CMAKE_COMPILER_IS_GNUCXX)
 #     set(CMAKE_C_FLAGS_PROFILE --coverage)
@@ -71,3 +82,11 @@ if(NOT yaml-cpp_POPULATED)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
+
+# particle generator
+add_subdirectory(generator)
+add_library(particles SHARED
+  src/particle.cpp
+  src/particles_exporter.cpp
+)
+target_include_directories(particles PUBLIC eigen)
