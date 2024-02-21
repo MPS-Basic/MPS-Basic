@@ -23,7 +23,7 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
   - Defined in each `cpp` files. Do **not** write it in `hpp` files to prevent spreading of the declaration.
   - Do **not** declare entire name space. `using namespace std; // not good`
   - You can declare a function if that's commonly used. `using std::cout; // not bad`
-  - You are **recommended** to rename long namespace, instead of declaring it. `namespace fs = std::filesystem; // very good`
+  - You are **recommended** to rename long namespace, instead of declaring it. `namespace fs = std::filesystem; // good`
   - Currently approved declarations:
     - `using std::cout;`
     - `using std::endl;`
