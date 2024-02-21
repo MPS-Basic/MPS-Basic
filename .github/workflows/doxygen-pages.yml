@@ -35,8 +35,12 @@ jobs:
           submodules: true
       - name: Install Doxygen
         run: |
-          sudo apt-get update
-          sudo apt-get install -y doxygen graphviz
+          wget https://github.com/doxygen/doxygen/releases/download/Release_1_9_8/doxygen-1.9.8.linux.bin.tar.gz
+          gunzip doxygen-1.9.8.linux.bin.tar.gz
+          tar xf doxygen-1.9.8.linux.bin.tar
+          cd doxygen-1.9.8
+          sudo make install
+          sudo apt-get install -y graphviz
       - name: Setup Doxygen
         run: doxygen Doxyfile
       - name: Upload artifact
