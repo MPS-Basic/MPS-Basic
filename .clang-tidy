@@ -1,0 +1,15 @@
+---
+Checks: |
+  bugprone-*,
+  clang-analyzer-cplusplus*,
+  clang-diagnostic-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  openmp-*,
+  performance-*,
+  portalbility-*,
+  readability-*
+
+---
+
