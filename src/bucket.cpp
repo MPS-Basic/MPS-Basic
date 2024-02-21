@@ -18,7 +18,7 @@ void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, c
 	next.resize(particleSize);
 }
 
-void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& domain) {
+void Bucket::storeParticles(vector<Particle>& particles, const Domain& domain) {
 
 #pragma omp parallel for
 	for (int i = 0; i < num; i++) {
@@ -42,10 +42,10 @@ void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& doma
 		if (p.position.z() < domain.zMin || domain.zMax < p.position.z())
 			isInDomain = false;
 		if (!isInDomain) {
-			std::cerr << "WARNING: particle " << p.id << " is out of domain." << std::endl;
-			std::cerr << "x = " << p.position.x() << " ";
-			std::cerr << "y = " << p.position.y() << " ";
-			std::cerr << "z = " << p.position.z() << std::endl;
+			cerr << "WARNING: particle " << p.id << " is out of domain." << endl;
+			cerr << "x = " << p.position.x() << " ";
+			cerr << "y = " << p.position.y() << " ";
+			cerr << "z = " << p.position.z() << endl;
 			p.type = ParticleType::Ghost;
 			continue;
 			// std::exit(-1);

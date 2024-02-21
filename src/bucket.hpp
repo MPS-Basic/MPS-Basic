@@ -1,11 +1,11 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-
 #include "common.hpp"
 #include "domain.hpp"
 #include "particle.hpp"
+#include <iostream>
+#include <vector>
+
 
 /**
  * @brief Class for bucket for neighbor search
@@ -19,7 +19,7 @@ private:
 public:
 	int num, numX, numY;
 	double length;
-	std::vector<int> next, first, last;
+	vector<int> next, first, last;
 
 	void generate(const int& particleNum);
 	void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
@@ -28,5 +28,5 @@ public:
 	 * @param particles partiles to be stored
 	 * @param domain domain of the simulation
 	 */
-	void storeParticles(std::vector<Particle>& particles, const Domain& domain);
+	void storeParticles(vector<Particle>& particles, const Domain& domain);
 };

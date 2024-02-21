@@ -1,5 +1,7 @@
 #pragma once
+
 #include "common.hpp"
+
 /**
  *  @brief Struct for reference values of MPS method
  */

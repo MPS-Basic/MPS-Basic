@@ -1,10 +1,10 @@
 #pragma once
 
+#include "common.hpp"
 #include "mps.hpp"
 #include "particles_exporter.hpp"
 #include <filesystem>
 
-namespace fs = std::filesystem;
 
 /**
  * Saver class
@@ -22,9 +22,9 @@ public:
 
 	Saver() = default;
 
-	Saver(const fs::path& dir) ;
+	Saver(const fs::path& dir);
 
-	void save(const MPS& mps, const double time) ;
+	void save(const MPS& mps, const double time);
 
 private:
 };

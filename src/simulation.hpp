@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.hpp"
 #include "loader.hpp"
 #include "mps.hpp"
 #include "saver.hpp"
@@ -8,8 +9,6 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
-
-namespace fs = std::filesystem;
 
 /**
  * Simulation class
@@ -25,7 +24,7 @@ public:
 	Loader loader;
 	Saver saver;
 
-	std::chrono::system_clock::time_point realStartTime, realEndTime;
+	chrono::system_clock::time_point realStartTime, realEndTime;
 	double startTime, time, endTime, dt;
 	double outputPeriod;
 	int timeStep = 0;
@@ -37,12 +36,12 @@ public:
 private:
 	void startSimulation();
 
-	template <typename Rep, typename Period> std::string calHourMinuteSecond(std::chrono::duration<Rep, Period> d) {
-		auto h = std::chrono::duration_cast<std::chrono::hours>(d);
+	template <typename Rep, typename Period> std::string calHourMinuteSecond(chrono::duration<Rep, Period> d) {
+		auto h = chrono::duration_cast<chrono::hours>(d);
 		d -= h;
-		auto m = std::chrono::duration_cast<std::chrono::minutes>(d);
+		auto m = chrono::duration_cast<chrono::minutes>(d);
 		d -= m;
-		auto s = std::chrono::duration_cast<std::chrono::seconds>(d);
+		auto s = chrono::duration_cast<chrono::seconds>(d);
 
 		std::stringstream out;
 		out << h.count() << "h ";
@@ -55,8 +54,8 @@ private:
 	/**
 	 * @brief Report time step information to the console
 	 */
-	void timeStepReport(const std::chrono::system_clock::time_point& timeStepStartTime,
-	                    const std::chrono::system_clock::time_point& timeStepEndTime);
+	void timeStepReport(const chrono::system_clock::time_point& timeStepStartTime,
+	                    const chrono::system_clock::time_point& timeStepEndTime);
 
 	bool saveCondition();
 

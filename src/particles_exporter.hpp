@@ -1,9 +1,10 @@
 #pragma once
+
+#include "common.hpp"
 #include "particle.hpp"
 #include <filesystem>
 #include <fstream>
 #include <vector>
-namespace fs = std::filesystem;
 
 /**
  * ParticlesExporter class
@@ -16,9 +17,9 @@ namespace fs = std::filesystem;
  */
 class ParticlesExporter {
 public:
-	std::vector<Particle> particles;
+	vector<Particle> particles;
 
-	void setParticles(const std::vector<Particle>& particles);
+	void setParticles(const vector<Particle>& particles);
 	void toProf(const fs::path& path, const double& time);
 	void toVtu(const fs::path& path, const double& time);
 

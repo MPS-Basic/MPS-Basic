@@ -1,11 +1,10 @@
 #pragma once
 
+#include "common.hpp"
 #include "input.hpp"
 #include <filesystem>
 #include <utility>
 #include <vector>
-
-namespace fs = std::filesystem;
 
 /**
  * @brief Class for loading setting file and particle file
@@ -22,5 +21,5 @@ public:
 private:
 	Settings loadSettingYaml(const fs::path& settingPath);
 
-	std::pair<double, std::vector<Particle>> loadParticleProf(const fs::path& profPath);
+	std::pair<double, vector<Particle>> loadParticleProf(const fs::path& profPath);
 };
