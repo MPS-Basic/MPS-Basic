@@ -19,11 +19,20 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
   - Excessive use should be avoided.
   - **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
 - **Declaration of namespace**:
-  - Defined in `common.hpp`.
   - Should be minimum to prevent conflicts.
+  - Defined in each `cpp` files. Do **not** write it in `hpp` files to prevent spreading of the declaration.
   - Do **not** declare entire name space. `using namespace std; // not good`
   - You can declare a function if that's commonly used. `using std::cout; // not bad`
   - You are **recommended** to rename long namespace, instead of declaring it. `namespace fs = std::filesystem; // very good`
+  - Currently approved declarations:
+    - `using std::cout;`
+    - `using std::endl;`
+    - `namespace fs = std::filesystem;`
+    - `namespace chrono = std::chrono;`
+  - Curretnly **prohibited** declarations:
+    - `using namespace std;`
+    - `using namespace Eigen;`: to let beginers know Eigen is used
+    - `using std::vector`: not to be confused with `Vector` in Eigen
 
 ## Issue Creation
 
