@@ -14,9 +14,6 @@ jobs:
         CC: clang
         CXX: clang++
       run: cmake -B ./build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-    - name: reviewdog with clang-tidy
-      uses: arkedge/action-clang-tidy
+    - uses: arkedge/action-clang-tidy@v1.5.0
       with:
         workdir: ./build
-    - name: Build
-      run: cmake --build ./build
