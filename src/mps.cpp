@@ -7,15 +7,14 @@ using std::cerr;
 using std::endl;
 
 MPS::MPS(const Input& input, std::unique_ptr<IPressureCalculator> pressureCalculator) {
-	this->settings  = input.settings;
-	this->domain    = input.settings.domain;
-	this->particles = input.particles;
+	this->settings           = input.settings;
+	this->domain             = input.settings.domain;
+	this->particles          = input.particles;
 	this->pressureCalculator = std::move(pressureCalculator);
-}
 
-void MPS::init() {
-	refValues.calc(settings.dim, settings.particleDistance, settings.re_forNumberDensity, settings.re_forGradient,
-	               settings.re_forLaplacian);
+	refValuesForGradient  = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
+	refValuesForLaplacian = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
+
 	bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
 }
 
@@ -32,9 +31,7 @@ void MPS::stepForward() {
 
 	bucket.storeParticles(particles, domain);
 	setNeighbors(settings.reMax);
-	calNumberDensity(settings.re_forNumberDensity);
-	setBoundaryCondition();
-	pressureCalculator->calc(particles);
+	setMinimumPressure(settings.re_forGradient);
 	calPressureGradient(settings.re_forGradient);
 	moveParticleUsingPressureGradient();
 
@@ -54,8 +51,8 @@ void MPS::calGravity() {
 }
 
 void MPS::calViscosity(const double& re) {
-	double n0     = refValues.n0_forLaplacian;
-	double lambda = refValues.lambda;
+	double n0     = refValuesForLaplacian.n0;
+	double lambda = refValuesForLaplacian.lambda;
 	double a      = (settings.kinematicViscosity) * (2.0 * settings.dim) / (n0 * lambda);
 
 #pragma omp parallel for
@@ -141,24 +138,6 @@ void MPS::calNumberDensity(const double& re) {
 	}
 }
 
-void MPS::setBoundaryCondition() {
-	double n0   = refValues.n0_forNumberDensity;
-	double beta = settings.surfaceDetectionRatio;
-
-#pragma omp parallel for
-	for (auto& pi : particles) {
-		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
-			pi.boundaryCondition = FluidState::Ignored;
-
-		} else if (pi.numberDensity < beta * n0) {
-			pi.boundaryCondition = FluidState::FreeSurface;
-
-		} else {
-			pi.boundaryCondition = FluidState::Inner;
-		}
-	}
-}
-
 void MPS::setMinimumPressure(const double& re) {
 #pragma omp parallel for
 	for (auto& p : particles) {
@@ -185,7 +164,7 @@ void MPS::setMinimumPressure(const double& re) {
 }
 
 void MPS::calPressureGradient(const double& re) {
-	double a = settings.dim / refValues.n0_forGradient;
+	double a = settings.dim / refValuesForGradient.n0;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
