@@ -6,7 +6,7 @@
 using std::cerr;
 using std::endl;
 
-MPS::MPS(const Input& input, std::unique_ptr<IPressureCalculator> pressureCalculator) {
+MPS::MPS(const Input& input, std::unique_ptr<IPressureCalculator>&& pressureCalculator) {
 	this->settings           = input.settings;
 	this->domain             = input.settings.domain;
 	this->particles          = input.particles;

@@ -22,9 +22,6 @@ ImplicitPressureCalculator::ImplicitPressureCalculator(int dimension,
 	refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
 }
 
-ImplicitPressureCalculator::~ImplicitPressureCalculator() {
-}
-
 void ImplicitPressureCalculator::calc(std::vector<Particle>& particles) {
 	this->particles = particles;
 	setSourceTerm();
@@ -33,15 +30,19 @@ void ImplicitPressureCalculator::calc(std::vector<Particle>& particles) {
 	removeNegativePressure();
 }
 
+ImplicitPressureCalculator::~ImplicitPressureCalculator() {
+}
+
 void ImplicitPressureCalculator::setSourceTerm() {
 	double n0    = refValuesForNumberDensity.n0;
 	double gamma = relaxationCoefficient;
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
-		pi.sourceTerm = 0.0;
 		if (pi.boundaryCondition == FluidState::Inner) {
-			pi.sourceTerm = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+			sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+		} else {
+			sourceTerm[pi.id] = 0.0;
 		}
 	}
 }

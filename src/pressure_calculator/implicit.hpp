@@ -13,6 +13,7 @@ public:
 	 * @param particles particles
 	 */
 	void calc(std::vector<Particle>& particles) override;
+	~ImplicitPressureCalculator() override;
 
 	ImplicitPressureCalculator(int dimension,
 	                           double particleDistance,
@@ -22,7 +23,6 @@ public:
 	                           double fluidDensity,
 	                           double compressibility,
 	                           double relaxationCoefficient);
-	~ImplicitPressureCalculator() override;
 
 private:
 	int dimension;

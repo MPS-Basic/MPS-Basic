@@ -9,6 +9,7 @@
 #include "settings.hpp"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+#include <memory>
 #include <vector>
 
 /**
@@ -21,7 +22,7 @@ class MPS {
 public:
 	Settings settings;               ///< Settings for the simulation
 	RefValues refValuesForLaplacian; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
-	RefValues refValuesForGradient;             ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
+	RefValues refValuesForGradient;  ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
 	std::vector<Particle> particles; ///< Particles in the simulation
 	Bucket bucket;                   ///< Bucket for neighbor search
 	Domain domain;                   ///< Domain of the simulation
@@ -32,7 +33,7 @@ public:
 
 	MPS() = default;
 
-	MPS(const Input& input, std::unique_ptr<IPressureCalculator> pressureCalculator);
+	MPS(const Input& input, std::unique_ptr<IPressureCalculator>&& pressureCalculator);
 
 	void stepForward();
 

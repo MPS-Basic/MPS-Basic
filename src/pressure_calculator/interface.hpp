@@ -20,5 +20,5 @@ public:
 	/**
 	 * @brief destructor
 	 */
-	virtual ~IPressureCalculator() = 0;
+	virtual ~IPressureCalculator() {};
 };
