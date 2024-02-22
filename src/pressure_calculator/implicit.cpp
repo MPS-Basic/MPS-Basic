@@ -10,7 +10,6 @@ void ImplicitPressureCalculator::calc(std::vector<Particle>& particles) {
     setMatrix();
     solveSimultaneousEquations();
     removeNegativePressure();
-    setMinimumPressure();
 }
 
 void ImplicitPressureCalculator::setSourceTerm() {
@@ -122,33 +121,6 @@ void ImplicitPressureCalculator::removeNegativePressure() {
 	for (auto& p : particles) {
 		if (p.pressure < 0.0) {
 			p.pressure = 0.0;
-		}
-	}
-}
-
-void ImplicitPressureCalculator::setMinimumPressure() {
-    auto re = re_forGradient;
-
-#pragma omp parallel for
-	for (auto& p : particles) {
-		p.minimumPressure = p.pressure;
-	}
-
-	for (auto& pi : particles) {
-		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall)
-			continue;
-
-		for (auto& neighbor : pi.neighbors) {
-			Particle& pj = particles[neighbor.id];
-			if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
-				continue;
-			if (pj.id > pi.id)
-				continue;
-
-			if (neighbor.distance < re) {
-				pi.minimumPressure = std::min(pi.minimumPressure, pj.pressure);
-				pj.minimumPressure = std::min(pj.minimumPressure, pi.pressure);
-			}
 		}
 	}
 }

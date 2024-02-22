@@ -159,6 +159,31 @@ void MPS::setBoundaryCondition() {
 	}
 }
 
+void MPS::setMinimumPressure(const double& re) {
+#pragma omp parallel for
+	for (auto& p : particles) {
+		p.minimumPressure = p.pressure;
+	}
+
+	for (auto& pi : particles) {
+		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall)
+			continue;
+
+		for (auto& neighbor : pi.neighbors) {
+			Particle& pj = particles[neighbor.id];
+			if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
+				continue;
+			if (pj.id > pi.id)
+				continue;
+
+			if (neighbor.distance < re) {
+				pi.minimumPressure = std::min(pi.minimumPressure, pj.pressure);
+				pj.minimumPressure = std::min(pj.minimumPressure, pi.pressure);
+			}
+		}
+	}
+}
+
 void MPS::calPressureGradient(const double& re) {
 	double a = settings.dim / refValues.n0_forGradient;
 

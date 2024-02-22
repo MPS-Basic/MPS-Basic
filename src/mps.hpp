@@ -81,6 +81,12 @@ private:
 	void setBoundaryCondition();
 
 	/**
+	 * @brief set minimum pressure for pressure gradient calculation
+	 * @param re effective radius \f$r_e\f$
+	 */
+	void MPS::setMinimumPressure(const double& re);
+
+	/**
 	 * @brief calculate pressure gradient term
 	 * @param re
 	 * @details

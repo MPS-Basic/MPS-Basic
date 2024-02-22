@@ -93,10 +93,4 @@ private:
 	 * @brief remove negative pressure for stability
 	 */
 	void removeNegativePressure();
-
-	/**
-	 * @brief set minimum pressure for pressure gradient calculation
-	 * @param re effective radius \f$r_e\f$
-	 */
-	void setMinimumPressure(const double& re);
 };
