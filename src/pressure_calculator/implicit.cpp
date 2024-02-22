@@ -1,15 +1,33 @@
 #include "implicit.hpp"
+#include "../weight.hpp"
+#include <iostream>
 #include <queue>
+#include "../refvalues.hpp"
 
-using namespace std::cerr;
-using namespace std::endl;
+using std::cerr;
+using std::endl;
+
+ImplicitPressureCalculator::ImplicitPressureCalculator(int dimension,
+                                                       double particleDistance,
+                                                       double re_forGradient,
+                                                       double re_forLaplacian,
+                                                       double dt,
+                                                       double fluidDensity,
+                                                       double compressibility,
+                                                       double relaxationCoefficient)
+    : dimension(dimension), re_forGradient(re_forGradient), re_forLaplacian(re_forLaplacian), dt(dt),
+      fluidDensity(fluidDensity), compressibility(compressibility), relaxationCoefficient(relaxationCoefficient) {
+
+		RefValues refValues;
+		refValues.calc(dimension, particleDistance, re_forLaplacian, re_forGradient, re_forLaplacian);
+}
 
 void ImplicitPressureCalculator::calc(std::vector<Particle>& particles) {
-    this->particles = particles;
-    setSourceTerm();
-    setMatrix();
-    solveSimultaneousEquations();
-    removeNegativePressure();
+	this->particles = particles;
+	setSourceTerm();
+	setMatrix();
+	solveSimultaneousEquations();
+	removeNegativePressure();
 }
 
 void ImplicitPressureCalculator::setSourceTerm() {
@@ -29,7 +47,7 @@ void ImplicitPressureCalculator::setMatrix() {
 	std::vector<Eigen::Triplet<double>> triplets;
 	auto n0 = n0_forLaplacian;
 	auto a  = 2.0 * dimension / (n0 * lambda);
-    auto re = re_forLaplacian;
+	auto re = re_forLaplacian;
 	coefficientMatrix.resize(particles.size(), particles.size());
 
 	for (auto& pi : particles) {
@@ -55,7 +73,6 @@ void ImplicitPressureCalculator::setMatrix() {
 
 	// exceptionalProcessingForBoundaryCondition();
 }
-
 
 void ImplicitPressureCalculator::exceptionalProcessingForBoundaryCondition() {
 	std::vector<bool> checked(particles.size(), false);

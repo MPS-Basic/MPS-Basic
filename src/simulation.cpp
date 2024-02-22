@@ -1,7 +1,9 @@
 #include "simulation.hpp"
 #include "input.hpp"
+#include "pressure_calculator/implicit.hpp"
 #include <cstdio>
 #include <iostream>
+#include <memory>
 
 using std::cout;
 using std::endl;
@@ -12,16 +14,8 @@ Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);
 	saver       = Saver(input.settings.outputDirectory);
 
-	ImplicitPressureCalculator pressureCalculator(
-		input.settings.dim,
-		input.settings.re_forNumberDensity,
-		input.settings.re_forLaplacian,
-		input.settings.lambda, // settings には lambda がない、、ここでは注入できないか、、
-		input.settings.re_forGradient,
-		input.settings.re_forLaplacian,
-		input.settings.relaxationCoefficientForPressure, input.settings.dt
-	);
-	mps          = MPS(input, pressureCalculator);
+	std::unique_ptr<IPressureCalculator> pressureCalculator ;
+	mps          = MPS(input, std::move(pressureCalculator));
 	startTime    = input.startTime;
 	time         = startTime;
 	endTime      = input.settings.endTime;

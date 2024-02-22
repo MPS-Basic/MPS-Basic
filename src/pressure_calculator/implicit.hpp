@@ -1,41 +1,30 @@
 #pragma once
 
+#include "../particle.hpp"
 #include "interface.hpp"
-#include "particle.hpp"
-#include <vector>
 #include <Eigen/Sparse>
+#include <vector>
 
 class ImplicitPressureCalculator : IPressureCalculator {
 public:
-    /**
-     * @brief calculate pressure
-     * @param particles particles
-     */
-    void calc(std::vector<Particle>& particles) override;
+	/**
+	 * @brief calculate pressure
+	 * @param particles particles
+	 */
+	void calc(std::vector<Particle>& particles) override;
 
-	ImplicitPressureCalculator(
-	    int dimension,
-		double n0_forNumberDensity,
-		double n0_forLaplacian,
-		double lambda,
-		double re_forGradient,
-		double re_forLaplacian,
-		double dt,
-		double fluidDensity,
-		double compressibility,
-		double relaxationCoefficient)
-		: dimension(dimension),
-		  n0_forNumberDensity(n0_forNumberDensity),
-		  n0_forLaplacian(n0_forLaplacian),
-		  lambda(lambda),
-		  re_forGradient(re_forGradient),
-		  re_forLaplacian(re_forLaplacian),
-		  dt(dt),
-		  fluidDensity(fluidDensity),
-		  compressibility(compressibility),
-		  relaxationCoefficient(relaxationCoefficient) {}
+	ImplicitPressureCalculator(int dimension,
+	                           double particleDistance,
+	                           double re_forGradient,
+	                           double re_forLaplacian,
+	                           double dt,
+	                           double fluidDensity,
+	                           double compressibility,
+	                           double relaxationCoefficient);
+	~ImplicitPressureCalculator() override = default;
+
 private:
-    int dimension;
+	int dimension;
 	double n0_forNumberDensity;
 	double n0_forLaplacian;
 	double lambda;
@@ -72,7 +61,7 @@ private:
 	 *	-\frac{1}{\rho^0}\langle\nabla^2 P\rangle_i^{k+1} = b_i.
 	 * \f]
 	 */
-	void setMatrix(const double& re);
+	void setMatrix();
 
 	/**
 	 * @brief If there is no Dirichlet boundary condition on the fluid,

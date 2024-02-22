@@ -10,14 +10,15 @@
  * calculate pressure in the MPS method.
  */
 class IPressureCalculator {
-    /**
-     * @brief calculate pressure
-     * @param particles particles
-     */
+public:
+	/**
+	 * @brief calculate pressure
+	 * @param particles particles
+	 */
 	virtual void calc(std::vector<Particle>& particles) = 0;
 
-    /**
-     * @brief destructor
-     */
-    ~IPressureCalculator() = default;
+	/**
+	 * @brief destructor
+	 */
+	virtual ~IPressureCalculator() = 0;
 };
