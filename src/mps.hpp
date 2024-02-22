@@ -4,6 +4,7 @@
 #include "common.hpp"
 #include "domain.hpp"
 #include "input.hpp"
+#include "pressure_calculator/interface.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
 #include <Eigen/Dense>
@@ -24,17 +25,13 @@ public:
 	Bucket bucket;                   ///< Bucket for neighbor search
 	Domain domain;                   ///< Domain of the simulation
 
-	// pressure Poisson equation
-	Eigen::SparseMatrix<double, Eigen::RowMajor>
-	    coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
-	Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
-	Eigen::VectorXd pressure;   ///< Solution of pressure Poisson equation
+	std::unique_ptr<IPressureCalculator> pressureCalculator; ///< Interface for pressure calculation
 
 	double courant; ///< Maximum courant number among all particles
 
 	MPS() = default;
 
-	MPS(const Input& input);
+	MPS(const Input& input, std::unique_ptr<IPressureCalculator> pressureCalculator);
 
 	void init();
 
@@ -73,19 +70,6 @@ private:
 	void collision();
 
 	/**
-	 * @brief calculate pressure using pressure Poisson equation
-	 */
-	void calPressure() {
-		calNumberDensity(settings.re_forNumberDensity);
-		setBoundaryCondition();
-		setSourceTerm();
-		setMatrix(settings.re_forLaplacian);
-		solveSimultaneousEquations();
-		removeNegativePressure();
-		setMinimumPressure(settings.re_forGradient);
-	}
-
-	/**
 	 * @brief calculate number density of each particle
 	 * @param re effective radius \f$r_e\f$
 	 */
@@ -96,52 +80,6 @@ private:
 	 */
 	void setBoundaryCondition();
 
-	/**
-	 * @brief set source term of pressure Poisson equation
-	 * @details
-	 * The source term of the pressure Poisson equation is calculated as follows:
-	 * \f[
-	 * b_i = \frac{\gamma}{\Delta t^2}\frac{n_i-n^0}{n^0}
-	 * \f]
-	 */
-	void setSourceTerm();
-
-	/**
-	 * @brief set coefficient matrix of pressure Poisson equation
-	 * @param re  effective radius \f$r_e\f$
-	 * @details
-	 * Applying Laplacian model to pressure Poisson equation, the coefficient matrix is calculated as follows:
-	 * \f[
-	 *	-\frac{1}{\rho^0}\langle\nabla^2 P\rangle_i^{k+1} = b_i.
-	 * \f]
-	 */
-	void setMatrix(const double& re);
-
-	/**
-	 * @brief If there is no Dirichlet boundary condition on the fluid,
-	       increase the diagonal terms of the matrix for an exception. This
-	       allows us to solve the matrix without Dirichlet boundary conditions.
-	 *
-	 */
-	void exceptionalProcessingForBoundaryCondition();
-
-	/**
-	 * @brief Solve the pressure Poisson equation
-	 * @details
-	 * The pressure Poisson equation is solved using the BiCGSTAB method.
-	 */
-	void solveSimultaneousEquations();
-
-	/**
-	 * @brief remove negative pressure for stability
-	 */
-	void removeNegativePressure();
-
-	/**
-	 * @brief set minimum pressure for pressure gradient calculation
-	 * @param re effective radius \f$r_e\f$
-	 */
-	void setMinimumPressure(const double& re);
 	/**
 	 * @brief calculate pressure gradient term
 	 * @param re

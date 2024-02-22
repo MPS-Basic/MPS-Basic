@@ -6,10 +6,11 @@
 using std::cerr;
 using std::endl;
 
-MPS::MPS(const Input& input) {
+MPS::MPS(const Input& input, std::unique_ptr<IPressureCalculator> pressureCalculator) {
 	this->settings  = input.settings;
 	this->domain    = input.settings.domain;
 	this->particles = input.particles;
+	this->pressureCalculator = std::move(pressureCalculator);
 }
 
 void MPS::init() {
@@ -31,7 +32,9 @@ void MPS::stepForward() {
 
 	bucket.storeParticles(particles, domain);
 	setNeighbors(settings.reMax);
-	calPressure();
+	calNumberDensity(settings.re_forNumberDensity);
+	setBoundaryCondition();
+	pressureCalculator->calc(particles);
 	calPressureGradient(settings.re_forGradient);
 	moveParticleUsingPressureGradient();
 
@@ -124,6 +127,7 @@ void MPS::collision() {
 		}
 	}
 }
+
 void MPS::calNumberDensity(const double& re) {
 #pragma omp parallel for
 	for (auto& pi : particles) {
@@ -136,6 +140,7 @@ void MPS::calNumberDensity(const double& re) {
 			pi.numberDensity += weight(neighbor.distance, re);
 	}
 }
+
 void MPS::setBoundaryCondition() {
 	double n0   = refValues.n0_forNumberDensity;
 	double beta = settings.surfaceDetectionRatio;
@@ -150,143 +155,6 @@ void MPS::setBoundaryCondition() {
 
 		} else {
 			pi.boundaryCondition = FluidState::Inner;
-		}
-	}
-}
-
-void MPS::setSourceTerm() {
-	double n0    = refValues.n0_forNumberDensity;
-	double gamma = settings.relaxationCoefficientForPressure;
-
-#pragma omp parallel for
-	for (auto& pi : particles) {
-		pi.sourceTerm = 0.0;
-		if (pi.boundaryCondition == FluidState::Inner) {
-			pi.sourceTerm = gamma * (1.0 / (settings.dt * settings.dt)) * ((pi.numberDensity - n0) / n0);
-		}
-	}
-}
-
-void MPS::setMatrix(const double& re) {
-	std::vector<Eigen::Triplet<double>> triplets;
-	auto n0 = refValues.n0_forLaplacian;
-	auto a  = 2.0 * settings.dim / (n0 * refValues.lambda);
-	coefficientMatrix.resize(particles.size(), particles.size());
-
-	for (auto& pi : particles) {
-		if (pi.boundaryCondition != FluidState::Inner)
-			continue;
-
-		double coefficient_ii = 0.0;
-		for (auto& neighbor : pi.neighbors) {
-			Particle& pj = particles[neighbor.id];
-			if (pj.boundaryCondition == FluidState::Ignored)
-				continue;
-
-			if (neighbor.distance < re) {
-				double coefficient_ij = a * weight(neighbor.distance, re) / settings.fluidDensity;
-				triplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
-				coefficient_ii += coefficient_ij;
-			}
-		}
-		coefficient_ii += (settings.compressibility) / (settings.dt * settings.dt);
-		triplets.emplace_back(pi.id, pi.id, coefficient_ii);
-	}
-	coefficientMatrix.setFromTriplets(triplets.begin(), triplets.end());
-
-	// exceptionalProcessingForBoundaryCondition();
-}
-void MPS::exceptionalProcessingForBoundaryCondition() {
-	std::vector<bool> checked(particles.size(), false);
-	std::vector<bool> connected(particles.size(), false);
-
-	for (auto& pi : particles) {
-		if (pi.boundaryCondition == FluidState::FreeSurface)
-			connected[pi.id] = true;
-		if (connected[pi.id])
-			continue;
-		// BFS for connected components
-		std::queue<size_t> queue;
-		queue.push(pi.id);
-		checked[pi.id] = true;
-		while (!queue.empty()) {
-			// pop front element
-			auto v = queue.front();
-			queue.pop();
-			// search for adjacent nodes
-			for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, v); it; ++it) {
-				auto nv = it.col();
-				if (!checked[nv]) {
-					if (connected[nv]) { // connected to boundary
-						connected[v] = true;
-						checked[v]   = true;
-						break;
-
-					} else {
-						queue.push(nv);
-						checked[nv] = true;
-					}
-				}
-			}
-		}
-	}
-}
-
-void MPS::solveSimultaneousEquations() {
-	sourceTerm.resize(particles.size());
-	pressure.resize(particles.size());
-
-#pragma omp parallel for
-	for (auto& pi : particles) {
-		sourceTerm[pi.id] = pi.sourceTerm;
-	}
-
-	Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
-	solver.compute(coefficientMatrix);
-	pressure = solver.solve(sourceTerm);
-	if (solver.info() != Eigen::Success) {
-		cerr << "Pressure calculation failed." << endl;
-		std::exit(-1);
-	}
-
-#pragma omp parallel for
-	for (auto& pi : particles) {
-		pi.pressure = pressure[pi.id];
-	}
-}
-void MPS::removeNegativePressure() {
-#pragma omp parallel for
-	for (auto& p : particles) {
-		if (p.pressure < 0.0) {
-			p.pressure = 0.0;
-		}
-	}
-}
-/**
- * @brief set minimum pressure for pressure gradient calculation
- * @param re effective radius \f$r_e\f$
- */
-void MPS::setMinimumPressure(const double& re) {
-#pragma omp parallel for
-	for (auto& p : particles) {
-		p.minimumPressure = p.pressure;
-	}
-
-	for (auto& pi : particles) {
-		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall)
-			continue;
-
-		for (auto& neighbor : pi.neighbors) {
-			Particle& pj = particles[neighbor.id];
-			if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
-				continue;
-			if (pj.id > pi.id)
-				continue;
-
-			if (neighbor.distance < re) {
-				pi.minimumPressure = std::min(pi.minimumPressure, pj.pressure);
-				pj.minimumPressure = std::min(pj.minimumPressure, pi.pressure);
-			}
 		}
 	}
 }

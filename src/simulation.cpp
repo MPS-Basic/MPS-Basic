@@ -12,7 +12,16 @@ Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);
 	saver       = Saver(input.settings.outputDirectory);
 
-	mps          = MPS(input);
+	ImplicitPressureCalculator pressureCalculator(
+		input.settings.dim,
+		input.settings.re_forNumberDensity,
+		input.settings.re_forLaplacian,
+		input.settings.lambda, // settings には lambda がない、、ここでは注入できないか、、
+		input.settings.re_forGradient,
+		input.settings.re_forLaplacian,
+		input.settings.relaxationCoefficientForPressure, input.settings.dt
+	);
+	mps          = MPS(input, pressureCalculator);
 	startTime    = input.startTime;
 	time         = startTime;
 	endTime      = input.settings.endTime;
