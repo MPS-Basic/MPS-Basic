@@ -1,10 +1,12 @@
 #include "refvalues.hpp"
 #include "weight.hpp"
+#include <cassert>
 #include <cmath>
 #include <utility>
 
 RefValues::RefValues(int dim, double particleDistance, double re) {
-
+	assert(dim == 2 || dim == 3);
+	assert(particleDistance < re);
 	int iZ_start = -4;
 	int iZ_end   = 5;
 	if (dim == 2) {
