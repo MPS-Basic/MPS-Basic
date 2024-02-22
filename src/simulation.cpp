@@ -14,7 +14,14 @@ Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);
 	saver       = Saver(input.settings.outputDirectory);
 
-	std::unique_ptr<IPressureCalculator> pressureCalculator ;
+	std::unique_ptr<IPressureCalculator> pressureCalculator(new ImplicitPressureCalculator(input.settings.dim,
+		input.settings.particleDistance,
+		input.settings.re_forNumberDensity,
+		input.settings.re_forLaplacian,
+		input.settings.dt,
+		input.settings.fluidDensity,
+		input.settings.compressibility,
+		input.settings.relaxationCoefficientForPressure));
 	mps          = MPS(input, std::move(pressureCalculator));
 	startTime    = input.startTime;
 	time         = startTime;
@@ -25,7 +32,6 @@ Simulation::Simulation(fs::path& settingPath) {
 
 void Simulation::run() {
 	startSimulation();
-	mps.init();
 	saver.save(mps, time);
 
 	while (time < endTime) {

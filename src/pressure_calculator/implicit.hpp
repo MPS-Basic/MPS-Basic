@@ -1,11 +1,12 @@
 #pragma once
 
 #include "../particle.hpp"
+#include "../refvalues.hpp"
 #include "interface.hpp"
 #include <Eigen/Sparse>
 #include <vector>
 
-class ImplicitPressureCalculator : IPressureCalculator {
+class ImplicitPressureCalculator : public IPressureCalculator {
 public:
 	/**
 	 * @brief calculate pressure
@@ -21,15 +22,14 @@ public:
 	                           double fluidDensity,
 	                           double compressibility,
 	                           double relaxationCoefficient);
-	~ImplicitPressureCalculator() override = default;
+	~ImplicitPressureCalculator() override;
 
 private:
 	int dimension;
-	double n0_forNumberDensity;
-	double n0_forLaplacian;
-	double lambda;
-	double re_forGradient;
-	double re_forLaplacian;
+	RefValues refValuesForNumberDensity;
+	RefValues refValuesForLaplacian;
+	double reForNumberDensity;
+	double reForLaplacian;
 	double dt;
 	double fluidDensity;
 	double compressibility;

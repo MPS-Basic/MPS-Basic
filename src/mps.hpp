@@ -78,7 +78,7 @@ private:
 	 * @brief set minimum pressure for pressure gradient calculation
 	 * @param re effective radius \f$r_e\f$
 	 */
-	void MPS::setMinimumPressure(const double& re);
+	void setMinimumPressure(const double& re);
 
 	/**
 	 * @brief calculate pressure gradient term
