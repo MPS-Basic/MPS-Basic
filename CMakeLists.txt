@@ -43,8 +43,8 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 add_executable(
     mps_test
-    # src/refvalues.cpp
-    # test/refvalues_test.cpp
+    src/refvalues.cpp
+    test/refvalues_test.cpp
     src/weight.cpp
     test/weight_test.cpp
 )
