@@ -6,6 +6,8 @@
 using std::cerr;
 using std::endl; 
 
+double a;
+
 MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
 	this->settings           = input.settings;
 	this->domain             = input.settings.domain;
