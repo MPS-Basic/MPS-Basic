@@ -1,6 +1,7 @@
 #include "simulation.hpp"
 #include "input.hpp"
-#include "pressure_calculator/implicit.hpp"
+// #include "pressure_calculator/implicit.hpp"
+#include "pressure_calculator/explicit.hpp"
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -14,16 +15,26 @@ Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);
 	saver       = Saver(input.settings.outputDirectory);
 
+	// std::unique_ptr<PressureCalculator::Interface> pressureCalculator(
+	// 	new PressureCalculator::Implicit(
+	// 		input.settings.dim,
+	// 		input.settings.particleDistance,
+	// 		input.settings.re_forNumberDensity,
+	// 		input.settings.re_forLaplacian,
+	// 		input.settings.dt,
+	// 		input.settings.fluidDensity,
+	// 		input.settings.compressibility,
+	// 		input.settings.relaxationCoefficientForPressure
+	// 	)
+	// );
+
 	std::unique_ptr<PressureCalculator::Interface> pressureCalculator(
-		new PressureCalculator::Implicit(
-			input.settings.dim,
-			input.settings.particleDistance,
-			input.settings.re_forNumberDensity,
-			input.settings.re_forLaplacian,
-			input.settings.dt,
+		new PressureCalculator::Explicit(
 			input.settings.fluidDensity,
-			input.settings.compressibility,
-			input.settings.relaxationCoefficientForPressure
+			input.settings.re_forNumberDensity,
+			17.1,
+			input.settings.dim,
+			input.settings.particleDistance
 		)
 	);
 
