@@ -8,7 +8,7 @@
 
 namespace PressureCalculator {
 
-class Implicit : public IPressureCalculator {
+class Implicit : public Interface {
 public:
 	/**
 	 * @brief calculate pressure

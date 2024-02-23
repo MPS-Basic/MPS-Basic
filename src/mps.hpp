@@ -28,13 +28,13 @@ public:
 	Bucket bucket;                   ///< Bucket for neighbor search
 	Domain domain;                   ///< Domain of the simulation
 
-	std::unique_ptr<IPressureCalculator> pressureCalculator; ///< Interface for pressure calculation
+	std::unique_ptr<PressureCalculator::Interface> pressureCalculator; ///< Interface for pressure calculation
 
 	double courant; ///< Maximum courant number among all particles
 
 	MPS() = default;
 
-	MPS(const Input& input, std::unique_ptr<IPressureCalculator>&& pressureCalculator);
+	MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator);
 
 	void stepForward();
 
