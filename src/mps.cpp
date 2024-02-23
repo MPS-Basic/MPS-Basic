@@ -34,7 +34,11 @@ void MPS::stepForward() {
 	setNeighbors(settings.reMax);
 	calNumberDensity(settings.re_forNumberDensity);
 	setBoundaryCondition();
-	pressureCalculator->calc(particles);
+	auto pressures = pressureCalculator->calc(particles);
+	for (auto& particle: particles) {
+		particle.pressure = pressures[particle.id];
+	}
+
 	setMinimumPressure(settings.re_forGradient);
 	calPressureGradient(settings.re_forGradient);
 	moveParticleUsingPressureGradient();

@@ -22,13 +22,23 @@ ImplicitPressureCalculator::ImplicitPressureCalculator(int dimension,
 	refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
 }
 
-void ImplicitPressureCalculator::calc(std::vector<Particle>& particles) {
+std::vector<double> ImplicitPressureCalculator::calc(const std::vector<Particle>& particles) {
 	this->particles = particles;
 	setSourceTerm();
 	setMatrix();
 	solveSimultaneousEquations();
 	removeNegativePressure();
-	particles = this->particles;
+
+	// this->pressure is defined as Eigen::VectorXd to solve pressure Poisson equation
+	// using the BiGCSTAB method in Eigen,
+	// but it is converted to std::vector<double> to return the result.
+	// This conversion is done by giving std::vector
+	// the pointers to the first and the last elements of the Eigen::VectorXd.
+	// If this type of conversion appears frequently,
+	// consider defining a function to convert the vector type.
+	std::vector<double> pressureStdVec(this->pressure.data(), this->pressure.data() + this->pressure.size());
+
+	return pressureStdVec;
 }
 
 ImplicitPressureCalculator::~ImplicitPressureCalculator() {
@@ -38,11 +48,14 @@ void ImplicitPressureCalculator::setSourceTerm() {
 	double n0    = refValuesForNumberDensity.n0;
 	double gamma = relaxationCoefficient;
 
+	sourceTerm.resize(particles.size());
+
 #pragma omp parallel for
 	for (auto& pi : particles) {
-		pi.sourceTerm = 0.0;
 		if (pi.boundaryCondition == FluidState::Inner) {
-			pi.sourceTerm = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+			sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+		} else {
+			sourceTerm[pi.id] = 0.0;
 		}
 	}
 }
@@ -114,13 +127,7 @@ void ImplicitPressureCalculator::exceptionalProcessingForBoundaryCondition() {
 }
 
 void ImplicitPressureCalculator::solveSimultaneousEquations() {
-	sourceTerm.resize(particles.size());
 	pressure.resize(particles.size());
-
-#pragma omp parallel for
-	for (auto& pi : particles) {
-		sourceTerm[pi.id] = pi.sourceTerm;
-	}
 
 	Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
 	solver.compute(coefficientMatrix);
@@ -129,18 +136,13 @@ void ImplicitPressureCalculator::solveSimultaneousEquations() {
 		cerr << "Pressure calculation failed." << endl;
 		std::exit(-1);
 	}
-
-#pragma omp parallel for
-	for (auto& pi : particles) {
-		pi.pressure = pressure[pi.id];
-	}
 }
 
 void ImplicitPressureCalculator::removeNegativePressure() {
 #pragma omp parallel for
-	for (auto& p : particles) {
-		if (p.pressure < 0.0) {
-			p.pressure = 0.0;
+	for (auto& p: pressure) {
+		if (p < 0) {
+			p = 0;
 		}
 	}
 }

@@ -12,7 +12,7 @@ public:
 	 * @brief calculate pressure
 	 * @param particles particles
 	 */
-	void calc(std::vector<Particle>& particles) override;
+	std::vector<double> calc(const std::vector<Particle>& particles) override;
 	~ImplicitPressureCalculator() override;
 
 	ImplicitPressureCalculator(int dimension,

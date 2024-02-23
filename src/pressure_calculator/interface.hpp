@@ -14,8 +14,10 @@ public:
 	/**
 	 * @brief calculate pressure
 	 * @param particles particles
+	 *
+	 * @return pressures of particles
 	 */
-	virtual void calc(std::vector<Particle>& particles) = 0;
+	virtual std::vector<double> calc(const std::vector<Particle>& particles) = 0;
 
 	/**
 	 * @brief destructor
