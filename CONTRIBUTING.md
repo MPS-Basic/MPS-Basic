@@ -14,25 +14,41 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
 
 - **C++ Standard**: We adhere to C++17.
 - **Exceptions**: Do **NOT** use exceptions.
-- **Macros**:
-  - Defined in `common.hpp`.
-  - Excessive use should be avoided.
-  - **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
-- **Declaration of namespace**:
-  - Should be minimum to prevent conflicts.
-  - Defined in each `cpp` files. Do **not** write it in `hpp` files to prevent spreading of the declaration.
-  - Do **not** declare entire name space. `using namespace std; // not good`
-  - You can declare a function if that's commonly used. `using std::cout; // not bad`
-  - You are **recommended** to rename long namespace, instead of declaring it. `namespace fs = std::filesystem; // good`
-  - Currently approved declarations:
-    - `using std::cout;`
-    - `using std::endl;`
-    - `namespace fs = std::filesystem;`
-    - `namespace chrono = std::chrono;`
-  - Curretnly **prohibited** declarations:
-    - `using namespace std;`
-    - `using namespace Eigen;`: to let beginers know Eigen is used
-    - `using std::vector`: not to be confused with `Vector` in Eigen
+
+### Macros
+- Defined in `common.hpp`.
+- Excessive use should be avoided.
+- **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
+
+### Declaration of Namespace
+- Should be minimum to prevent conflicts.
+- Defined in each `cpp` files. Do **not** write it in `hpp` files to prevent spreading of the declaration.
+- Do **not** declare entire name space.
+- You can declare a function if that's commonly used.
+- You are **recommended** to rename long namespace, instead of declaring it.
+  ```c++
+  using namespace std;            // not good
+  using std::cout;                // not bad
+  namespace fs = std::filesystem; // good
+  ```
+- Currently approved declarations:
+  ```c++
+  using std::cout;
+  using std::endl;
+  namespace fs = std::filesystem;
+  namespace chrono = std::chrono;
+  ```
+- Curretnly **prohibited** declarations:
+  ```c++
+  using namespace std;
+  using namespace Eigen; // to let beginers know Eigen is used
+  using std::vector      // not to be confused with `Vector` in Eigen
+  ```
+
+### Formatter
+- We use [clang-format](https://clang.llvm.org/docs/ClangFormat.html) as a formatter.
+- Settings for formatting is written in [.clang-format](.clang-format).
+- Create an issue and discuss when you want to change the format settings.
 
 ## Issue Creation
 
