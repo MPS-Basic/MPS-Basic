@@ -21,9 +21,13 @@ gravity: [0.0, -9.8, 0.0]
 # free surface detection ratio of the number density
 surfaceDetectionRatio: 0.97
 
-# pressure Poisson equation
+# pressure calculation method
+pressureCalculationMethod: Implicit # Implicit or Explicit
+# for Implicit
 compressibility: 0.45e-09
 relaxationCoefficientForPressure: 0.2
+# for Explicit
+speedOfSound: 17.1
 
 # collision
 collisionDistanceRatio: 0.5
@@ -37,4 +41,4 @@ radiusRatioForLaplacian: 3.1
 # i/o
 # relative path from the directory where this file is located
 profPath: ./input.prof
-outputDirectory: ../../result/dambreak
+outputDirectory: ../../result/explicit

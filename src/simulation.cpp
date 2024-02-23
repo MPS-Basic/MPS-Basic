@@ -1,11 +1,12 @@
 #include "simulation.hpp"
 #include "input.hpp"
-// #include "pressure_calculator/implicit.hpp"
 #include "pressure_calculator/explicit.hpp"
+#include "pressure_calculator/implicit.hpp"
 #include <cstdio>
 #include <iostream>
 #include <memory>
 
+using std::cerr;
 using std::cout;
 using std::endl;
 namespace fs     = std::filesystem;
@@ -15,28 +16,23 @@ Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);
 	saver       = Saver(input.settings.outputDirectory);
 
-	// std::unique_ptr<PressureCalculator::Interface> pressureCalculator(
-	// 	new PressureCalculator::Implicit(
-	// 		input.settings.dim,
-	// 		input.settings.particleDistance,
-	// 		input.settings.re_forNumberDensity,
-	// 		input.settings.re_forLaplacian,
-	// 		input.settings.dt,
-	// 		input.settings.fluidDensity,
-	// 		input.settings.compressibility,
-	// 		input.settings.relaxationCoefficientForPressure
-	// 	)
-	// );
+	std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
+	if (input.settings.pressureCalculationMethod == "Implicit") {
+		pressureCalculator.reset(new PressureCalculator::Implicit(
+		    input.settings.dim, input.settings.particleDistance, input.settings.re_forNumberDensity,
+		    input.settings.re_forLaplacian, input.settings.dt, input.settings.fluidDensity,
+		    input.settings.compressibility, input.settings.relaxationCoefficientForPressure));
 
-	std::unique_ptr<PressureCalculator::Interface> pressureCalculator(
-		new PressureCalculator::Explicit(
-			input.settings.fluidDensity,
-			input.settings.re_forNumberDensity,
-			17.1,
-			input.settings.dim,
-			input.settings.particleDistance
-		)
-	);
+	} else if (input.settings.pressureCalculationMethod == "Explicit") {
+		pressureCalculator.reset(new PressureCalculator::Explicit(
+		    input.settings.fluidDensity, input.settings.re_forNumberDensity, input.settings.speedOfSound,
+		    input.settings.dim, input.settings.particleDistance));
+
+	} else {
+		cerr << "Invalid pressure calculation method: " << input.settings.pressureCalculationMethod << endl;
+		cerr << "Please select either Implicit or Explicit." << endl;
+		std::exit(-1);
+	}
 
 	mps          = MPS(input, std::move(pressureCalculator));
 	startTime    = input.startTime;
