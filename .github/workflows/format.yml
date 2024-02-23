@@ -1,0 +1,33 @@
+name: Format code
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  formatter:
+    name: formatter
+    
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Install Dependencies
+        run: sudo apt install clang-format
+          
+      - name: Execute clang-format
+        run: find src -name *.cpp -o -name *.hpp | xargs clang-format -i -style=.clang-format --verbose
+        # find src - name *.cpp -o -name *.hpp: find files named *.cpp and *.hpp in src directory
+        # find -- | xargs clang-format: pass found files onto clang-format command
+        # -i: apply edits to files insted of displaying a diff
+        # --verbose: print extra infomation
+        
+      - name: Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply Code Formatter Changes
