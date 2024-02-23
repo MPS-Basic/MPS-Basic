@@ -1,11 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-
 #include "common.hpp"
 #include "domain.hpp"
 #include "particle.hpp"
+#include <iostream>
+#include <vector>
 
 /**
  * @brief Class for bucket for neighbor search

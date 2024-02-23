@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.hpp"
 #include "loader.hpp"
 #include "mps.hpp"
 #include "saver.hpp"
@@ -8,8 +9,6 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
-
-namespace fs = std::filesystem;
 
 /**
  * Simulation class
@@ -30,7 +29,7 @@ public:
 	double outputPeriod;
 	int timeStep = 0;
 
-	Simulation(fs::path& settingPath);
+	Simulation(std::filesystem::path& settingPath);
 
 	void run();
 

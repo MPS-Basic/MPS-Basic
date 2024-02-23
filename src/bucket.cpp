@@ -1,5 +1,8 @@
 #include "bucket.hpp"
 
+using std::cerr;
+using std::endl;
+
 void Bucket::generate(const int& particleNum) {
 	next.resize(particleNum);
 }
@@ -42,10 +45,10 @@ void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& doma
 		if (p.position.z() < domain.zMin || domain.zMax < p.position.z())
 			isInDomain = false;
 		if (!isInDomain) {
-			std::cerr << "WARNING: particle " << p.id << " is out of domain." << std::endl;
-			std::cerr << "x = " << p.position.x() << " ";
-			std::cerr << "y = " << p.position.y() << " ";
-			std::cerr << "z = " << p.position.z() << std::endl;
+			cerr << "WARNING: particle " << p.id << " is out of domain." << endl;
+			cerr << "x = " << p.position.x() << " ";
+			cerr << "y = " << p.position.y() << " ";
+			cerr << "z = " << p.position.z() << endl;
 			p.type = ParticleType::Ghost;
 			continue;
 			// std::exit(-1);

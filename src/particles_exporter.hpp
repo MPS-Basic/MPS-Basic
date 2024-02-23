@@ -1,9 +1,10 @@
 #pragma once
+
+#include "common.hpp"
 #include "particle.hpp"
 #include <filesystem>
 #include <fstream>
 #include <vector>
-namespace fs = std::filesystem;
 
 /**
  * ParticlesExporter class
@@ -19,8 +20,8 @@ public:
 	std::vector<Particle> particles;
 
 	void setParticles(const std::vector<Particle>& particles);
-	void toProf(const fs::path& path, const double& time);
-	void toVtu(const fs::path& path, const double& time);
+	void toProf(const std::filesystem::path& path, const double& time);
+	void toVtu(const std::filesystem::path& path, const double& time);
 
 private:
 	void dataArrayBegin(std::ofstream& ofs,

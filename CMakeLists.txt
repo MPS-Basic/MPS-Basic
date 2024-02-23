@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # main executable
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
   src/bucket.cpp
   src/loader.cpp
   src/main.cpp
@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME}
   src/saver.cpp
   src/simulation.cpp
   src/weight.cpp
+  src/pressure_calculator/implicit.cpp
 )
 
 # OpenMP
@@ -42,7 +43,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 add_executable(
     mps_test
-    src/refvalues.cpp  
+    src/refvalues.cpp
     test/refvalues_test.cpp
     src/weight.cpp
     test/weight_test.cpp
@@ -85,7 +86,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
 # particle generator
 add_subdirectory(generator)
-add_library(particles SHARED
+add_library(particles STATIC
   src/particle.cpp
   src/particles_exporter.cpp
 )
