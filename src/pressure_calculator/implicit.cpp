@@ -28,6 +28,7 @@ void ImplicitPressureCalculator::calc(std::vector<Particle>& particles) {
 	setMatrix();
 	solveSimultaneousEquations();
 	removeNegativePressure();
+	particles = this->particles;
 }
 
 ImplicitPressureCalculator::~ImplicitPressureCalculator() {
