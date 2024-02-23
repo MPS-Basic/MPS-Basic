@@ -12,6 +12,7 @@ MPS::MPS(const Input& input, std::unique_ptr<IPressureCalculator>&& pressureCalc
 	this->particles          = input.particles;
 	this->pressureCalculator = std::move(pressureCalculator);
 
+	refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
 	refValuesForGradient  = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
 	refValuesForLaplacian = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
 
@@ -31,6 +32,9 @@ void MPS::stepForward() {
 
 	bucket.storeParticles(particles, domain);
 	setNeighbors(settings.reMax);
+	calNumberDensity(settings.re_forNumberDensity);
+	setBoundaryCondition();
+	pressureCalculator->calc(particles);
 	setMinimumPressure(settings.re_forGradient);
 	calPressureGradient(settings.re_forGradient);
 	moveParticleUsingPressureGradient();
@@ -135,6 +139,24 @@ void MPS::calNumberDensity(const double& re) {
 
 		for (auto& neighbor : pi.neighbors)
 			pi.numberDensity += weight(neighbor.distance, re);
+	}
+}
+
+void MPS::setBoundaryCondition() {
+	double n0   = refValuesForNumberDensity.n0;
+	double beta = settings.surfaceDetectionRatio;
+
+#pragma omp parallel for
+	for (auto& pi : particles) {
+		if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
+			pi.boundaryCondition = FluidState::Ignored;
+
+		} else if (pi.numberDensity < beta * n0) {
+			pi.boundaryCondition = FluidState::FreeSurface;
+
+		} else {
+			pi.boundaryCondition = FluidState::Inner;
+		}
 	}
 }
 

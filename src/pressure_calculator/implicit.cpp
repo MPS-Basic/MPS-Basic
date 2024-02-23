@@ -39,10 +39,9 @@ void ImplicitPressureCalculator::setSourceTerm() {
 
 #pragma omp parallel for
 	for (auto& pi : particles) {
+		pi.sourceTerm = 0.0;
 		if (pi.boundaryCondition == FluidState::Inner) {
-			sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
-		} else {
-			sourceTerm[pi.id] = 0.0;
+			pi.sourceTerm = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
 		}
 	}
 }

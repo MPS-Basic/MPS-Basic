@@ -21,6 +21,7 @@
 class MPS {
 public:
 	Settings settings;               ///< Settings for the simulation
+	RefValues refValuesForNumberDensity; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
 	RefValues refValuesForLaplacian; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
 	RefValues refValuesForGradient;  ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
 	std::vector<Particle> particles; ///< Particles in the simulation
@@ -74,6 +75,11 @@ private:
 	 * @param re effective radius \f$r_e\f$
 	 */
 	void calNumberDensity(const double& re);
+
+	/**
+	 *@brief set boundary condition of pressure Poisson equation
+	 */
+	void setBoundaryCondition();
 
 	/**
 	 * @brief set minimum pressure for pressure gradient calculation
