@@ -14,11 +14,11 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
 
 - **C++ Standard**: We adhere to C++17.
 - **Exceptions**: Do **NOT** use exceptions.
+- **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
 
 ### Macros
-- Defined in `common.hpp`.
-- Excessive use should be avoided.
-- **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
+- Currently no macros are approved.
+- Create an issue and discuss when you want to use a new macro.
 
 ### Declaration of Namespace
 - Should be minimum to prevent conflicts.
