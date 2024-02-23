@@ -22,6 +22,7 @@ jobs:
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
           tidy-review: true
           format-review: true
+          step-summary: true
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
