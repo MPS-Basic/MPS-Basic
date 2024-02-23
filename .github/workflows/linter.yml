@@ -23,6 +23,7 @@ jobs:
           tidy-review: true
           format-review: true
           database: '.'
+          extra-args: '-Wall'
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
