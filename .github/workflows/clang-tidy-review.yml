@@ -3,6 +3,9 @@ name: clang-tidy-review
 # You can be more specific, but it currently only works on pull requests
 on: [pull_request]
 
+permissions:
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
