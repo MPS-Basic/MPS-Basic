@@ -4,25 +4,30 @@
 #include <iostream>
 #include <queue>
 
+using PressureCalculator::Implicit;
 using std::cerr;
 using std::endl;
 
-ImplicitPressureCalculator::ImplicitPressureCalculator(int dimension,
-                                                       double particleDistance,
-                                                       double reForNumberDensity,
-                                                       double reForLaplacian,
-                                                       double dt,
-                                                       double fluidDensity,
-                                                       double compressibility,
-                                                       double relaxationCoefficient)
-    : dimension(dimension), reForNumberDensity(reForNumberDensity), reForLaplacian(reForLaplacian), dt(dt),
-      fluidDensity(fluidDensity), compressibility(compressibility), relaxationCoefficient(relaxationCoefficient) {
-
-	refValuesForNumberDensity = RefValues(dimension, particleDistance, reForNumberDensity);
-	refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
+Implicit::Implicit(int dimension,
+                   double particleDistance,
+                   double reForNumberDensity,
+                   double reForLaplacian,
+                   double dt,
+                   double fluidDensity,
+                   double compressibility,
+                   double relaxationCoefficient) {
+	this->dimension                 = dimension;
+	this->reForNumberDensity        = reForNumberDensity;
+	this->reForLaplacian            = reForLaplacian;
+	this->dt                        = dt;
+	this->fluidDensity              = fluidDensity;
+	this->compressibility           = compressibility;
+	this->relaxationCoefficient     = relaxationCoefficient;
+	this->refValuesForNumberDensity = RefValues(dimension, particleDistance, reForNumberDensity);
+	this->refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
 }
 
-std::vector<double> ImplicitPressureCalculator::calc(const std::vector<Particle>& particles) {
+std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
 	this->particles = particles;
 	setSourceTerm();
 	setMatrix();
@@ -41,10 +46,10 @@ std::vector<double> ImplicitPressureCalculator::calc(const std::vector<Particle>
 	return pressureStdVec;
 }
 
-ImplicitPressureCalculator::~ImplicitPressureCalculator() {
+Implicit::~Implicit() {
 }
 
-void ImplicitPressureCalculator::setSourceTerm() {
+void Implicit::setSourceTerm() {
 	double n0    = refValuesForNumberDensity.n0;
 	double gamma = relaxationCoefficient;
 
@@ -60,7 +65,7 @@ void ImplicitPressureCalculator::setSourceTerm() {
 	}
 }
 
-void ImplicitPressureCalculator::setMatrix() {
+void Implicit::setMatrix() {
 	std::vector<Eigen::Triplet<double>> triplets;
 	auto a  = 2.0 * dimension / (refValuesForLaplacian.n0 * refValuesForLaplacian.lambda);
 	auto re = reForLaplacian;
@@ -90,7 +95,7 @@ void ImplicitPressureCalculator::setMatrix() {
 	// exceptionalProcessingForBoundaryCondition();
 }
 
-void ImplicitPressureCalculator::exceptionalProcessingForBoundaryCondition() {
+void Implicit::exceptionalProcessingForBoundaryCondition() {
 	std::vector<bool> checked(particles.size(), false);
 	std::vector<bool> connected(particles.size(), false);
 
@@ -126,7 +131,7 @@ void ImplicitPressureCalculator::exceptionalProcessingForBoundaryCondition() {
 	}
 }
 
-void ImplicitPressureCalculator::solveSimultaneousEquations() {
+void Implicit::solveSimultaneousEquations() {
 	pressure.resize(particles.size());
 
 	Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
@@ -138,9 +143,9 @@ void ImplicitPressureCalculator::solveSimultaneousEquations() {
 	}
 }
 
-void ImplicitPressureCalculator::removeNegativePressure() {
+void Implicit::removeNegativePressure() {
 #pragma omp parallel for
-	for (auto& p: pressure) {
+	for (auto& p : pressure) {
 		if (p < 0) {
 			p = 0;
 		}

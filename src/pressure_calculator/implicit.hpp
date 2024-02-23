@@ -6,23 +6,25 @@
 #include <Eigen/Sparse>
 #include <vector>
 
-class ImplicitPressureCalculator : public IPressureCalculator {
+namespace PressureCalculator {
+
+class Implicit : public IPressureCalculator {
 public:
 	/**
 	 * @brief calculate pressure
 	 * @param particles particles
 	 */
 	std::vector<double> calc(const std::vector<Particle>& particles) override;
-	~ImplicitPressureCalculator() override;
+	~Implicit() override;
 
-	ImplicitPressureCalculator(int dimension,
-	                           double particleDistance,
-	                           double re_forGradient,
-	                           double re_forLaplacian,
-	                           double dt,
-	                           double fluidDensity,
-	                           double compressibility,
-	                           double relaxationCoefficient);
+	Implicit(int dimension,
+	         double particleDistance,
+	         double re_forGradient,
+	         double re_forLaplacian,
+	         double dt,
+	         double fluidDensity,
+	         double compressibility,
+	         double relaxationCoefficient);
 
 private:
 	int dimension;
@@ -83,3 +85,5 @@ private:
 	 */
 	void removeNegativePressure();
 };
+
+} // namespace PressureCalculator

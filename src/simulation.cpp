@@ -15,7 +15,7 @@ Simulation::Simulation(fs::path& settingPath) {
 	saver       = Saver(input.settings.outputDirectory);
 
 	std::unique_ptr<IPressureCalculator> pressureCalculator(
-		new ImplicitPressureCalculator(
+		new PressureCalculator::Implicit(
 			input.settings.dim,
 			input.settings.particleDistance,
 			input.settings.re_forNumberDensity,
