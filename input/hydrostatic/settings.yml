@@ -1,0 +1,40 @@
+# computational conditions
+dim: 2
+particleDistance: 0.012
+dt: 0.002
+endTime: 10.0
+outputPeriod: 0.1
+cflCondition: 0.3
+numPhysicalCores: 4
+
+# domain
+domainMin: [-0.25, -0.05, 0.0]
+domainMax: [0.25, 0.6, 0.0]
+
+# physical properties
+fluidDensity: 1000.0
+kinematicViscosity: 1.0e-04 # 少数第一位まで書かないと文字列として認識されてしまう
+
+# gravity
+gravity: [0.0, -10.0, 0.0]
+
+# free surface detection ratio of the number density
+surfaceDetectionRatio: 0.97
+
+# pressure Poisson equation
+compressibility: 0.45e-09
+relaxationCoefficientForPressure: 0.2
+
+# collision
+collisionDistanceRatio: 0.5
+coefficientOfRestitution: 0.2
+
+# effective radius
+radiusRatioForNumberDensity: 3.1
+radiusRatioForGradient: 2.1
+radiusRatioForLaplacian: 3.1
+
+# i/o
+# relative path from the directory where this file is located
+profPath: ./input.prof
+outputDirectory: ../../result/hydrostatic
