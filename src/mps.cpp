@@ -4,7 +4,7 @@
 #include <queue>
 
 using std::cerr;
-using std::endl; 
+using std::endl;
 
 double a;
 
