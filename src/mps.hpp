@@ -20,13 +20,13 @@
  */
 class MPS {
 public:
-	Settings settings;               ///< Settings for the simulation
+	Settings settings;                   ///< Settings for the simulation
 	RefValues refValuesForNumberDensity; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
-	RefValues refValuesForLaplacian; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
-	RefValues refValuesForGradient;  ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
-	std::vector<Particle> particles; ///< Particles in the simulation
-	Bucket bucket;                   ///< Bucket for neighbor search
-	Domain domain{};                 ///< Domain of the simulation
+	RefValues refValuesForLaplacian;     ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
+	RefValues refValuesForGradient;      ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
+	std::vector<Particle> particles;     ///< Particles in the simulation
+	Bucket bucket;                       ///< Bucket for neighbor search
+	Domain domain{};                     ///< Domain of the simulation
 
 	std::unique_ptr<PressureCalculator::Interface> pressureCalculator; ///< Interface for pressure calculation
 
