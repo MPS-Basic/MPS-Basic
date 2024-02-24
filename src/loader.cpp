@@ -68,7 +68,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
 	s.compressibility                  = yaml["compressibility"].as<double>();
 	s.relaxationCoefficientForPressure = yaml["relaxationCoefficientForPressure"].as<double>();
 	// for Explicit
-	s.speedOfSound = yaml["speedOfSound"].as<double>();
+	s.soundSpeed = yaml["soundSpeed"].as<double>();
 
 	// collision
 	s.collisionDistance        = yaml["collisionDistanceRatio"].as<double>() * s.particleDistance;

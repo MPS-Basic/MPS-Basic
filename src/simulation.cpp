@@ -25,7 +25,7 @@ Simulation::Simulation(fs::path& settingPath) {
 
 	} else if (input.settings.pressureCalculationMethod == "Explicit") {
 		pressureCalculator.reset(new PressureCalculator::Explicit(
-		    input.settings.fluidDensity, input.settings.re_forNumberDensity, input.settings.speedOfSound,
+		    input.settings.fluidDensity, input.settings.re_forNumberDensity, input.settings.soundSpeed,
 		    input.settings.dim, input.settings.particleDistance));
 
 	} else {

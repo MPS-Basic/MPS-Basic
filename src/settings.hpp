@@ -39,7 +39,7 @@ struct Settings {
 	double compressibility;                  ///< Compressibility of the fluid for Implicit method
 	double relaxationCoefficientForPressure; ///< Relaxation coefficient for pressure for Implicit method
 	// for Explicit
-	double speedOfSound; ///< Speed of sound for Explicit method
+	double soundSpeed; ///< Speed of sound for Explicit method
 
 	// collision
 	double collisionDistance;        ///< Distance for collision detection
