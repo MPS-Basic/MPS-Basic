@@ -9,14 +9,14 @@ using std::endl;
 MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
 	this->settings           = input.settings;
 	this->domain             = input.settings.domain;
-	this->particles        = input.particles;
+	this->particles          = input.particles;
 	this->pressureCalculator = std::move(pressureCalculator);
 
-	refValuesForNumberDensity= RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
-	refValuesForGradient  = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
-	refValuesForLaplacian = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
+	refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
+	refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
+	refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
 
-	bucket.set(settings.reMax, settings.cflCondition, domain,   particles.size());
+	bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
 }
 
 void MPS::stepForward() {
