@@ -4,7 +4,7 @@
 #include <queue>
 
 using std::cerr;
-using std::endl;  
+using std::endl;
 
 MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
 	this->settings           = input.settings;
