@@ -1,7 +1,9 @@
 #include "simulation.hpp"
 #include "input.hpp"
+#include "pressure_calculator/implicit.hpp"
 #include <cstdio>
 #include <iostream>
+#include <memory>
 
 using std::cout;
 using std::endl;
@@ -12,7 +14,20 @@ Simulation::Simulation(fs::path& settingPath) {
 	Input input = loader.load(settingPath);
 	saver       = Saver(input.settings.outputDirectory);
 
-	mps          = MPS(input);
+	std::unique_ptr<PressureCalculator::Interface> pressureCalculator(
+		new PressureCalculator::Implicit(
+			input.settings.dim,
+			input.settings.particleDistance,
+			input.settings.re_forNumberDensity,
+			input.settings.re_forLaplacian,
+			input.settings.dt,
+			input.settings.fluidDensity,
+			input.settings.compressibility,
+			input.settings.relaxationCoefficientForPressure
+		)
+	);
+
+	mps          = MPS(input, std::move(pressureCalculator));
 	startTime    = input.startTime;
 	time         = startTime;
 	endTime      = input.settings.endTime;
@@ -22,7 +37,6 @@ Simulation::Simulation(fs::path& settingPath) {
 
 void Simulation::run() {
 	startSimulation();
-	mps.init();
 	saver.save(mps, time);
 
 	while (time < endTime) {
