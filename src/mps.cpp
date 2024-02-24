@@ -50,7 +50,7 @@ void MPS::stepForward() {
 	// Update pressure again when using EMPS
 	if (auto explicitPressureCalculator = dynamic_cast<PressureCalculator::Explicit*>(pressureCalculator.get())) {
 		auto pressures = explicitPressureCalculator->calc(particles);
-		for (auto& particle: particles) {
+		for (auto& particle : particles) {
 			particle.pressure = pressures[particle.id];
 		}
 	}
