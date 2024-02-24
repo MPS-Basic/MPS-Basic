@@ -18,9 +18,9 @@ public:
 	Explicit(double fluidDensity, double n0, double soundSpeed, int dimension, double particleDistance);
 
 private:
-    double fluidDensity;
-    double n0;
-    double soundSpeed;
+	double fluidDensity;
+	double n0;
+	double soundSpeed;
 };
 
 } // namespace PressureCalculator
