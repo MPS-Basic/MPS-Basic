@@ -1,7 +1,6 @@
 #include "loader.hpp"
 #include <cmath>
 #include <iostream>
-#include <cmath>
 #include <yaml-cpp/yaml.h>
 
 using std::cerr;
