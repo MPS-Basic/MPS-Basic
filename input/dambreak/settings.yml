@@ -27,7 +27,7 @@ pressureCalculationMethod: Implicit # Implicit or Explicit
 compressibility: 0.45e-09
 relaxationCoefficientForPressure: 0.2
 # for Explicit
-speedOfSound: 17.1
+soundSpeed: 17.1
 
 # collision
 collisionDistanceRatio: 0.5
