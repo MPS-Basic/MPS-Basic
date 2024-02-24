@@ -13,8 +13,8 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
 	this->pressureCalculator = std::move(pressureCalculator);
 
 	refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
-	refValuesForGradient  = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
-	refValuesForLaplacian = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
+	refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
+	refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
 
 	bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
 }
