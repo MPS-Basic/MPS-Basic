@@ -1,6 +1,6 @@
 # MPS-Basic
 
-![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/build-cmake.yml/badge.svg)  
+![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/build-cmake.yml/badge.svg)
 ![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/doxygen-pages.yml/badge.svg)
 
 Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
@@ -39,9 +39,10 @@ Get-ChildItem result/dambreak -Include *.* -Recurse | del # remove all folders/f
 ./build/mps.exe input/dambreak/settings.yml 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
 ```
 
-#### Linux
+#### Linux/Mac
 ```bash
 mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
+rm -rf result/dambreak/*
 ./build/mps input/dambreak/settings.yml 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
 ```
 
