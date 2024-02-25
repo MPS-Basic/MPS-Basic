@@ -27,7 +27,7 @@ public:
 };
 
 int main(int argc, char** argv) {
-	std::vector<Particle> particles;
+    std::vector<Particle> particles;
 
 	double l0 = 0.012;
 
