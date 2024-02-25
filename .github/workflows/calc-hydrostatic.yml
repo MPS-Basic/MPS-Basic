@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
         run: >
           python3 ${{ github.workspace }}/ci/upload_image.py 
-          ${{ github.workspace }}/output_0100.png
+          "${{ github.workspace }}/output_0100.png"
           
       - name: Create comment
         run: |
