@@ -25,7 +25,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build libomp-15-dev
-          pip3 install meshio matplotlib PyGithub images-upload-cli gtk
+          pip3 install meshio matplotlib PyGithub images-upload-cli PyQt4
           
       # - name: Configure CMake
       #   run: >
