@@ -22,7 +22,7 @@ jobs:
       run: |
         sudo apt-get update 
         sudo apt-get install -y ninja-build libomp-15-dev
-        pip3 install meshio matplotlib
+        pip3 install meshio matplotlib PyGithub
     - name: Configure CMake
       run: >
         cmake
@@ -42,12 +42,10 @@ jobs:
     - name: visualize results
       run: >
         python3 ${{ github.workspace }}/ci/visualize_vtk.py 
-        ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu 0.012 
+        ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu
         ${{ github.workspace }}/result/hydrostatic/output_0100.png
-    - uses:  edunad/actions-image@v2.0.3
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
-        title: Pressure distribution of hydrostatic test
-        annotationLevel: notice
-        annotationTag: intput/hydrostatic/settings.yml
+    - name: Comment on Pull request
+      run: >
+        python3 ${{ github.workspace }}/ci/comment_on_pr.py
+        ${{ secrets.GITHUB_TOKEN }}
+        ${{ github.workspace }}/result/hydrostatic/output_0100.png
