@@ -64,7 +64,7 @@ jobs:
 
       - name: temp
         run: |
-          mkdir /home/runner/.config -f
+          mkdir /home/runner/.config -p
           echo "4e76ea5fdfa558896c27a9b55cca7768" > '/home/runner/.config/images-upload-cli/.env'
           images-upload-cli -h imgbb ${{ github.workspace }}/output_0100.png
           
