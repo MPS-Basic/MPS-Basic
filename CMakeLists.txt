@@ -19,7 +19,9 @@ add_executable(${PROJECT_NAME}
   src/pressure_calculator/explicit.cpp
 )
 
-# OpenMP
+# ------------------
+# ----- OpenMP -----
+# ------------------
 find_package(OpenMP 5.0)
 if(OpenMP_CXX_FOUND)
   target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
@@ -27,10 +29,14 @@ else()
   message(WARNING "OpenMP not found. It runs on single thread.")
 endif()
 
-# eigen
+# -----------------
+# ----- Eigen -----
+# -----------------
 target_include_directories(${PROJECT_NAME} PUBLIC eigen)
 
-# google test
+# -----------------------
+# ----- Google Test -----
+# -----------------------
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -67,9 +73,10 @@ gtest_discover_tests(mps_test)
 #     set(CMAKE_CXX_FLAGS_PROFILE --coverage)
 # endif()
 
-# yaml-cpp
+# --------------------
+# ----- yaml-cpp -----
+# --------------------
 include(FetchContent)
-
 FetchContent_Declare(
   yaml-cpp
   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
@@ -85,10 +92,24 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
-# particle generator
+# ------------------------------
+# ----- particle generator -----
+# ------------------------------
 add_subdirectory(generator)
 add_library(particles STATIC
   src/particle.cpp
   src/particles_exporter.cpp
 )
 target_include_directories(particles PUBLIC eigen)
+
+# --------------------
+# ----- argparse -----
+# --------------------
+include(FetchContent)
+FetchContent_Declare(
+    argparse
+    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+    GIT_TAG v3.0
+)
+FetchContent_MakeAvailable(argparse)
+target_link_libraries(${PROJECT_NAME} PUBLIC argparse)

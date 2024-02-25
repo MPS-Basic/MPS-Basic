@@ -17,7 +17,7 @@
  */
 class Loader {
 public:
-    Input load(const std::filesystem::path& settingPath);
+    Input load(const std::filesystem::path& settingPath, const std::filesystem::path& outputDirectory);
 
 private:
     Settings loadSettingYaml(const std::filesystem::path& settingPath);
