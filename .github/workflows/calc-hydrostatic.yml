@@ -64,10 +64,12 @@ jobs:
       #     if-no-files-found: error
 
       - name: temp
+        continue-on-error: true
         run: |
           mkdir /home/runner/.config/images-upload-cli -p
           echo "IMGBB_KEY=4e76ea5fdfa558896c27a9b55cca7768" > '/home/runner/.config/images-upload-cli/.env'
-          images-upload-cli -h imgbb ${{ github.workspace }}/output_0100.png
+          URL=$(images-upload-cli -h imgbb ${{ github.workspace }}/output_0100.png)
+          echo ${URL}
           
       - name: Create comment
         run: |
