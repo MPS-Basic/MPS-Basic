@@ -11,8 +11,8 @@ namespace fs = std::filesystem;
 
 class Box2d {
 private:
-	Eigen::Vector2d center;
-	Eigen::Vector2d box_size;
+    Eigen::Vector2d center;
+    Eigen::Vector2d box_size;
 
 public:
 	Box2d() = default;
