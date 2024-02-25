@@ -2,6 +2,7 @@
 
 #include "../particle.hpp"
 #include "interface.hpp"
+
 #include <vector>
 
 namespace PressureCalculator {

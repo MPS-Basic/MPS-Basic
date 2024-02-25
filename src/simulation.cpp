@@ -1,7 +1,9 @@
 #include "simulation.hpp"
+
 #include "input.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
+
 #include <cstdio>
 #include <iostream>
 #include <memory>

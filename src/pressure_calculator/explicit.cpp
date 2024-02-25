@@ -1,4 +1,5 @@
 #include "explicit.hpp"
+
 #include "../refvalues.hpp"
 
 using PressureCalculator::Explicit;

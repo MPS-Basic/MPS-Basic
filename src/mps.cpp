@@ -1,6 +1,8 @@
 #include "mps.hpp"
+
 #include "particle.hpp"
 #include "weight.hpp"
+
 #include <queue>
 
 // This include is for checking if the pressure calculator is explicit.

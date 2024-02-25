@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "input.hpp"
+
 #include <filesystem>
 #include <utility>
 #include <vector>

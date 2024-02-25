@@ -1,5 +1,7 @@
 #include "refvalues.hpp"
+
 #include "weight.hpp"
+
 #include <cassert>
 #include <cmath>
 #include <utility>

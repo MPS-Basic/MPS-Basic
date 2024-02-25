@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "particle.hpp"
 #include "settings.hpp"
+
 #include <vector>
 
 /**
