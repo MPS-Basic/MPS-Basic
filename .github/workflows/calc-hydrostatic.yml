@@ -25,23 +25,23 @@ jobs:
           sudo apt-get install -y ninja-build libomp-15-dev
           pip3 install meshio matplotlib PyGithub images-upload-cli
           
-      - name: Configure CMake
-        run: >
-          cmake
-          -G Ninja
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_CXX_COMPILER=clang++-15
-          -S ${{ github.workspace }}
-          -B  ${{ steps.strings.outputs.build-output-dir }}
+      # - name: Configure CMake
+      #   run: >
+      #     cmake
+      #     -G Ninja
+      #     -DCMAKE_BUILD_TYPE=Release
+      #     -DCMAKE_CXX_COMPILER=clang++-15
+      #     -S ${{ github.workspace }}
+      #     -B  ${{ steps.strings.outputs.build-output-dir }}
           
-      - name: Build
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
+      # - name: Build
+      #   run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
         
-      - name: Generate input
-        run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
+      # - name: Generate input
+      #   run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
         
-      - name: Create result directory
-        run: mkdir -p ${{ github.workspace }}/result/hydrostatic
+      # - name: Create result directory
+      #   run: mkdir -p ${{ github.workspace }}/result/hydrostatic
         
       # - name: Run
       #   run: >
@@ -63,7 +63,7 @@ jobs:
       #     if-no-files-found: error
 
       - name: temp
-        run: images-upload-cli -h -imgbb ${{ github.workspace }}/output_0100.png
+        run: images-upload-cli -h imgbb ${{ github.workspace }}/output_0100.png
           
       - name: Create comment
         run: |
