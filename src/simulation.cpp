@@ -14,9 +14,9 @@ using std::endl;
 namespace fs     = std::filesystem;
 namespace chrono = std::chrono;
 
-Simulation::Simulation(fs::path& settingPath) {
-    Input input = loader.load(settingPath);
-    saver       = Saver(input.settings.outputDirectory);
+Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
+    Input input = loader.load(settingPath, outputDirectory);
+    saver       = Saver(outputDirectory);
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
     if (input.settings.pressureCalculationMethod == "Implicit") {
