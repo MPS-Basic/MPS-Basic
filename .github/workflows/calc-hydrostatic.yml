@@ -18,6 +18,7 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "pr-comment=${{ github.workspace }}/pr_comment.md" >> "$GITHUB_OUTPUT"
     - name: Install dependencies for Ubuntu # Install ninja, OpenMP, and Python packages
       run: |
         sudo apt-get update 
@@ -44,8 +45,18 @@ jobs:
         python3 ${{ github.workspace }}/ci/visualize_vtk.py 
         ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu
         ${{ github.workspace }}/result/hydrostatic/output_0100.png
-    - name: Comment on Pull request
-      run: >
-        python3 ${{ github.workspace }}/ci/put_image_on_pr.py
-        ${{ secrets.GITHUB_TOKEN }}
-        ${{ github.workspace }}/result/hydrostatic/output_0100.png
+    - uses: actions/upload-artifact@v2
+      id: upload-result-hydrostatic
+      with:
+        name: result_hydrostatic
+        path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
+        if-no-files-found: error
+    - name: Create comment
+      run: |
+        echo "See ![hydrostatic result]( ${{steps.upload-result-hydrostatic.outputs.artifact_url}} )" > ${{ steps.strings.outputs.pr-comment }}
+    - name: Comment on PR
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        URL: ${{ github.event.pull_request.html_url }}
+      run:
+        gh pr comment -F ${{ steps.strings.outputs.pr-comment }} "${URL}"
