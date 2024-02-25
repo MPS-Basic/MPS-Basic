@@ -29,6 +29,8 @@ jobs:
         -B  ${{ steps.strings.outputs.build-output-dir }}
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} -j4
+    - name: Generate grid
+      run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
     - name: Run
       run: ${{ steps.strings.outputs.build-output-dir }}/mps ${{ github.workspace }}/input/hydrostatic/settings.yml
     - name: visualize results
