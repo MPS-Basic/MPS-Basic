@@ -17,16 +17,15 @@
  */
 class ParticlesExporter {
 public:
-	std::vector<Particle> particles;
+    std::vector<Particle> particles;
 
-	void setParticles(const std::vector<Particle>& particles);
-	void toProf(const std::filesystem::path& path, const double& time);
-	void toVtu(const std::filesystem::path& path, const double& time);
+    void setParticles(const std::vector<Particle>& particles);
+    void toProf(const std::filesystem::path& path, const double& time);
+    void toVtu(const std::filesystem::path& path, const double& time);
 
 private:
-	void dataArrayBegin(std::ofstream& ofs,
-	                    const std::string& numberOfComponents,
-	                    const std::string& type,
-	                    const std::string& name);
-	void dataArrayEnd(std::ofstream& ofs);
+    void dataArrayBegin(
+        std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
+    );
+    void dataArrayEnd(std::ofstream& ofs);
 };
