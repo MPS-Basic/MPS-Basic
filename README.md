@@ -23,12 +23,14 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
 ## Execution
 ### Build
-```bash
-cmake -S . -B build # Generate build system
-# -S: Source tree. The location of CMakeLists.txt
-# -B: Build tree. Directory for storing products for builds
-cmake --build build # Execute build
-```
+1. Generate build system
+	```bash
+	cmake -S . -B build
+	```
+1. Execute build
+	```bash
+	cmake --build build
+	```
 
 > [!NOTE]
 > Install dependencies as shown above for the first build
@@ -38,17 +40,28 @@ cmake --build build # Execute build
 
 ### Execution
 #### Windows
-```powershell
-New-Item -ItemType Directory -Path result/dambreak -Force # create or clean output directory
-./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
-```
+1. Create or clean output directory
+	```powershell
+	New-Item -ItemType Directory -Path result/dambreak -Force
+	```
+1. Run simulation
+	```powershell
+	./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log"
+	```
 
 #### Linux/Mac
-```bash
-mkdir -p result/dambreak/ # create output directory if not exist
-rm -rf result/dambreak/* # remove old output files if exit
-./build/mps --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
-```
+1. Create output directory if not exist
+	```bash
+	mkdir -p result/dambreak/
+	```
+1. Remove old output files if exist
+	```bash
+	rm -rf result/dambreak/*
+	```
+1. Run simulation
+	```bash
+	./build/mps --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | tee result/dambreak/console.log
+	```
 
 ## I/O
 ### Input

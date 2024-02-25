@@ -13,14 +13,12 @@
 - Doxygen and Graphviz (optional, for building documents)
 
 ### Dependencies
-- Install dependencies as follows before the first build.
-	```bash
-	git submodule update --init eigen
-	```
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 
 ## Command Line Execution
 
-@note It's easier to do it in the VS code as shown later,
+@note
+It's easier to do it in the VS code as shown later,
 but it's better to do it in command line for your understanding.
 
 ### Build
@@ -35,35 +33,58 @@ cmake --build build # Execute build
   and move to the directory (`cd build`), thanks to the `-B build` option.
   The `build` directory will be automatically generated if you don't have one.
 
+@note
+Install dependencies as shown above for the first build
+```bash
+git submodule update --init eigen
+```
+
 ### Execution
 #### Windows
-```powershell
-Get-ChildItem result/dambreak -Include *.* -Recurse | del # remove all folders/files in result/dambreak
-./build/mps.exe input/dambreak/settings.yml 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
-```
-The execution command consists of three parts.
-1. Pass the location of the input file and execute.
-	```bash
-	./build/mps.exe input/dambreak/settings.yml
+1. Create or clean output directory
+	```powershell
+	New-Item -ItemType Directory -Path result/dambreak -Force
 	```
-2. Change standard error output to the specified file.
-	```bash
-	2> result/dambreak/error.log
-	```
-3. Save the console output to the specified file.
-	```bash
-	Tee-Object -Filepath "result/dambreak/console.log"
+
+2. Run simulation
+	```powershell
+	./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log"
 	```
 
 #### Linux
-```bash
-mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
-rm -rf result/dambreak/*
-./build/mps input/dambreak/settings.yml 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
-```
+1. Create output directory if not exist
+	```bash
+	mkdir -p result/dambreak/
+	```
+2. Remove old output files if exist
+	```bash
+	rm -rf result/dambreak/*
+	```
+3. Run simulation
+	```bash
+	./build/mps --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | tee result/dambreak/console.log
+	```
 
 #### Note
-(1). Standard (Error) Output
+***(1). Execution Command***
+
+The execution command consists of three parts.
+1. Execute with required options
+	```powershell
+	./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak
+	```
+	- ```--setting``` or ```-s``` specifies the setting file.
+	- ```--output``` or ```-o``` specifies the output directory.
+2. Change standard error output to the specified file.
+	```powershell
+	2> result/dambreak/error.log
+	```
+3. Save the console output to the specified file.
+	```powershell
+	Tee-Object -Filepath "result/dambreak/console.log"
+	```
+
+***(2). Standard (Error) Output***
 
 The output of a c++ program includes standard output and standard error output.
 The standard output comes from `std::cout` or `printf()`,
@@ -87,7 +108,7 @@ and the standard error output will be written to `error.log`.
 # ./test.exe > result.log 2> error.log
 ```
 
-(2). `tee` command
+***(2). `tee` command***
 
 `tee` command allows us to show the standard output in the console
 and save them into a file at the same time.
@@ -101,6 +122,20 @@ and will be written to `result.log` at the same time.
 ```bash
 ./test.exe | tee result.log
 ```
+
+#### Scripts
+Script files are prepared in the `scripts` folder. You can just call it for execution.
+
+***Windows***
+```powershell
+./scripts/runner.ps1
+```
+
+***Linux/Mac***
+```sh
+./scripts/runner.sh
+```
+
 ## VS Code Execution
 - Before you begin, install CMake Tools extension.
 
@@ -115,18 +150,7 @@ and will be written to `result.log` at the same time.
 
 ### Execution
 - Execute in the same way as the command line.
-- Script files are prepared in the `scripts` folder. You can just call it.
 - Don't use the `Launch` button on the CMake tab. It will launch the program in a wrong directory, and it won't delete existing files.
-
-#### Windows
-```powershell
-./scripts/runner.ps1
-```
-
-#### Linux/Mac
-```sh
-./scripts/runner.sh
-```
 
 #### Note
 - You can configure `tasks` to do it easily.
@@ -142,7 +166,7 @@ and will be written to `result.log` at the same time.
     	{
       	"label": "Execute",
       	"type": "shell",
-      	"command": "./scripts/windows.ps1",
+      	"command": "./scripts/runner.ps1",
       	"options": {
         	"cwd": "${workspaceFolder}"
       	},
