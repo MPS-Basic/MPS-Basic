@@ -14,7 +14,7 @@ using std::endl;
 
 MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
     this->settings         = input.settings;
-    this->domain             = input.settings.domain;
+    this->domain              = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
 
