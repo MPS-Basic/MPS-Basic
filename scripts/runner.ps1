@@ -10,16 +10,10 @@ $consoleLogFile = $outputDir + "/console.log"
 cd (get-item $PSScriptRoot).parent.FullName
 Write-Output "Current directory: $PWD" | Tee-Object -FilePath $consoleLogFile
 
-if (!(Test-Path -Path $outputDir)) {
-  # create output directory if not exist
-  New-Item -ItemType Directory -Path $outputDir
-  Write-Output "Output directory created: $outputDir" | Tee-Object -FilePath $consoleLogFile -Append
-}
-else {
-  # clean output directory if exist
-  Get-ChildItem $outputDir | Remove-Item -Recurse
-  Write-Output "Output directory cleaned: $outputDir" | Tee-Object -FilePath $consoleLogFile -Append
-}
+# create and clean output directory
+New-Item -ItemType Directory -Path $outputDir -Force
+# Force: Update the directory if already exists
+Write-Output "Output directory created: $outputDir" | Tee-Object -FilePath $consoleLogFile -Append
 
 # run simulation
 ./build/mps.exe --setting $settingFile --output $outputDir 2> $errorLogFile | Tee-Object -FilePath $consoleLogFile -Append
