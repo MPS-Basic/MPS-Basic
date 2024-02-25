@@ -4,9 +4,9 @@
 using PressureCalculator::Explicit;
 
 Explicit::Explicit(double fluidDensity, double re, double soundSpeed, int dimension, double particleDistance) {
-	this->fluidDensity = fluidDensity;
-	this->soundSpeed   = soundSpeed;
-	this->n0           = RefValues(dimension, particleDistance, re).n0;
+    this->fluidDensity = fluidDensity;
+    this->soundSpeed   = soundSpeed;
+    this->n0           = RefValues(dimension, particleDistance, re).n0;
 }
 
 Explicit::~Explicit() {
