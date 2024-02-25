@@ -25,8 +25,8 @@ public:
     void toVtu(const std::filesystem::path& path, const double& time);
 
 private:
-    void dataArrayBegin(
+    static void dataArrayBegin(
         std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
     );
-    void dataArrayEnd(std::ofstream& ofs);
+    static void dataArrayEnd(std::ofstream& ofs);
 };
