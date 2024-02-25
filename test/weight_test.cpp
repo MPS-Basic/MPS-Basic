@@ -1,4 +1,5 @@
 #include "weight.hpp"
+
 #include <gtest/gtest.h>
 
 TEST(WeightTest, WeightTest) {

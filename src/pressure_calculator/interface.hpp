@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../particle.hpp"
+
 #include <vector>
 
 namespace PressureCalculator {
