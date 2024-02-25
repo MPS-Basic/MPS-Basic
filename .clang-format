@@ -8,6 +8,7 @@ AllowShortFunctionsOnASingleLine: 'None'
 BinPackArguments: 'false'
 BinPackParameters: 'false'
 ColumnLimit: '120'
+IncludeBlocks: 'Regroup'
 IndentCaseLabels: 'false'
 IndentWidth: '4'
 PointerAlignment: Left

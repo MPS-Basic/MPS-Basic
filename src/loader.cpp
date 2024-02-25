@@ -1,4 +1,5 @@
 #include "loader.hpp"
+
 #include <cmath>
 #include <fstream>
 #include <iostream>

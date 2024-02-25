@@ -1,5 +1,6 @@
 #include "common.hpp"
 #include "simulation.hpp"
+
 #include <filesystem>
 
 using std::cout;

@@ -1,4 +1,5 @@
 #include "weight.hpp"
+
 #include <cassert>
 
 double weight(double dis, double re) {
