@@ -10,8 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true  # Fetch submodules: true
-        
+        submodules: true  # Fetch submodules: true    
     - name: Set variables
       id: strings
       shell: bash
@@ -66,7 +65,6 @@ jobs:
         name: result_hydrostatic
         path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
         if-no-files-found: error
-        
     - name: Create comment
       run: |
         echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
