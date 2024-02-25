@@ -5,7 +5,8 @@
 
 Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
-**See [Documentation](https://mps-basic.github.io/MPS-Basic/index.html) for more information**
+> [!NOTE]
+> See [Documentation](https://mps-basic.github.io/MPS-Basic/index.html) for more information
 
 ## Requirements
 ### Execution
@@ -18,10 +19,7 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 - Doxygen and Graphviz (optional, for building documents)
 
 ### Dependencies
-- Install dependencies as follows before the first build.
-	```bash
-	git submodule update --init eigen
-	```
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 
 ## Execution
 ### Build
@@ -32,18 +30,24 @@ cmake -S . -B build # Generate build system
 cmake --build build # Execute build
 ```
 
+> [!NOTE]
+> Install dependencies as shown above for the first build
+> ```bash
+> git submodule update --init eigen
+> ```
+
 ### Execution
 #### Windows
 ```powershell
-Get-ChildItem result/dambreak -Include *.* -Recurse | del # remove all folders/files in result/dambreak
-./build/mps.exe input/dambreak/settings.yml 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
+New-Item -ItemType Directory -Path result/dambreak -Force # create or clean output directory
+./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
 ```
 
 #### Linux/Mac
 ```bash
-mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
-rm -rf result/dambreak/*
-./build/mps input/dambreak/settings.yml 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
+mkdir -p result/dambreak/ # create output directory if not exist
+rm -rf result/dambreak/* # remove old output files if exit
+./build/mps --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
 ```
 
 ## I/O
