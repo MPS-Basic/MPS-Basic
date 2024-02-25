@@ -22,4 +22,4 @@ rm -rf ${outputDir}*
 # -f, --force: ignore nonexistent files and arguments, never prompt
 
 # run simulation
-./build/mps --setting ${settingFile} 2> ${errorLogFile} | tee ${consoleLogFile}
+./build/mps --setting ${settingFile} --output ${outputDIr} 2> ${errorLogFile} | tee ${consoleLogFile}
