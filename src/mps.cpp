@@ -3,6 +3,10 @@
 #include "weight.hpp"
 #include <queue>
 
+// This include is for checking if the pressure calculator is explicit.
+// This is needed because we need to update the pressure again when using EMPS.
+#include "pressure_calculator/explicit.hpp"
+
 using std::cerr;
 using std::endl;
 
@@ -42,6 +46,14 @@ void MPS::stepForward() {
     setMinimumPressure(settings.re_forGradient);
     calPressureGradient(settings.re_forGradient);
     moveParticleUsingPressureGradient();
+
+    // Update pressure again when using EMPS
+    if (auto explicitPressureCalculator = dynamic_cast<PressureCalculator::Explicit*>(pressureCalculator.get())) {
+        auto pressures = explicitPressureCalculator->calc(particles);
+        for (auto& particle : particles) {
+            particle.pressure = pressures[particle.id];
+        }
+    }
 
     calCourant();
 }

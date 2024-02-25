@@ -63,9 +63,13 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     // free surface detection
     s.surfaceDetectionRatio = yaml["surfaceDetectionRatio"].as<double>();
 
-    // pressure Poisson equation
+    // pressure calculation method
+    s.pressureCalculationMethod = yaml["pressureCalculationMethod"].as<std::string>();
+    // for Implicit
     s.compressibility                  = yaml["compressibility"].as<double>();
     s.relaxationCoefficientForPressure = yaml["relaxationCoefficientForPressure"].as<double>();
+    // for Explicit
+    s.soundSpeed = yaml["soundSpeed"].as<double>();
 
     // collision
     s.collisionDistance        = yaml["collisionDistanceRatio"].as<double>() * s.particleDistance;

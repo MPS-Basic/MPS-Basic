@@ -33,9 +33,13 @@ struct Settings {
     // free surface detection
     double surfaceDetectionRatio{}; ///< Ratio for free surface detection
 
-    // parameters for pressure Poisson equation
-    double compressibility{};                  ///< Compressibility of the fluid
-    double relaxationCoefficientForPressure{}; ///< Relaxation coefficient for pressure
+    // pressure calculation method
+    std::string pressureCalculationMethod{}; ///< Method for pressure calculation
+    // for Implicit
+    double compressibility{};                  ///< Compressibility of the fluid for Implicit method
+    double relaxationCoefficientForPressure{}; ///< Relaxation coefficient for pressure for Implicit method
+    // for Explicit
+    double soundSpeed{}; ///< Speed of sound for Explicit method
 
     // collision
     double collisionDistance{};        ///< Distance for collision detection
