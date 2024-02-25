@@ -8,54 +8,68 @@ jobs:
   run_hydrostatic:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with: 
-        submodules: true  # Fetch submodules: true
-    - name: Set variables
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-        echo "pr-comment=${{ github.workspace }}/pr_comment.md" >> "$GITHUB_OUTPUT"
-    - name: Install dependencies for Ubuntu # Install ninja, OpenMP, and Python packages
-      run: |
-        sudo apt-get update 
-        sudo apt-get install -y ninja-build libomp-15-dev
-        pip3 install meshio matplotlib PyGithub
-    - name: Configure CMake
-      run: >
-        cmake
-        -G Ninja
-        -DCMAKE_BUILD_TYPE=Release
-        -DCMAKE_CXX_COMPILER=clang++-15
-        -S ${{ github.workspace }}
-        -B  ${{ steps.strings.outputs.build-output-dir }}
-    - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} 
-    - name: Generate input
-      run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
-    - name: Run
-      run: >
-        ${{ steps.strings.outputs.build-output-dir }}/mps 
-        ${{ github.workspace }}/input/hydrostatic/settings.yml
-    - name: visualize results
-      run: >
-        python3 ${{ github.workspace }}/ci/visualize_vtk.py 
-        ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu
-        ${{ github.workspace }}/result/hydrostatic/output_0100.png
-    - uses: actions/upload-artifact@v4
-      id: upload-result-hydrostatic
-      with:
-        name: result_hydrostatic
-        path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
-        if-no-files-found: error
-        compression-level: 0
-    - name: Create comment
-      run: |
-        echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
-    - name: Comment on PR
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        URL: ${{ github.event.pull_request.html_url }}
-      run:
-        gh pr comment -F ${{ steps.strings.outputs.pr-comment }} "${URL}"
+      - uses: actions/checkout@v4
+        with:
+          submodules: true # Fetch submodules: true
+
+      - name: Set variables
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+          echo "pr-comment=${{ github.workspace }}/pr_comment.md" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies for Ubuntu # Install ninja, OpenMP, and Python packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libomp-15-dev
+          pip3 install meshio matplotlib PyGithub images-upload-cli
+
+      - name: Configure CMake
+        run: >
+          cmake
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_CXX_COMPILER=clang++-15
+          -S ${{ github.workspace }}
+          -B  ${{ steps.strings.outputs.build-output-dir }}
+
+      - name: Build
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
+
+      - name: Generate input
+        run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
+
+      - name: Run
+        run: >
+          ${{ steps.strings.outputs.build-output-dir }}/mps
+          ${{ github.workspace }}/input/hydrostatic/settings.yml
+
+      - name: visualize results
+        run: >
+          python3 ${{ github.workspace }}/ci/visualize_vtk.py
+          ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu
+          ${{ github.workspace }}/result/hydrostatic/output_0100.png
+
+      - name: create comment
+        run: |
+          URL=$(images-upload-cli -h imgbb ${{ github.workspace }}/result/hydrostatic/output_0100.png)
+          echo -e "Hydrostatic problem was calculated.\n\n <a href="https://imgbb.com/"><img src="${URL}" alt="upload" border="0"></a>>"" ${{ steps.strings.outputs.pr-comment }}
+
+      # - uses: actions/upload-artifact@v4
+      #   id: upload-result-hydrostatic
+      #   with:
+      #     name: result_hydrostatic
+      #     path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
+      #     if-no-files-found: error
+      #     compression-level: 0
+
+      # - name: Create comment
+      #   run: |
+      #     echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
+
+      - name: Comment on PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr comment -F ${{ steps.strings.outputs.pr-comment }} "${URL}"
