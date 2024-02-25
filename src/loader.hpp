@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "input.hpp"
+
 #include <filesystem>
 #include <utility>
 #include <vector>
@@ -16,10 +17,10 @@
  */
 class Loader {
 public:
-	Input load(const std::filesystem::path& settingPath);
+    Input load(const std::filesystem::path& settingPath);
 
 private:
-	Settings loadSettingYaml(const std::filesystem::path& settingPath);
+    Settings loadSettingYaml(const std::filesystem::path& settingPath);
 
-	std::pair<double, std::vector<Particle>> loadParticleProf(const std::filesystem::path& profPath);
+    std::pair<double, std::vector<Particle>> loadParticleProf(const std::filesystem::path& profPath);
 };

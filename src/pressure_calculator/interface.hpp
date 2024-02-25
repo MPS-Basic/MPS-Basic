@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../particle.hpp"
+
 #include <vector>
 
 namespace PressureCalculator {
@@ -13,18 +14,18 @@ namespace PressureCalculator {
  */
 class Interface {
 public:
-	/**
-	 * @brief calculate pressure
-	 * @param particles particles
-	 *
-	 * @return pressures of particles
-	 */
-	virtual std::vector<double> calc(const std::vector<Particle>& particles) = 0;
+    /**
+     * @brief calculate pressure
+     * @param particles particles
+     *
+     * @return pressures of particles
+     */
+    virtual std::vector<double> calc(const std::vector<Particle>& particles) = 0;
 
-	/**
-	 * @brief destructor
-	 */
-	virtual ~Interface() {};
+    /**
+     * @brief destructor
+     */
+    virtual ~Interface(){};
 };
 
-}
+} // namespace PressureCalculator

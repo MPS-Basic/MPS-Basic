@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "mps.hpp"
 #include "particles_exporter.hpp"
+
 #include <filesystem>
 
 /**
@@ -15,15 +16,15 @@
  */
 class Saver {
 public:
-	ParticlesExporter exporter;
-	int fileNumber = 0;
-	std::filesystem::path dir;
+    ParticlesExporter exporter;
+    int fileNumber = 0;
+    std::filesystem::path dir;
 
-	Saver() = default;
+    Saver() = default;
 
-	Saver(const std::filesystem::path& dir);
+    Saver(const std::filesystem::path& dir);
 
-	void save(const MPS& mps, const double time);
+    void save(const MPS& mps, const double time);
 
 private:
 };
