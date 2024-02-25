@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies for Ubuntu # Install ninja, OpenMP, and Python packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libomp-15-dev
+          sudo apt-get install -y ninja-build libomp-15-dev xsel
           pip3 install meshio matplotlib PyGithub images-upload-cli
           
       # - name: Configure CMake
