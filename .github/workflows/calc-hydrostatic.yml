@@ -46,6 +46,6 @@ jobs:
         ${{ github.workspace }}/result/hydrostatic/output_0100.png
     - name: Comment on Pull request
       run: >
-        python3 ${{ github.workspace }}/ci/comment_on_pr.py
+        python3 ${{ github.workspace }}/ci/put_image_on_pr.py
         ${{ secrets.GITHUB_TOKEN }}
         ${{ github.workspace }}/result/hydrostatic/output_0100.png
