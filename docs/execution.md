@@ -31,8 +31,8 @@ cmake -S . -B build # Generate build system
 cmake --build build # Execute build
 ```
 
-- You don't have to make `build` directory (`mkdir build`) 
-  and move to the directory (`cd build`), thanks to the `-B build` option. 
+- You don't have to make `build` directory (`mkdir build`)
+  and move to the directory (`cd build`), thanks to the `-B build` option.
   The `build` directory will be automatically generated if you don't have one.
 
 ### Execution
@@ -53,11 +53,12 @@ The execution command consists of three parts.
 3. Save the console output to the specified file.
 	```bash
 	Tee-Object -Filepath "result/dambreak/console.log"
-	``` 
+	```
 
 #### Linux
 ```bash
 mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
+rm -rf result/dambreak/*
 ./build/mps input/dambreak/settings.yml 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
 ```
 
@@ -65,20 +66,20 @@ mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
 (1). Standard (Error) Output
 
 The output of a c++ program includes standard output and standard error output.
-The standard output comes from `std::cout` or `printf()`, 
+The standard output comes from `std::cout` or `printf()`,
 while the standard error output comes from `std::cerr` or `fprintf(stderr, )`.
 By default, both the standard output and the standard error output will be shown in the console.
-Changing the output destination is called "redirect", 
+Changing the output destination is called "redirect",
 and can be accomplished with the `>` command.
 
-For example, the standard output of the command below 
-will be written to `result.log`. 
+For example, the standard output of the command below
+will be written to `result.log`.
 The standard error output will be shown in the console as usual.
 ```bash
 ./test.exe > resut.log
 ```
 
-In the next example, the standard output will be written to `result.log`, 
+In the next example, the standard output will be written to `result.log`,
 and the standard error output will be written to `error.log`.
 ```bash
 ./test.exe 1> result.log 2> error.log
@@ -92,10 +93,10 @@ and the standard error output will be written to `error.log`.
 and save them into a file at the same time.
 
 > it sends the output of a command in two directions (like the letter T)
-> 
+>
 > <cite>[Microsoft Docs](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/tee-object?view=powershell-7.4&viewFallbackFrom=powershell-7.1)</cite>
 
-Foe example, the standard output of the command below will be shown in the console 
+Foe example, the standard output of the command below will be shown in the console
 and will be written to `result.log` at the same time.
 ```bash
 ./test.exe | tee result.log
@@ -119,12 +120,12 @@ and will be written to `result.log` at the same time.
 
 #### Windows
 ```powershell
-./scripts/windows.ps1
+./scripts/runner.ps1
 ```
 
-#### Linux
+#### Linux/Mac
 ```sh
-./scripts/linux.sh
+./scripts/runner.sh
 ```
 
 #### Note
@@ -159,9 +160,9 @@ and will be written to `result.log` at the same time.
 
 	![](fig/tasks_2.png)
 
-- You can set a keyboard shortcut to run test task. 
+- You can set a keyboard shortcut to run test task.
   To do so, open Command Palette and move on to `Preferences: Keyboard Shortcuts`.
-  Search `Tasks: Run Test Task` and set any keybinding you want. 
+  Search `Tasks: Run Test Task` and set any keybinding you want.
   `Ctrl + Shift + T` is a suggestion of the writer.
 
 	![](fig/tasks_3.png)
@@ -173,7 +174,7 @@ and will be written to `result.log` at the same time.
 
 	![](fig/debug.png)
 
-- Unlike the `launch` button in the previous section, 
-  the `debug` button will execute the code in the correct directory. 
-  Also, there is no need to delete existing files when debugging. 
+- Unlike the `launch` button in the previous section,
+  the `debug` button will execute the code in the correct directory.
+  Also, there is no need to delete existing files when debugging.
   So you can just press it this time.
