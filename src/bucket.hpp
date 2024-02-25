@@ -16,16 +16,16 @@
 class Bucket {
 private:
 public:
-	int num{}, numX{}, numY{};
-	double length{};
-	std::vector<int> next, first, last;
+    int num{}, numX{}, numY{};
+    double length{};
+    std::vector<int> next, first, last;
 
-	void generate(const int& particleNum);
-	void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
-	/**
-	 * @brief store particles in the bucket
-	 * @param particles partiles to be stored
-	 * @param domain domain of the simulation
-	 */
-	void storeParticles(std::vector<Particle>& particles, const Domain& domain);
+    void generate(const int& particleNum);
+    void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
+    /**
+     * @brief store particles in the bucket
+     * @param particles partiles to be stored
+     * @param domain domain of the simulation
+     */
+    void storeParticles(std::vector<Particle>& particles, const Domain& domain);
 };
