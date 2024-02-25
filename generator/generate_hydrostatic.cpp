@@ -15,15 +15,15 @@ private:
     Eigen::Vector2d box_size;
 
 public:
-	Box2d() = default;
-	Box2d(double xMin, double xMax, double yMin, double yMax) {
-		center << (xMin + xMax) / 2.0, (yMin + yMax) / 2.0;
-		box_size << xMax - xMin, yMax - yMin;
-	}
-	double sdf(const Eigen::Vector2d& r) const {
-		auto q = (r - center).array().abs() - box_size.array() / 2.0;
-		return q.max(0.0).matrix().norm() + std::min(std::max(q.x(), q.y()), 0.0);
-	}
+    Box2d() = default;
+    Box2d(double xMin, double xMax, double yMin, double yMax) {
+        center << (xMin + xMax) / 2.0, (yMin + yMax) / 2.0;
+        box_size << xMax - xMin, yMax - yMin;
+    }
+    double sdf(const Eigen::Vector2d& r) const {
+        auto q = (r - center).array().abs() - box_size.array() / 2.0;
+        return q.max(0.0).matrix().norm() + std::min(std::max(q.x(), q.y()), 0.0);
+    }
 };
 
 int main(int argc, char** argv) {
