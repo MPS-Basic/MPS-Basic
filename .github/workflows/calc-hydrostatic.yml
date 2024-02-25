@@ -64,16 +64,15 @@ jobs:
       #     if-no-files-found: error
 
       - name: temp
-        continue-on-error: true
         run: |
           URL=$(python3 ${{ github.workspace }}/ci/upload_image.py ${{ github.workspace }}/output_0100.png)
-          echo Created URL: ${URL}
+          echo -e "Hydrostatic problem was calculated.\n\n <img src=<img src=https://i.imgur.com/b8wUvPv.png>>" ${{ steps.strings.outputs.pr-comment }}
           
-      - name: Create comment
-        run: |
-          URL=$(images-upload-cli -h imgbb ${{ github.workspace }}/result/hydrostatic/output_0100.png)
-          echo -e "Hydrostatic problem was calculated.\n\n <a href='https://imgbb.com/'><img src='${URL}' alt='upload' border='0'></a>" ${{ steps.strings.outputs.pr-comment }}
-          # echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
+      # - name: Create comment
+      #   run: |
+      #     URL=$(images-upload-cli -h imgbb ${{ github.workspace }}/result/hydrostatic/output_0100.png)
+      #     echo -e "Hydrostatic problem was calculated.\n\n <a href='https://imgbb.com/'><img src='${URL}' alt='upload' border='0'></a>" ${{ steps.strings.outputs.pr-comment }}
+      #     # echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
           
       - name: Comment on PR
         env:
