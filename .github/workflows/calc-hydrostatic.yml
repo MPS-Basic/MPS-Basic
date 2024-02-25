@@ -1,4 +1,4 @@
-name Run Hydrostatic
+name: Run Hydrostatic
 
 permissions:
   pull-requests: write
