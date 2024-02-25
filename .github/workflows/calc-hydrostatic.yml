@@ -1,0 +1,43 @@
+permissions:
+  contents: write
+  actions: read
+  checks: write
+
+on:
+  pull_request:
+
+jobs:
+  run_hydrostatic:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with: 
+        submodules: true  # Fetch submodules: true
+    - name: Set variables
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+    - name: Configure CMake
+      run: |
+        cmake
+        -G "Unix Makefiles"
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_CXX_COMPILER=clang++-15
+        -S ${{ github.workspace }}
+        -B  ${{ steps.strings.outputs.build-output-dir }}
+    - name: Build
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} -j4
+    - name: Run
+      run: ${{ steps.strings.outputs.build-output-dir }}/mps ${{ github.workspace }}/input/hydrostatic/settings.yml
+    - name: visualize results
+      run: |
+        python3 ${{ github.workspace }}/ci/visualize_vtk.py 
+        ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu 0.012 
+        ${{ github.workspace }}/result/hydrostatic/output_0100.png
+    - uses:  edunad/actions-image@v2.0.3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
+        title: Pressure distribution of hydrostatic test
