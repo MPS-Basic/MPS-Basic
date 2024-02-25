@@ -29,7 +29,7 @@ public:
 int main(int argc, char** argv) {
     std::vector<Particle> particles;
 
-	double l0 = 0.012;
+    double l0 = 0.012;
 
 	Box2d fluidDomain(-0.18, 0.18, 0, 0.48);
 	Box2d emptyDomain(-0.18, 0.18, 0.48, 0.6);
