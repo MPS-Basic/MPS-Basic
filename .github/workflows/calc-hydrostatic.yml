@@ -39,8 +39,6 @@ jobs:
       run: >
         ${{ steps.strings.outputs.build-output-dir }}/mps 
         ${{ github.workspace }}/input/hydrostatic/settings.yml
-        2> ${{ github.workspace }}/result/dambreak/error.log 
-        | tee ${{ github.workspace }}/result/dambreak/console.log 
     - name: visualize results
       run: >
         python3 ${{ github.workspace }}/ci/visualize_vtk.py 
