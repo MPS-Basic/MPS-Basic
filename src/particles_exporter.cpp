@@ -41,10 +41,7 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time) {
     // --- Header ---
     // --------------
     ofs << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
-    ofs << "<VTKFile xmlns='VTK' byte_order='LittleEndian' version='0.1' "
-           "type "
-           "= 'UnstructuredGrid' >"
-        << endl;
+    ofs << "<VTKFile byte_order='LittleEndian' version='0.1' type = 'UnstructuredGrid'>" << endl;
     ofs << "<UnstructuredGrid>" << endl;
     ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>" << endl;
 
