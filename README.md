@@ -1,5 +1,6 @@
 # MPS-Basic
 
+[![Documentation Badge](https://img.shields.io/badge/Documentation-blue)](https://mps-basic.github.io/MPS-Basic/index.html)
 ![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/build-cmake.yml/badge.svg)
 ![](https://github.com/MPS-Basic/MPS-Basic/actions/workflows/doxygen-pages.yml/badge.svg)
 
