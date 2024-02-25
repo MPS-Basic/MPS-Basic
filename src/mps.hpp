@@ -82,6 +82,10 @@ private:
      */
     void setBoundaryCondition();
 
+    bool isFreeSurface(const Particle& pi);
+
+    bool isParticleDistributionBiased(const Particle& pi);
+
     /**
      * @brief set minimum pressure for pressure gradient calculation
      * @param re effective radius \f$r_e\f$

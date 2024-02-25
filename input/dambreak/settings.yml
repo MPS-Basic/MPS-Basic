@@ -20,10 +20,10 @@ gravity: [0.0, -9.8, 0.0]
 
 # free surface detection
 # surface detection based on number density
-surfaceDetection-threshold: 0.97 # threshold ratio of the number density
+surfaceDetection-numberDensity-threshold: 0.97 # threshold ratio of the number density
 # surface detection based on particle distribution
-surfaceDetection-basedOnParticleDistribution: true
-surfaceDetection-basedOnParticleDistribution-threshold: 1.0
+surfaceDetection-particleDistribution: true
+surfaceDetection-particleDistribution-threshold: 1.0
 
 # pressure calculation method
 pressureCalculationMethod: Implicit # Implicit or Explicit
