@@ -58,13 +58,6 @@ int main(int argc, char** argv) {
         exit(-1);
     }
 
-    // if (argc < 2) {
-    //     cout << "Usage" << endl << endl;
-    //     cout << "  mps <path-to-settings>" << endl << endl;
-    //     cout << "Specify a settings for simulation." << endl;
-    //     return 0;
-    // }
-
     // auto settingPath = fs::path(argv[1]);
     auto settingPath     = fs::path(program.get<std::string>("--setting"));
     auto outputDirectory = fs::path(program.get<std::string>("--output"));
