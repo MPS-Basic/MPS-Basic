@@ -40,11 +40,15 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
 ### Execution
 #### Windows
-1. Create or clean output directory
+1. Create output directory if not exist
 	```powershell
 	New-Item -ItemType Directory -Path result/dambreak -Force
 	```
-1. Run simulation
+1. Remove old output files if exist
+	```powershell
+	Remove-Item -Path $outputDir/* -Force -Recurse
+	```
+3. Run simulation
 	```powershell
 	./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log"
 	```
