@@ -7,7 +7,7 @@ import sys
 auth=Auth.Token(sys.argv[1])
 g = Github(auth=auth)
 repo = g.get_repo(os.getenv('GITHUB_REPOSITORY'))
-pr_number = os.getenv('GITHUB_REF').split('/')[0]
+pr_number = int(os.getenv('GITHUB_REF_NAME').split('/')[0])
 
 # Read the image file
 with open(sys.argv[2], 'rb') as image_file:
