@@ -46,3 +46,4 @@ jobs:
         path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
         title: Pressure distribution of hydrostatic test
         annotationLevel: notice
+        annotationTag: intput/hydrostatic/settings.yml
