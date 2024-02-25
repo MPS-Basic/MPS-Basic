@@ -17,9 +17,9 @@ mkdir -p ${outputDir}
 # -p, --parent: create parent directories if not exist
 
 # remove old output files if exist
-rm -rf ${outputDir}*
+rm -rf ${outputDir}/*
 # -r, --recursive: remove directories and their contents
 # -f, --force: ignore nonexistent files and arguments, never prompt
 
 # run simulation
-./build/mps --setting ${settingFile} --output ${outputDIr} 2> ${errorLogFile} | tee ${consoleLogFile}
+./build/mps --setting ${settingFile} --output ${outputDir} 2> ${errorLogFile} | tee ${consoleLogFile}
