@@ -21,9 +21,13 @@ gravity: [0.0, -10.0, 0.0]
 # free surface detection ratio of the number density
 surfaceDetectionRatio: 0.97
 
-# pressure Poisson equation
+# pressure calculation method
+pressureCalculationMethod: Implicit # Implicit or Explicit
+# for Implicit
 compressibility: 0.45e-09
 relaxationCoefficientForPressure: 0.2
+# for Explicit
+soundSpeed: 17.1
 
 # collision
 collisionDistanceRatio: 0.5
