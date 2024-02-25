@@ -65,9 +65,9 @@ jobs:
 
       - name: temp
         continue-on-error: true
-        run: >
-          python3 ${{ github.workspace }}/ci/upload_image.py 
-          "${{ github.workspace }}/output_0100.png"
+        run: |
+          URL=$(python3 ${{ github.workspace }}/ci/upload_image.py ${{ github.workspace }}/output_0100.png)
+          echo Created URL: ${URL}
           
       - name: Create comment
         run: |
