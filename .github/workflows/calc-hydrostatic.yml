@@ -60,16 +60,16 @@ jobs:
     #     URL=$(images-upload-cli -h imgbb ${{ github.workspace }}/result/hydrostatic/output_0100.png)
     #     echo -e "Hydrostatic problem was calculated.\n\n <a href='https://imgbb.com/'><img src='${URL}' alt='upload' border='0'></a>" ${{ steps.strings.outputs.pr-comment }}
       
-    # - uses: actions/upload-artifact@v4
-    #   id: upload-result-hydrostatic
-    #   with:
-    #     name: result_hydrostatic
-    #     path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
-    #     if-no-files-found: error
+    - uses: actions/upload-artifact@v4
+      id: upload-result-hydrostatic
+      with:
+       name: result_hydrostatic
+       path: ${{ github.workspace }}/result/hydrostatic/output_0100.png
+       if-no-files-found: error
         
-    # - name: Create comment
-    #   run: |
-    #     echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
+    - name: Create comment
+      run: |
+       echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
         
     - name: Comment on PR
       env:
