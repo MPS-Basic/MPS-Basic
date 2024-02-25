@@ -53,6 +53,5 @@ struct Settings {
     double reMax{};               ///< Maximum of effective radius
 
     // i/o
-    std::filesystem::path profPath;        ///< Path for input particle file
-    std::filesystem::path outputDirectory; ///< Directory for output files
+    std::filesystem::path profPath; ///< Path for input particle file
 };

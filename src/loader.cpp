@@ -10,7 +10,7 @@ using std::cout;
 using std::endl;
 namespace fs = std::filesystem;
 
-Input Loader::load(const fs::path& settingPath) {
+Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory) {
     Input input;
     input.settings = loadSettingYaml(settingPath);
 
@@ -18,17 +18,14 @@ Input Loader::load(const fs::path& settingPath) {
     input.startTime             = startTime;
     input.particles             = particles;
 
-    cout << "Output directory: " << input.settings.outputDirectory << endl;
-    fs::create_directories(input.settings.outputDirectory);
-
-    auto outputSettingPath = input.settings.outputDirectory / settingPath.filename();
+    auto outputSettingPath = outputDirectory / settingPath.filename();
     if (fs::exists(outputSettingPath)) {
         cerr << "setting file already exists in the output directory: " << outputSettingPath << endl;
         std::exit(-1);
     } else {
         fs::copy_file(settingPath, outputSettingPath);
     }
-    auto outputProfPath = input.settings.outputDirectory / input.settings.profPath.filename();
+    auto outputProfPath = outputDirectory / input.settings.profPath.filename();
     if (fs::exists(outputProfPath)) {
         cerr << "prof file already exists in the output directory: " << outputProfPath << endl;
         std::exit(-1);
@@ -93,11 +90,8 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.domain.yLength = s.domain.yMax - s.domain.yMin;
     s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
-    auto yamlDir = settingPath.parent_path();
-    // outputDirectory path
-    auto relativeOutputDirectory = yaml["outputDirectory"].as<std::string>();
-    s.outputDirectory            = fs::weakly_canonical(yamlDir / relativeOutputDirectory);
     // profpath
+    auto yamlDir          = settingPath.parent_path();
     auto relativeProfPath = yaml["profPath"].as<std::string>();
     s.profPath            = fs::weakly_canonical(yamlDir / relativeProfPath);
 
