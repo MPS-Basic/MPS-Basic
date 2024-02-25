@@ -16,7 +16,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
-          thread-comments: true
+          thread-comments: 'update'
           format-review: true
           version: "17"
           tidy-checks: "-*" # Disable all checks
