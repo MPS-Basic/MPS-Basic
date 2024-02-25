@@ -19,7 +19,7 @@ void Saver::save(const MPS& mps, const double time) {
     std::stringstream vtuName;
     vtuName << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
     fs::path vtuPath = dir / "vtu" / vtuName.str();
-    exporter.toVtu(vtuPath, time);
+    exporter.toVtu(vtuPath, time, mps.refValuesForNumberDensity.n0);
 
     fileNumber++;
 }
