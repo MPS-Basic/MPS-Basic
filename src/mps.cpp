@@ -104,10 +104,8 @@ void MPS::moveParticle() {
         if (p.type == ParticleType::Fluid) {
             p.velocity += p.acceleration * settings.dt;
             p.position += p.velocity * settings.dt;
-
-        } else {
-            p.acceleration.setZero();
         }
+        p.acceleration.setZero();
     }
 }
 
