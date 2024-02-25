@@ -43,7 +43,7 @@ jobs:
         python3 ${{ github.workspace }}/ci/visualize_vtk.py 
         ${{ github.workspace }}/result/hydrostatic/vtu/output_0100.vtu
         ${{ github.workspace }}/result/hydrostatic/output_0100.png
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       id: upload-result-hydrostatic
       with:
         name: result_hydrostatic
@@ -51,7 +51,7 @@ jobs:
         if-no-files-found: error
     - name: Create comment
       run: |
-        echo "See ![hydrostatic result]( ${{steps.upload-result-hydrostatic.outputs.artifact_url}} )" > ${{ steps.strings.outputs.pr-comment }}
+        echo -e "Hydrostatic problem was calculated.\n\nSee ![result]( ${{steps.upload-result-hydrostatic.outputs.artifact-url}} )" > ${{ steps.strings.outputs.pr-comment }}
     - name: Comment on PR
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
