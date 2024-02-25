@@ -3,8 +3,8 @@ name: cpp-linter
 on: pull_request
 
 permissions:
-  checks: read|write
-  pull-requests: read|write
+  checks: write
+  pull-requests: write
 
 jobs:
   cpp-linter:
