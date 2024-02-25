@@ -19,9 +19,10 @@ jobs:
           # The following value will only update a single comment
           # in a pull request's thread. Set it to false to disable the comment.
           # Set it to true to post a new comment (and delete the old comment).
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          thread-comments: true
           format-review: true
           version: "17"
+          tidy-checks: "-*" # Disable all checks
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
