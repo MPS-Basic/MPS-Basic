@@ -107,12 +107,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 # ------------------------------
 # ----- particle generator -----
 # ------------------------------
-add_subdirectory(generator)
 add_library(particles STATIC
   src/particle.cpp
   src/particles_exporter.cpp
 )
-target_include_directories(particles PUBLIC eigen)
+target_link_libraries(particles PUBLIC Eigen3::Eigen)
+add_subdirectory(generator)
 
 # --------------------
 # ----- argparse -----
