@@ -32,7 +32,19 @@ endif()
 # -----------------
 # ----- Eigen -----
 # -----------------
-target_include_directories(${PROJECT_NAME} PUBLIC eigen)
+include(FetchContent)
+FetchContent_Declare(
+  eigen
+  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+  GIT_TAG 3.4.0
+)
+set(BUILD_TESTING OFF)
+set(EIGEN_BUILD_TESTING OFF)
+set(EIGEN_MPL2_ONLY ON)
+set(EIGEN_BUILD_PKGCONFIG OFF)
+set(EIGEN_BUILD_DOC OFF)
+FetchContent_MakeAvailable(Eigen)
+target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
 
 # -----------------------
 # ----- Google Test -----
