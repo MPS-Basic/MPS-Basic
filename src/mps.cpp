@@ -12,6 +12,7 @@
 using std::cerr;
 using std::endl;
 
+//initialize and capture data
 MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
