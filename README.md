@@ -33,12 +33,6 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 	cmake --build build
 	```
 
-> [!NOTE]
-> Install dependencies as shown above for the first build
-> ```bash
-> git submodule update --init eigen
-> ```
-
 ### Execution
 #### Windows
 1. Create output directory if not exist
@@ -91,6 +85,13 @@ To be written.
 
 
 ## Build documents
+
+> [!NOTE]
+> Install dependencies as shown above for the first build
+> ```bash
+> git submodule update --init doxygen-awesome-css
+> ```
+
 ```bash
 doxygen Doxyfile
 ```
