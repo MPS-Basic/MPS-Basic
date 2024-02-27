@@ -32,7 +32,11 @@ struct Settings {
     Eigen::Vector3d gravity; ///< Gravity
 
     // free surface detection
-    double surfaceDetectionRatio{}; ///< Ratio for free surface detection
+    // surface detection based on number density
+    double surfaceDetection_numberDensity_threshold{}; ///< threshold ratio of number density for free surface detection
+    // surface detection based on particle distribution
+    bool surfaceDetection_particleDistribution{}; ///< flag for free surface detection based on particle distribution
+    double surfaceDetection_particleDistribution_threshold{};
 
     // pressure calculation method
     std::string pressureCalculationMethod{}; ///< Method for pressure calculation

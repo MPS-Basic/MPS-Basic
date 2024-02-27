@@ -59,7 +59,10 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.gravity[2] = yaml["gravity"][2].as<double>();
 
     // free surface detection
-    s.surfaceDetectionRatio = yaml["surfaceDetectionRatio"].as<double>();
+    s.surfaceDetection_numberDensity_threshold = yaml["surfaceDetection-numberDensity-threshold"].as<double>();
+    s.surfaceDetection_particleDistribution    = yaml["surfaceDetection-particleDistribution"].as<bool>();
+    s.surfaceDetection_particleDistribution_threshold =
+        yaml["surfaceDetection-particleDistribution-threshold"].as<double>();
 
     // pressure calculation method
     s.pressureCalculationMethod = yaml["pressureCalculationMethod"].as<std::string>();

@@ -30,7 +30,7 @@ void ParticlesExporter::toProf(const fs::path& path, const double& time) {
     }
 }
 
-void ParticlesExporter::toVtu(const fs::path& path, const double& time) {
+void ParticlesExporter::toVtu(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
     std::ofstream ofs(path);
     if (ofs.fail()) {
         cerr << "cannot write " << path << endl;
@@ -96,6 +96,16 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time) {
     dataArrayBegin(ofs, "1", "Float64", "Number Density");
     for (const auto& p : particles)
         ofs << p.numberDensity << endl;
+    dataArrayEnd(ofs);
+
+    dataArrayBegin(ofs, "1", "Float64", "Number Density Ratio");
+    for (auto& p : particles)
+        ofs << p.numberDensity / n0ForNumberDensity << std::endl;
+    dataArrayEnd(ofs);
+
+    dataArrayBegin(ofs, "1", "Int32", "Boundary Condition");
+    for (auto& p : particles)
+        ofs << static_cast<int>(p.boundaryCondition) << std::endl;
     dataArrayEnd(ofs);
 
     ofs << "</PointData>" << endl;

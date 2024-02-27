@@ -82,6 +82,23 @@ private:
      */
     void setBoundaryCondition();
 
+    bool isFreeSurface(const Particle& pi);
+
+    /**
+     * @brief check if particle distribution is biased.
+     * @details
+     * Particle number density can be low even in the fluid region, making the free surface detection based on particle
+     * number density vulnerable. Even when a specific particle's the particle number density is lower than criteria,
+     * it can be considered as inner particle if the particle distribution around the particle is not biased. In this
+     * way we can avoid the free surface detection error.
+     * This is based on Khayyer et al. (https://doi.org/10.1016/j.apor.2009.06.003)
+     *
+     * @param pi Particle to check
+     * @return true particle distribution is biased = free surface
+     * @return false particle distribution is not biased = not free surface
+     */
+    bool isParticleDistributionBiased(const Particle& pi);
+
     /**
      * @brief set minimum pressure for pressure gradient calculation
      * @param re effective radius \f$r_e\f$
