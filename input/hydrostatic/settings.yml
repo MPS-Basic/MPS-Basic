@@ -18,8 +18,12 @@ kinematicViscosity: 1.0e-04 # 少数第一位まで書かないと文字列と�
 # gravity
 gravity: [0.0, -10.0, 0.0]
 
-# free surface detection ratio of the number density
-surfaceDetectionRatio: 0.97
+# free surface detection
+# surface detection based on number density
+surfaceDetection-numberDensity-threshold: 0.97 # threshold ratio of the number density
+# surface detection based on particle distribution
+surfaceDetection-particleDistribution: true
+surfaceDetection-particleDistribution-threshold: 1.0
 
 # pressure calculation method
 pressureCalculationMethod: Implicit # Implicit or Explicit
@@ -41,4 +45,3 @@ radiusRatioForLaplacian: 3.1
 # i/o
 # relative path from the directory where this file is located
 profPath: ./input.prof
-outputDirectory: ../../result/hydrostatic
