@@ -72,11 +72,7 @@ int main(int argc, char** argv) {
     ParticlesExporter exporter;
     exporter.setParticles(particles);
     exporter.toProf(fs::path("input/dambreak/input.prof"), 0.0);
-    exporter.toVtu(
-        fs::path("input/dambreak/input.vtu"),
-        0.0, // time
-        1.0  // n0ForNumberDensity is meaningless here, so just put 1.0
-    );
+    exporter.toVtu(fs::path("input/dambreak/input.vtu"), 0.0);
 }
 
 void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps) {
