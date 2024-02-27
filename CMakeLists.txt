@@ -32,7 +32,19 @@ endif()
 # -----------------
 # ----- Eigen -----
 # -----------------
-target_include_directories(${PROJECT_NAME} PUBLIC eigen)
+include(FetchContent)
+FetchContent_Declare(
+  eigen
+  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+  GIT_TAG 3.4.0
+)
+set(BUILD_TESTING OFF)
+set(EIGEN_BUILD_TESTING OFF)
+set(EIGEN_MPL2_ONLY ON)
+set(EIGEN_BUILD_PKGCONFIG OFF)
+set(EIGEN_BUILD_DOC OFF)
+FetchContent_MakeAvailable(Eigen)
+target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
 
 # -----------------------
 # ----- Google Test -----
@@ -95,12 +107,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 # ------------------------------
 # ----- particle generator -----
 # ------------------------------
-add_subdirectory(generator)
 add_library(particles STATIC
   src/particle.cpp
   src/particles_exporter.cpp
 )
-target_include_directories(particles PUBLIC eigen)
+target_link_libraries(particles PUBLIC Eigen3::Eigen)
+add_subdirectory(generator)
 
 # --------------------
 # ----- argparse -----

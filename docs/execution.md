@@ -33,12 +33,6 @@ cmake --build build # Execute build
   and move to the directory (`cd build`), thanks to the `-B build` option.
   The `build` directory will be automatically generated if you don't have one.
 
-@note
-Install dependencies as shown above for the first build
-```bash
-git submodule update --init eigen
-```
-
 ### Execution
 #### Windows
 1. Create output directory if not exist
