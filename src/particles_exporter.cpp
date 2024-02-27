@@ -43,11 +43,20 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     ofs << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
     ofs << "<VTKFile byte_order='LittleEndian' version='0.1' type = 'UnstructuredGrid'>" << endl;
     ofs << "<UnstructuredGrid>" << endl;
-    ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>" << endl;
+
+    // -----------------
+    // --- Time data ---
+    // -----------------
+    ofs << "<FieldData>" << endl;
+    ofs << "<DataArray type='Float64' Name='Time' NumberOfComponents='1' NumberOfTuples='1' format='ascii'>" << endl;
+    ofs << time << endl;
+    ofs << "</DataArray>" << endl;
+    ofs << "</FieldData>" << endl;
 
     /// ------------------
     /// ----- Points -----
     /// ------------------
+    ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>" << endl;
     ofs << "<Points>" << endl;
     ofs << "<DataArray NumberOfComponents='3' type='Float64' "
            "Name='position' format='ascii'>"

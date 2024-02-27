@@ -30,7 +30,7 @@ public:
     double outputPeriod;
     int timeStep = 0;
 
-    Simulation(std::filesystem::path& settingPath);
+    Simulation(std::filesystem::path& settingPath, std::filesystem::path& outputDirectory);
 
     void run();
 

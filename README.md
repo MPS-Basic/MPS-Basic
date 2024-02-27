@@ -6,7 +6,8 @@
 
 Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
-**See [Documentation](https://mps-basic.github.io/MPS-Basic/index.html) for more information**
+> [!NOTE]
+> See [Documentation](https://mps-basic.github.io/MPS-Basic/index.html) for more information
 
 ## Requirements
 ### Execution
@@ -19,33 +20,47 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 - Doxygen and Graphviz (optional, for building documents)
 
 ### Dependencies
-- Install dependencies as follows before the first build.
-	```bash
-	git submodule update --init eigen
-	```
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 
 ## Execution
 ### Build
-```bash
-cmake -S . -B build # Generate build system
-# -S: Source tree. The location of CMakeLists.txt
-# -B: Build tree. Directory for storing products for builds
-cmake --build build # Execute build
-```
+1. Generate build system
+	```bash
+	cmake -S . -B build
+	```
+1. Execute build
+	```bash
+	cmake --build build
+	```
 
 ### Execution
 #### Windows
-```powershell
-Get-ChildItem result/dambreak -Include *.* -Recurse | del # remove all folders/files in result/dambreak
-./build/mps.exe input/dambreak/settings.yml 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log" # run simulation
-```
+1. Create output directory if not exist
+	```powershell
+	New-Item -ItemType Directory -Path result/dambreak -Force
+	```
+1. Remove old output files if exist
+	```powershell
+	Remove-Item -Path $outputDir/* -Force -Recurse
+	```
+3. Run simulation
+	```powershell
+	./build/mps.exe --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | Tee-Object -FilePath "result/dambreak/console.log"
+	```
 
 #### Linux/Mac
-```bash
-mkdir -p result/dambreak/ # remove all folders/files in result/dambreak
-rm -rf result/dambreak/*
-./build/mps input/dambreak/settings.yml 2> result/dambreak/error.log | tee result/dambreak/console.log # run simulation
-```
+1. Create output directory if not exist
+	```bash
+	mkdir -p result/dambreak/
+	```
+1. Remove old output files if exist
+	```bash
+	rm -rf result/dambreak/*
+	```
+1. Run simulation
+	```bash
+	./build/mps --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | tee result/dambreak/console.log
+	```
 
 ## I/O
 ### Input
@@ -70,6 +85,13 @@ To be written.
 
 
 ## Build documents
+
+> [!NOTE]
+> Install dependencies as shown above for the first build
+> ```bash
+> git submodule update --init doxygen-awesome-css
+> ```
+
 ```bash
 doxygen Doxyfile
 ```

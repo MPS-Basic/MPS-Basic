@@ -19,7 +19,9 @@ add_executable(${PROJECT_NAME}
   src/pressure_calculator/explicit.cpp
 )
 
-# OpenMP
+# ------------------
+# ----- OpenMP -----
+# ------------------
 find_package(OpenMP 5.0)
 if(OpenMP_CXX_FOUND)
   target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
@@ -27,10 +29,26 @@ else()
   message(WARNING "OpenMP not found. It runs on single thread.")
 endif()
 
-# eigen
-target_include_directories(${PROJECT_NAME} PUBLIC eigen)
+# -----------------
+# ----- Eigen -----
+# -----------------
+include(FetchContent)
+FetchContent_Declare(
+  eigen
+  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+  GIT_TAG 3.4.0
+)
+set(BUILD_TESTING OFF)
+set(EIGEN_BUILD_TESTING OFF)
+set(EIGEN_MPL2_ONLY ON)
+set(EIGEN_BUILD_PKGCONFIG OFF)
+set(EIGEN_BUILD_DOC OFF)
+FetchContent_MakeAvailable(Eigen)
+target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
 
-# google test
+# -----------------------
+# ----- Google Test -----
+# -----------------------
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -67,9 +85,10 @@ gtest_discover_tests(mps_test)
 #     set(CMAKE_CXX_FLAGS_PROFILE --coverage)
 # endif()
 
-# yaml-cpp
+# --------------------
+# ----- yaml-cpp -----
+# --------------------
 include(FetchContent)
-
 FetchContent_Declare(
   yaml-cpp
   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
@@ -85,10 +104,24 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
-# particle generator
-add_subdirectory(generator)
+# ------------------------------
+# ----- particle generator -----
+# ------------------------------
 add_library(particles STATIC
   src/particle.cpp
   src/particles_exporter.cpp
 )
-target_include_directories(particles PUBLIC eigen)
+target_link_libraries(particles PUBLIC Eigen3::Eigen)
+add_subdirectory(generator)
+
+# --------------------
+# ----- argparse -----
+# --------------------
+include(FetchContent)
+FetchContent_Declare(
+    argparse
+    GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+    GIT_TAG v3.0
+)
+FetchContent_MakeAvailable(argparse)
+target_link_libraries(${PROJECT_NAME} PUBLIC argparse)

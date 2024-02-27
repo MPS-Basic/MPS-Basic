@@ -11,6 +11,7 @@ ColumnLimit: '120'
 IncludeBlocks: 'Regroup'
 IndentCaseLabels: 'false'
 IndentWidth: '4'
+InsertNewlineAtEOF: 'true'
 PointerAlignment: Left
 ReflowComments: 'true'
 SpaceAfterCStyleCast: 'true'
