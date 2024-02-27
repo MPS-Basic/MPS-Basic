@@ -60,7 +60,7 @@ jobs:
       - name: Create comment
         run: |
           URL=$(python3 ${{ github.workspace }}/ci/upload_image.py ${{ github.workspace }}/result/hydrostatic/output_0100.png)
-          echo -e "Hydrostatic problem was calculated.\n <img src=https://i.imgur.com/b8wUvPv.png>" > ${{ steps.strings.outputs.pr-comment }}
+          echo -e "Hydrostatic problem was calculated.\n <img src=${URL}>" > ${{ steps.strings.outputs.pr-comment }}
           
       - name: Comment on PR
         env:
