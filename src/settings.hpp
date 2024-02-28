@@ -2,10 +2,9 @@
 
 #include "common.hpp"
 #include "domain.hpp"
+
 #include <Eigen/Dense>
 #include <filesystem>
-
-namespace fs = std::filesystem;
 
 /**
  * @brief Struct for settings of calculation
@@ -14,42 +13,49 @@ namespace fs = std::filesystem;
  * load the settings from the input file.
  */
 struct Settings {
-	// computational condition
-	int dim;                 ///< Dimension of the simulation
-	double particleDistance; ///< Initial distance between particles
-	double dt;               ///< Time step
-	double endTime;          ///< End time of the simulation
-	double outputPeriod;     ///< Output period of the simulation
-	double cflCondition;     ///< CFL condition
-	int numPhysicalCores;    ///< Number of cores to calculate
+    // computational condition
+    int dim{};                 ///< Dimension of the simulation
+    double particleDistance{}; ///< Initial distance between particles
+    double dt{};               ///< Time step
+    double endTime{};          ///< End time of the simulation
+    double outputPeriod{};     ///< Output period of the simulation
+    double cflCondition{};     ///< CFL condition
+    int numPhysicalCores{};    ///< Number of cores to calculate
 
-	Domain domain; ///< domain of the simulation
+    Domain domain{}; ///< domain of the simulation
 
-	// physical properties
-	double kinematicViscosity; ///< Kinematic viscosity
-	double fluidDensity;       ///< Fluid density
+    // physical properties
+    double kinematicViscosity{}; ///< Kinematic viscosity
+    double fluidDensity{};       ///< Fluid density
 
-	// gravity
-	Eigen::Vector3d gravity; ///< Gravity
+    // gravity
+    Eigen::Vector3d gravity; ///< Gravity
 
-	// free surface detection
-	double surfaceDetectionRatio; ///< Ratio for free surface detection
+    // free surface detection
+    // surface detection based on number density
+    double surfaceDetection_numberDensity_threshold{}; ///< threshold ratio of number density for free surface detection
+    // surface detection based on particle distribution
+    bool surfaceDetection_particleDistribution{}; ///< flag for free surface detection based on particle distribution
+    double surfaceDetection_particleDistribution_threshold{};
 
-	// parameters for pressure Poisson equation
-	double compressibility;                  ///< Compressibility of the fluid
-	double relaxationCoefficientForPressure; ///< Relaxation coefficient for pressure
+    // pressure calculation method
+    std::string pressureCalculationMethod{}; ///< Method for pressure calculation
+    // for Implicit
+    double compressibility{};                  ///< Compressibility of the fluid for Implicit method
+    double relaxationCoefficientForPressure{}; ///< Relaxation coefficient for pressure for Implicit method
+    // for Explicit
+    double soundSpeed{}; ///< Speed of sound for Explicit method
 
-	// collision
-	double collisionDistance;        ///< Distance for collision detection
-	double coefficientOfRestitution; ///< Coefficient of restitution
+    // collision
+    double collisionDistance{};        ///< Distance for collision detection
+    double coefficientOfRestitution{}; ///< Coefficient of restitution
 
-	// effective radius
-	double re_forNumberDensity; ///< Effective radius for number density
-	double re_forGradient;      ///< Effective radius for gradient
-	double re_forLaplacian;     ///< Effective radius for Laplacian
-	double reMax;               ///< Maximum of effective radius
+    // effective radius
+    double re_forNumberDensity{}; ///< Effective radius for number density
+    double re_forGradient{};      ///< Effective radius for gradient
+    double re_forLaplacian{};     ///< Effective radius for Laplacian
+    double reMax{};               ///< Maximum of effective radius
 
-	// i/o
-	fs::path profPath;  ///< Path for input particle file
-	fs::path outputDirectory; ///< Directory for output files
+    // i/o
+    std::filesystem::path profPath; ///< Path for input particle file
 };

@@ -1,0 +1,7 @@
+---
+HeaderFilterRegex: src/
+Checks: |
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-pro-type-member-init
+---
+

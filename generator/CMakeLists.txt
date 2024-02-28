@@ -1,5 +1,11 @@
-cmake_minimum_required(VERSION 3.9)
-project(INPUT_GENERATOR LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 17)
-add_executable(generate_dambreak generate_dambreak.cpp)
-target_include_directories(generate_dambreak PRIVATE ../eigen)
+add_executable(generate_dambreak
+    generate_dambreak.cpp
+)
+target_link_libraries(generate_dambreak PUBLIC Eigen3::Eigen)
+target_link_libraries(generate_dambreak PRIVATE particles)
+
+add_executable(generate_hydrostatic
+    generate_hydrostatic.cpp
+)
+target_link_libraries(generate_hydrostatic PUBLIC Eigen3::Eigen)
+target_link_libraries(generate_hydrostatic PRIVATE particles)

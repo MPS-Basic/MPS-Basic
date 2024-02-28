@@ -1,10 +1,10 @@
 #pragma once
 
+#include "common.hpp"
 #include "mps.hpp"
 #include "particles_exporter.hpp"
-#include <filesystem>
 
-namespace fs = std::filesystem;
+#include <filesystem>
 
 /**
  * Saver class
@@ -16,33 +16,15 @@ namespace fs = std::filesystem;
  */
 class Saver {
 public:
-	ParticlesExporter exporter;
-	int fileNumber = 0;
-	fs::path dir;
+    ParticlesExporter exporter;
+    int fileNumber = 0;
+    std::filesystem::path dir;
 
-	Saver() = default;
+    Saver() = default;
 
-	Saver(const fs::path& dir) {
-		this->dir = dir;
-		fs::create_directories(dir / "prof");
-		fs::create_directories(dir / "vtu");
-	};
+    Saver(const std::filesystem::path& dir);
 
-	void save(const MPS& mps, const double time) {
-		exporter.setParticles(mps.particles);
-
-		std::stringstream profName;
-		profName << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".prof";
-		fs::path profPath = dir / "prof" / profName.str();
-		exporter.toProf(profPath, time);
-
-		std::stringstream vtuName;
-		vtuName << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
-		fs::path vtuPath = dir / "vtu" / vtuName.str();
-		exporter.toVtu(vtuPath, time);
-
-		fileNumber++;
-	};
+    void save(const MPS& mps, const double time);
 
 private:
 };

@@ -1,14 +1,20 @@
 ---
+# List in alphabetical order.
 AccessModifierOffset: '-4'
+AlignAfterOpenBracket: 'BlockIndent'
+AlignConsecutiveAssignments: 'Consecutive'
+AllowAllArgumentsOnNextLine: 'false'
+AllowShortFunctionsOnASingleLine: 'None'
+BinPackArguments: 'false'
+BinPackParameters: 'false'
+ColumnLimit: '120'
+IncludeBlocks: 'Regroup'
 IndentCaseLabels: 'false'
 IndentWidth: '4'
+InsertNewlineAtEOF: 'true'
 PointerAlignment: Left
-TabWidth: '4'
-UseTab: ForIndentation
-ColumnLimit: '120'
-AllowShortFunctionsOnASingleLine: 'None'
-AlignAfterOpenBracket: 'Align'
-BinPackParameters: 'false'
-AlignConsecutiveAssignments: 'Consecutive'
+ReflowComments: 'true'
 SpaceAfterCStyleCast: 'true'
+TabWidth: '4'
+UseTab: 'Never'
 ...
