@@ -3,24 +3,33 @@
 using std::cerr;
 using std::endl;
 
+/**
+ * @brief Change the length of "next" array to match the number of particles
+ */
 void Bucket::generate(const int& particleNum) {
     next.resize(particleNum);
 }
 
+/**
+ * @brief Divide domain into lattice segments
+ */
 void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize) {
 
     length = reMax * (1.0 + CFL);
 
-    numX     = (int) (domain.xLength / length) + 3;
-    numY     = (int) (domain.yLength / length) + 3;
-    int numZ = (int) (domain.zLength / length) + 3;
-    num      = numX * numY * numZ;
+    numX     = (int) (domain.xLength / length) + 3; //bucket number in X direction
+    numY     = (int) (domain.yLength / length) + 3; //bucket number in Y direction
+    int numZ = (int) (domain.zLength / length) + 3; //bucket number in Z direction
+    num      = numX * numY * numZ;                  //Number of buckets
 
-    first.resize(num);
-    last.resize(num);
-    next.resize(particleSize);
+    first.resize(num);            //Array of minimum particle number in each bucket
+    last.resize(num);             //Array of maximum particle number in each bucket
+    next.resize(particleSize);    //
 }
 
+/**
+ * @brief Store particles in the bucket
+ */
 void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& domain) {
 
 #pragma omp parallel for

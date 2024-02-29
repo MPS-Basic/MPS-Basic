@@ -19,13 +19,26 @@ private:
 public:
     int num{}, numX{}, numY{};
     double length{};
-    std::vector<int> next, first, last;
+    std::vector<int> next, first, last; 
 
-    void generate(const int& particleNum);
-    void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
     /**
-     * @brief store particles in the bucket
-     * @param particles partiles to be stored
+     * @brief Change the length of "next" array to match the number of particles in the domain
+     * @param particleNum Number of fluid particles in the domain
+     */
+    void generate(const int& particleNum);
+
+    /**
+     * @brief Divide domain into lattice segments
+     * @param reMax Maximum of effective radius
+     * @param CFL  Courant-Friedrichs-Lewy Condition
+     * @param domain domain of the simulation
+     * @param particleSize Number of fluid particles in the domain
+     */
+    void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
+
+    /**
+     * @brief Store particles in the bucket
+     * @param particles particles to be stored
      * @param domain domain of the simulation
      */
     void storeParticles(std::vector<Particle>& particles, const Domain& domain);
