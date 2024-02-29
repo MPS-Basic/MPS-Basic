@@ -62,27 +62,9 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 	./build/mps --setting input/dambreak/settings.yml --output result/dambreak 2> result/dambreak/error.log | tee result/dambreak/console.log
 	```
 
-## I/O
-### Input
-To be written.
-
-### Output
-- The results are written in the following formats:
-	- `result/prof`: Profile data
-	- `result/vtu`: VTK data
-
-#### Profile data
-- The profile data is in the following format:
-
-```prof
-0  // time
-627  // number of particles
-3 -0.1 -0.1 0 0 0 0  // type x y z u v w
-3 -0.1 -0.075 0 0 0 0
-3 -0.1 -0.05 0 0 0 0
-...
-```
-
+### Checking Results
+Result files will be written in `result/dambreak/vtu/***.vtu`.
+Open these files in [ParaView](https://www.paraview.org/) to see the result.
 
 ## Build documents
 

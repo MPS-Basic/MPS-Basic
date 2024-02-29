@@ -1,3 +1,9 @@
+# This CMakeLists.txt is only supposed to be called from CMakeLists.txt
+# in the parent directory. This does not work properly only by itself.
+# The CMakelists.txt in the parent directory will build generators as well
+# in addition to the main soure code, so use it insted of this CMakeLists.txt
+# to build generators.
+
 add_executable(generate_dambreak
     generate_dambreak.cpp
 )
