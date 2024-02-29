@@ -188,6 +188,10 @@ Script files are prepared in the `scripts` folder. You can just call it for exec
 
 	![](fig/tasks_3.png)
 
+## Checking Results
+Result files will be written in `result/dambreak/vtu/***.vtu`.
+Open these files in [ParaView](https://www.paraview.org/) to see the result.
+
 ## Debugging
 1. Open Cmake tab.
 2. Change `Configure` to `Debug`
