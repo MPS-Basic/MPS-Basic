@@ -7,9 +7,9 @@ void Bucket::generate(const int& particleNum) {
     next.resize(particleNum);
 }
 
-void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize) {
+void Bucket::set(const double& reMax, const Domain& domain, const size_t& particleSize) {
 
-    length = reMax * (1.0 + CFL);
+    length = reMax;
 
     numX     = (int) (domain.xLength / length) + 3;
     numY     = (int) (domain.yLength / length) + 3;

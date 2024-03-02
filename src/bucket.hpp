@@ -22,7 +22,7 @@ public:
     std::vector<int> next, first, last;
 
     void generate(const int& particleNum);
-    void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
+    void set(const double& reMax, const Domain& domain, const size_t& particleSize);
     /**
      * @brief store particles in the bucket
      * @param particles partiles to be stored
