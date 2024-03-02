@@ -1,1 +1,1 @@
-\page surface_detection Surface Detection
+# Improved Algorithms: Surface Detection
