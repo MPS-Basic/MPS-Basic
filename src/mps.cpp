@@ -17,6 +17,7 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
+    this->neighborSearcher   = NeighborSearcher();
 
     refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
     refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
@@ -26,8 +27,8 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
 }
 
 void MPS::stepForward() {
-    bucket.storeParticles(particles, domain);
-    setNeighbors(settings.reMax);
+    // bucket.storeParticles(particles, domain);
+    neighborSearcher.setNeighbors(settings.reMax);
     calGravity();
     calViscosity(settings.re_forLaplacian);
     moveParticle();
@@ -36,10 +37,10 @@ void MPS::stepForward() {
     setNeighbors(settings.reMax);
     collision();
 
-    bucket.storeParticles(particles, domain);
-    setNeighbors(settings.reMax);
-    calNumberDensity(settings.re_forNumberDensity);
-    setBoundaryCondition();
+    // bucket.storeParticles(particles, domain);
+    // setNeighbors(settings.reMax);
+    // calNumberDensity(settings.re_forNumberDensity);
+    // setBoundaryCondition();
     auto pressures = pressureCalculator->calc(particles);
     for (auto& particle : particles) {
         particle.pressure = pressures[particle.id];

@@ -33,6 +33,10 @@ Implicit::Implicit(
 
 std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
     this->particles = particles;
+
+    Bucket bucket;
+    bucket.storeParticles(this->particles, this->domain);
+
     setSourceTerm();
     setMatrix();
     solveSimultaneousEquations();

@@ -7,18 +7,17 @@ void Bucket::generate(const int& particleNum) {
     next.resize(particleNum);
 }
 
-void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize) {
+Bucket(const double& reMax, const double& cfl, const Domain& domain, const size_t& particleSize) {
+    this->length = reMax;
 
-    length = reMax * (1.0 + CFL);
+    this->numX = (int) (domain.xLength / length) + 3;
+    this->numY = (int) (domain.yLength / length) + 3;
+    this->numZ = (int) (domain.zLength / length) + 3;
+    this->num  = numX * numY * numZ;
 
-    numX     = (int) (domain.xLength / length) + 3;
-    numY     = (int) (domain.yLength / length) + 3;
-    int numZ = (int) (domain.zLength / length) + 3;
-    num      = numX * numY * numZ;
-
-    first.resize(num);
-    last.resize(num);
-    next.resize(particleSize);
+    this->first.resize(num);
+    this->last.resize(num);
+    this->next.resize(particleSize);
 }
 
 void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& domain) {

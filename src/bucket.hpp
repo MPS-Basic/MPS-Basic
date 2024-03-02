@@ -17,12 +17,12 @@
 class Bucket {
 private:
 public:
-    int num{}, numX{}, numY{};
+    int num{}, numX{}, numY{}, numZ{};
     double length{};
     std::vector<int> next, first, last;
 
+    Bucket(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
     void generate(const int& particleNum);
-    void set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize);
     /**
      * @brief store particles in the bucket
      * @param particles partiles to be stored
