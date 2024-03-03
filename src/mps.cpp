@@ -22,7 +22,7 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
     refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
     refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
 
-    bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
+    bucket.set(settings.reMax, domain, particles.size());
 }
 
 void MPS::stepForward() {
