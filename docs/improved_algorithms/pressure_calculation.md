@@ -48,6 +48,7 @@ User-defined pressure calculation method is now set in
 ```cpp
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     Input input = loader.load(settingPath, outputDirectory);
+
     // -----
     // -----
     // -----
@@ -91,6 +92,9 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     // -----
 }
 ```
+@note
+Here we use "Interface Class" and "Smart Pointer".
+See [Coding Techniqes](../coding_techniques.md) for more information.
 
 ### Pressure Calculation
 Finally, at each timestep, MPS::stepForward() calls
