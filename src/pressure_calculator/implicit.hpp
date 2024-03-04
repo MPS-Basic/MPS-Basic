@@ -3,6 +3,7 @@
 #include "../particle.hpp"
 #include "../refvalues.hpp"
 #include "interface.hpp"
+#include "pressure_poisson_equation.hpp"
 
 #include <Eigen/Sparse>
 #include <vector>
@@ -45,7 +46,9 @@ private:
     Eigen::SparseMatrix<double, Eigen::RowMajor>
         coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
-    Eigen::VectorXd pressure;   ///< Solution of pressure Poisson equation
+    std::vector<double> pressure;   ///< Solution of pressure Poisson equation
+
+    PressurePoissonEquation ppe;
 
     /**
      * @brief set source term of pressure Poisson equation

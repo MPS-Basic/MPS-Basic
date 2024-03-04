@@ -1,3 +1,7 @@
+#pragma once
+
+#include "../particle.hpp"
+
 #include <Eigen/Sparse>
 
 class PressurePoissonEquation {
@@ -18,6 +22,7 @@ public:
     );
 
     void make(const std::vector<Particle>& particles);
+    void removeParticleFromCalculation(int index);
     std::vector<double> solve();
 
 private:
@@ -38,4 +43,7 @@ private:
 
     void setSourceTerm(const std::vector<particles>& particles);
     void setMatrix(const std::vector<particles>& particles);
+    void zeroOutMatrixRow(int row);
+    void zeroOutMatrixColumn(int column);
+    void zeroOutSourceTerm(int index);
 };

@@ -1,6 +1,6 @@
 #include "pressure_poisson_equation.hpp"
 
-#include "weight.hpp"
+#include "../weight.hpp"
 
 PressurePoissonEquation(
     int dimension,
@@ -31,6 +31,40 @@ void make(const std::vector<Particle>& particles) {
     setMatrix(particles);
 }
 
+// 指定した粒子を計算から除外する
+void removeParticleFromCalculation(int index) {
+    zeroOutMatrixRow(index);
+    zeroOutMatrixColumn(index);
+    zeroOutSourceTerm(index);
+}
+
+// coefficientMatrix の指定された行を0にする
+void zeroOutMatrixRow(int row) {
+    for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
+        for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
+            if (it.row() == row) {
+                it.valueRef() = 0.0;
+            }
+        }
+    }
+}
+
+// coefficientMatrix の指定された列を0にする
+void zeroOutMatrixColumn(int column) {
+    for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
+        for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
+            if (it.col() == column) {
+                it.valueRef() = 0.0;
+            }
+        }
+    }
+}
+
+// sourceTerm の指定された要素を0にする
+void zeroOutSourceTerm(int index) {
+    sourceTerm[index] = 0.0;
+}
+
 std::vector<double> solve() {
     using std::cerr;
     using std::endl;
@@ -43,6 +77,13 @@ std::vector<double> solve() {
         std::exit(-1);
     }
 
+    // this->pressure is defined as Eigen::VectorXd to solve pressure Poisson equation
+    // using the BiGCSTAB method in Eigen,
+    // but it is converted to std::vector<double> to return the result.
+    // This conversion is done by giving std::vector
+    // the pointers to the first and the last elements of the Eigen::VectorXd.
+    // If this type of conversion appears frequently,
+    // consider defining a function to convert the vector type.
     std::vector<double> pressureStdVec(pressure.data(), pressure.data() + pressure.size());
     return pressureStdVec;
 }
@@ -69,6 +110,9 @@ void setMatrix(const std::vector<particles>& particles) {
         double coefficient_ii = 0.0;
         for (auto& neighbor : pi.neighbors) {
             Particle& pj = particles[neighbor.id];
+            if (pj.type == ParticleType::Ignored) {
+                continue;
+            }
 
             if (neighbor.distance < re) {
                 double coefficient_ij = a * weight(neighbor.distance, re) / fluidDensity;
