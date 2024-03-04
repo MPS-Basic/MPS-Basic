@@ -2,13 +2,14 @@
 
 #include "bucket.hpp"
 
-NeighborSearcher::NeighborSearcher(double re) {
-    this->re = re;
+NeighborSearcher::NeighborSearcher(const double& re, const Domain& domain, const size_t& particleSize) {
+    this->re     = re;
+    this->domain = domain;
+    this->bucket = Bucket(re, domain, particleSize);
 }
 
-void NeighborSearcher::setNeighbors(std::vector<Particle>& particles, const Domain& domain) {
-    Bucket bucket;
-    bucket.storeParticles(particles, domain);
+void NeighborSearcher::setNeighbors(std::vector<Particle>& particles) {
+    bucket.storeParticles(particles);
 
 #pragma omp parallel for
     for (auto& pi : particles) {

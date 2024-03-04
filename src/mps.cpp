@@ -17,30 +17,25 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
-    this->neighborSearcher   = NeighborSearcher();
+    this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
 
     refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
     refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
     refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
-
-    bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
 }
 
 void MPS::stepForward() {
-    // bucket.storeParticles(particles, domain);
-    neighborSearcher.setNeighbors(settings.reMax);
+    neighborSearcher.setNeighbors(particles);
     calGravity();
     calViscosity(settings.re_forLaplacian);
     moveParticle();
 
-    bucket.storeParticles(particles, domain);
-    setNeighbors(settings.reMax);
+    neighborSearcher.setNeighbors(particles);
     collision();
 
-    // bucket.storeParticles(particles, domain);
-    // setNeighbors(settings.reMax);
-    // calNumberDensity(settings.re_forNumberDensity);
-    // setBoundaryCondition();
+    neighborSearcher.setNeighbors(particles);
+    calNumberDensity(settings.re_forNumberDensity);
+    setBoundaryCondition();
     auto pressures = pressureCalculator->calc(particles);
     for (auto& particle : particles) {
         particle.pressure = pressures[particle.id];
@@ -297,39 +292,5 @@ void MPS::calCourant() {
 
     if (courant > settings.cflCondition) {
         cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << endl;
-    }
-}
-
-void MPS::setNeighbors(const double& re) {
-#pragma omp parallel for
-    for (auto& pi : particles) {
-        if (pi.type == ParticleType::Ghost)
-            continue;
-
-        pi.neighbors.clear();
-
-        int ix = (int) ((pi.position.x() - domain.xMin) / bucket.length) + 1;
-        int iy = (int) ((pi.position.y() - domain.yMin) / bucket.length) + 1;
-        int iz = (int) ((pi.position.z() - domain.zMin) / bucket.length) + 1;
-
-        for (int jx = ix - 1; jx <= ix + 1; jx++) {
-            for (int jy = iy - 1; jy <= iy + 1; jy++) {
-                for (int jz = iz - 1; jz <= iz + 1; jz++) {
-                    int jBucket = jx + jy * bucket.numX + jz * bucket.numX * bucket.numY;
-                    int j       = bucket.first[jBucket];
-
-                    while (j != -1) {
-                        Particle& pj = particles[j];
-
-                        double dist = (pj.position - pi.position).norm();
-                        if (j != pi.id && dist < re) {
-                            pi.neighbors.emplace_back(j, dist);
-                        }
-
-                        j = bucket.next[j];
-                    }
-                }
-            }
-        }
     }
 }

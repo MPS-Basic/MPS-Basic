@@ -17,6 +17,7 @@ add_executable(${PROJECT_NAME}
   src/weight.cpp
   src/pressure_calculator/implicit.cpp
   src/pressure_calculator/explicit.cpp
+  src/neighbor_searcher.cpp
 )
 
 # ------------------

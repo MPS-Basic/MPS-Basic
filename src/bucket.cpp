@@ -7,8 +7,9 @@ void Bucket::generate(const int& particleNum) {
     next.resize(particleNum);
 }
 
-Bucket(const double& reMax, const double& cfl, const Domain& domain, const size_t& particleSize) {
+Bucket::Bucket(const double& reMax, const Domain& domain, const size_t& particleSize) {
     this->length = reMax;
+    this->domain = domain;
 
     this->numX = (int) (domain.xLength / length) + 3;
     this->numY = (int) (domain.yLength / length) + 3;
@@ -20,7 +21,7 @@ Bucket(const double& reMax, const double& cfl, const Domain& domain, const size_
     this->next.resize(particleSize);
 }
 
-void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& domain) {
+void Bucket::storeParticles(std::vector<Particle>& particles) {
 
 #pragma omp parallel for
     for (int i = 0; i < num; i++) {
