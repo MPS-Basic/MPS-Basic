@@ -30,49 +30,62 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void PressurePoissonEquation::make(const std::vector<Particle>& particles) {
-    setSourceTerm(particles);
-    setMatrix(particles);
+void PressurePoissonEquation::make(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds) {
+    this->particlesCount = particles.size();
+    setSourceTerm(particles, ignoreIds);
+    setMatrixTriplets(particles, ignoreIds);
 }
 
 // 指定した粒子を計算から除外する
-void PressurePoissonEquation::removeParticleFromCalculation(int index) {
-    zeroOutMatrixRow(index);
-    zeroOutMatrixColumn(index);
-    zeroOutSourceTerm(index);
-}
+// void PressurePoissonEquation::removeParticlesFromCalculation(const std::vector<int>& ids) {
+//     // Zero out the row and column of id in the matrix.
+//     for (auto& triplet : matrixTriplets) {
+//         if (triplet.row() == id || triplet.col() == id) {
+//             triplet = Eigen::Triplet<double>(triplet.row(), triplet.col(), 0.0);
+//         }
+//     }
 
-// coefficientMatrix の指定された行を0にする
-void PressurePoissonEquation::zeroOutMatrixRow(int row) {
-    for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
-        for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
-            if (it.row() == row) {
-                it.valueRef() = 0.0;
-            }
-        }
-    }
-}
+//     // Zero out the id-th element of the source term.
+//     for (int i = 0; i < sourceTerm.size(); i++) {
+//         if (i == id) {
+//             sourceTerm[i] = 0.0;
+//         }
+//     }
+// }
 
-// coefficientMatrix の指定された列を0にする
-void PressurePoissonEquation::zeroOutMatrixColumn(int column) {
-    for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
-        for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
-            if (it.col() == column) {
-                it.valueRef() = 0.0;
-            }
-        }
-    }
-}
+// // coefficientMatrix の指定された行を0にする
+// void PressurePoissonEquation::zeroOutMatrixRow(int row) {
+//     for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
+//         for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
+//             if (it.row() == row) {
+//                 it.valueRef() = 0.0;
+//             }
+//         }
+//     }
+// }
 
-// sourceTerm の指定された要素を0にする
-void PressurePoissonEquation::zeroOutSourceTerm(int index) {
-    sourceTerm[index] = 0.0;
-}
+// // coefficientMatrix の指定された列を0にする
+// void PressurePoissonEquation::zeroOutMatrixColumn(int column) {
+//     for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
+//         for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
+//             if (it.col() == column) {
+//                 it.valueRef() = 0.0;
+//             }
+//         }
+//     }
+// }
+
+// // sourceTerm の指定された要素を0にする
+// void PressurePoissonEquation::zeroOutSourceTerm(int index) {
+//     sourceTerm[index] = 0.0;
+// }
 
 std::vector<double> PressurePoissonEquation::solve() {
     using std::cerr;
     using std::endl;
 
+    coefficientMatrix.resize(particlesCount, particlesCount);
+    coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
     solver.compute(coefficientMatrix);
     Eigen::VectorXd pressure = solver.solve(sourceTerm);
@@ -92,25 +105,33 @@ std::vector<double> PressurePoissonEquation::solve() {
     return pressureStdVec;
 }
 
-void PressurePoissonEquation::setSourceTerm(const std::vector<Particle>& particles) {
+void PressurePoissonEquation::setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
-    sourceTerm.resize(particles.size());
+    sourceTerm.resize(particlesCount);
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+        if (std::binary_search(ignoreIds.begin(), ignoreIds.end(), pi.id)) {
+            sourceTerm[pi.id] = 0.0;
+        } else {
+            sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+        }
     }
 }
 
-void PressurePoissonEquation::setMatrix(const std::vector<Particle>& particles) {
-    std::vector<Eigen::Triplet<double>> triplets;
+void PressurePoissonEquation::setMatrixTriplets(
+    const std::vector<Particle>& particles, const std::vector<int>& ignoreIds
+) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
-    coefficientMatrix.resize(particles.size(), particles.size());
 
     for (auto& pi : particles) {
+        if (std::binary_search(ignoreIds.begin(), ignoreIds.end(), pi.id)) {
+            continue;
+        }
+
         double coefficient_ii = 0.0;
         for (auto& neighbor : pi.neighbors) {
             auto& pj = particles[neighbor.id];
@@ -120,12 +141,11 @@ void PressurePoissonEquation::setMatrix(const std::vector<Particle>& particles) 
 
             if (neighbor.distance < re) {
                 double coefficient_ij = a * weight(neighbor.distance, re) / fluidDensity;
-                triplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
+                matrixTriplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
                 coefficient_ii += coefficient_ij;
             }
         }
         coefficient_ii += (compressibility) / (dt * dt);
-        triplets.emplace_back(pi.id, pi.id, coefficient_ii);
+        matrixTriplets.emplace_back(pi.id, pi.id, coefficient_ii);
     }
-    coefficientMatrix.setFromTriplets(triplets.begin(), triplets.end());
 }

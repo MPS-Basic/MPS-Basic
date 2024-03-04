@@ -24,8 +24,7 @@ public:
         double reForNumberDensity
     );
 
-    void make(const std::vector<Particle>& particles);
-    void removeParticleFromCalculation(int index);
+    void make(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
     std::vector<double> solve();
 
 private:
@@ -39,16 +38,18 @@ private:
     double lambda0;
     double reForLaplacian;
     double reForNumberDensity;
+    size_t particlesCount;
 
+    std::vector<Eigen::Triplet<double>> matrixTriplets; ///< Triplet for coefficient matrix
     Eigen::SparseMatrix<double, Eigen::RowMajor>
         coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 
-    void setSourceTerm(const std::vector<Particle>& particles);
-    void setMatrix(const std::vector<Particle>& particles);
-    void zeroOutMatrixRow(int row);
-    void zeroOutMatrixColumn(int column);
-    void zeroOutSourceTerm(int index);
+    void setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
+    void setMatrixTriplets(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
+    // void zeroOutMatrixRow(int row);
+    // void zeroOutMatrixColumn(int column);
+    // void zeroOutSourceTerm(int index);
 };
 
 } // namespace PressureCalculator

@@ -40,7 +40,7 @@ private:
 
     PressurePoissonEquation ppe;
 
-    void applyBoundaryCondition(const std::vector<Particle>& particles);
+    // void applyBoundaryCondition(const std::vector<Particle>& particles);
 
     /**
      * @brief If there is no Dirichlet boundary condition on the fluid,

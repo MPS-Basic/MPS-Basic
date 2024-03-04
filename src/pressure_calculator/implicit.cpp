@@ -37,8 +37,14 @@ Implicit::Implicit(
 }
 
 std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
-    this->ppe.make(particles);
-    applyBoundaryCondition(particles);
+    std::vector<int> ignoreIds;
+    for (auto& p : particles) {
+        if (p.boundaryCondition != FluidState::Inner) {
+            ignoreIds.push_back(p.id);
+        }
+    }
+
+    this->ppe.make(particles, ignoreIds);
     this->pressure = this->ppe.solve();
     removeNegativePressure();
 
@@ -48,13 +54,16 @@ std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
 Implicit::~Implicit() {
 }
 
-void Implicit::applyBoundaryCondition(const std::vector<Particle>& particles) {
-    for (size_t i = 0; i < particles.size(); i++) {
-        if (particles[i].boundaryCondition != FluidState::Inner) {
-            this->ppe.removeParticleFromCalculation(i);
-        }
-    }
-}
+// void Implicit::applyBoundaryCondition(const std::vector<Particle>& particles) {
+//     std::vector<int> NotInnerParticleIds;
+//     for (size_t i = 0; i < particles.size(); i++) {
+//         if (particles[i].boundaryCondition != FluidState::Inner) {
+//             NotInnerParticleIds.push_back(i);
+//         }
+//     }
+
+//     this->ppe.removeParticlesFromCalculation(NotInnerParticleIds);
+// }
 
 // this function is not used.
 void Implicit::exceptionalProcessingForBoundaryCondition() {
