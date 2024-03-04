@@ -2,7 +2,11 @@
 
 #include "../weight.hpp"
 
-PressurePoissonEquation(
+#include <iostream>
+
+using PressureCalculator::PressurePoissonEquation;
+
+PressurePoissonEquation::PressurePoissonEquation(
     int dimension,
     double dt,
     double relaxationCoefficient,
@@ -26,20 +30,20 @@ PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void make(const std::vector<Particle>& particles) {
+void PressurePoissonEquation::make(const std::vector<Particle>& particles) {
     setSourceTerm(particles);
     setMatrix(particles);
 }
 
 // 指定した粒子を計算から除外する
-void removeParticleFromCalculation(int index) {
+void PressurePoissonEquation::removeParticleFromCalculation(int index) {
     zeroOutMatrixRow(index);
     zeroOutMatrixColumn(index);
     zeroOutSourceTerm(index);
 }
 
 // coefficientMatrix の指定された行を0にする
-void zeroOutMatrixRow(int row) {
+void PressurePoissonEquation::zeroOutMatrixRow(int row) {
     for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
         for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
             if (it.row() == row) {
@@ -50,7 +54,7 @@ void zeroOutMatrixRow(int row) {
 }
 
 // coefficientMatrix の指定された列を0にする
-void zeroOutMatrixColumn(int column) {
+void PressurePoissonEquation::zeroOutMatrixColumn(int column) {
     for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
         for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
             if (it.col() == column) {
@@ -61,17 +65,17 @@ void zeroOutMatrixColumn(int column) {
 }
 
 // sourceTerm の指定された要素を0にする
-void zeroOutSourceTerm(int index) {
+void PressurePoissonEquation::zeroOutSourceTerm(int index) {
     sourceTerm[index] = 0.0;
 }
 
-std::vector<double> solve() {
+std::vector<double> PressurePoissonEquation::solve() {
     using std::cerr;
     using std::endl;
 
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
     solver.compute(coefficientMatrix);
-    auto pressure = solver.solve(sourceTerm);
+    Eigen::VectorXd pressure = solver.solve(sourceTerm);
     if (solver.info() != Eigen::Success) {
         cerr << "Pressure calculation failed." << endl;
         std::exit(-1);
@@ -88,7 +92,7 @@ std::vector<double> solve() {
     return pressureStdVec;
 }
 
-void setSourceTerm(const std::vector<particles>& particles) {
+void PressurePoissonEquation::setSourceTerm(const std::vector<Particle>& particles) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
@@ -100,7 +104,7 @@ void setSourceTerm(const std::vector<particles>& particles) {
     }
 }
 
-void setMatrix(const std::vector<particles>& particles) {
+void PressurePoissonEquation::setMatrix(const std::vector<Particle>& particles) {
     std::vector<Eigen::Triplet<double>> triplets;
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
@@ -109,8 +113,8 @@ void setMatrix(const std::vector<particles>& particles) {
     for (auto& pi : particles) {
         double coefficient_ii = 0.0;
         for (auto& neighbor : pi.neighbors) {
-            Particle& pj = particles[neighbor.id];
-            if (pj.type == ParticleType::Ignored) {
+            auto& pj = particles[neighbor.id];
+            if (pj.boundaryCondition == FluidState::Ignored) {
                 continue;
             }
 

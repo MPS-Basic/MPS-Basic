@@ -3,6 +3,9 @@
 #include "../particle.hpp"
 
 #include <Eigen/Sparse>
+#include <vector>
+
+namespace PressureCalculator {
 
 class PressurePoissonEquation {
 public:
@@ -41,9 +44,11 @@ private:
         coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 
-    void setSourceTerm(const std::vector<particles>& particles);
-    void setMatrix(const std::vector<particles>& particles);
+    void setSourceTerm(const std::vector<Particle>& particles);
+    void setMatrix(const std::vector<Particle>& particles);
     void zeroOutMatrixRow(int row);
     void zeroOutMatrixColumn(int column);
     void zeroOutSourceTerm(int index);
 };
+
+} // namespace PressureCalculator
