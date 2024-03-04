@@ -1,5 +1,7 @@
 # Building Environment
+
 [TOC]
+
 This page explains how to build environment for executing MPS-Basic.
 
 ## What You Need
@@ -7,28 +9,34 @@ There are 5 things you need.
 
 Component | Explanation | Examples
 --- | --- | ---
-IDE | to write, build and execute programs. | Visual Studio, Visual Studio Code, ...
+Editor/IDE | to write (, build and execute) programs. | Vim, Emacs, Visual Studio Code, Visual Studio, ...
 Compiler | to compile the program | Clang, GCC, ...
-Libraries | what you include at the begining of the code |C++ Standard Library (like `<vector>`), OpenMP, ...
+Libraries | what you include at the begining of the code | C++ Standard Library (like `<vector>`), OpenMP, ...
 Build System | automatically build executable files based on setting files | Make, MSBuild, Ninja, ...
 CMake | automatically generate input files for user defined Build System | ---
 
-### IDE
+### Editor/IDE
+The simplest editors, such as Vim and Emacs, specialize in editing programs.
+To build and run a program, you need to open a terminal in a separate window.
+In contrast, IDEs have advanced features that are not limited to program editing
+and can automatically build and run programs.
 IDE stands for Integrated Development Environment.
-Basically it's a sophisticated editor combined with console (terminal).
 
 Examples:
-- Visual Studio Code
-- Visual Studio
+- Simple editors
+  - Vim
+  - Emacs
+- IDEs
+  - Visual Studio Code
+  - Xcode
+  - Eclipse
 
+Simple editors are so simple that it's inconvinient (unless you're a pro),
+while IDEs are so sophisticated that it's difficult for beginners to use.
+Visual Studio Code is somewhere in between.
+VS Code allows you to open a terminal within it's window
+and to introduce extensions to automate the build and execution of programs.
 ***If you're new, use Visual Studio Code***.
-Visual Studio is advanced, but difficult to use for beginers.
-
-IDE is acturally not necessary,
-since you can edit using editor (such as Emacs, Vim, or even a text editor),
-and build and execute using terminal app.
-But using IDE is far more easy since you can access everything from one app,
-and it's a de fact standard in the modern program development fields.
 
 ### Compiler and Libraries
 Sophisticated functionalities in `c++` such as `std::string`,  `std::vector`,

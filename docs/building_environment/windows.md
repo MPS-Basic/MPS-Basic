@@ -104,7 +104,7 @@ We recommend beginners to use this build system.
 `Make` can be installed throuh varios ways such as:
 - (Original) MinGW (old and not recommended)
 - MSYS2
-- GnuWin32
+- GnuWin32 (old and not recommended)
 - And more...
 
 But most of them are old and not easy to use.
