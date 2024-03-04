@@ -946,6 +946,7 @@ WARN_LOGFILE           =
 INPUT                  = src\
                          docs/mainpage.md\
                          docs/execution.md\
+                         docs/building_environment\
                          docs/input-output.md\
                          docs/improved_algorithms\
                          CONTRIBUTING.md\
