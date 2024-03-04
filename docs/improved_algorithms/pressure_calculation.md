@@ -4,7 +4,7 @@
 
 ## Pressure Calculation Methods
 - Implicit
-- Explicit
+- \subpage explicit
 
 ## How It's Switched
 Let's take a look at how the pressure calculation method is
