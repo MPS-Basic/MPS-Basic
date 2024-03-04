@@ -20,16 +20,9 @@ Implicit::Implicit(
     double compressibility,
     double relaxationCoefficient
 ) {
-    this->dimension                 = dimension;
-    this->reForNumberDensity        = reForNumberDensity;
-    this->reForLaplacian            = reForLaplacian;
-    this->dt                        = dt;
-    this->fluidDensity              = fluidDensity;
-    this->compressibility           = compressibility;
-    this->relaxationCoefficient     = relaxationCoefficient;
-    this->refValuesForNumberDensity = RefValues(dimension, particleDistance, reForNumberDensity);
-    this->refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
-    this->ppe                       = PressurePoissonEquation(
+    auto refValuesForNumberDensity = RefValues(dimension, particleDistance, reForNumberDensity);
+    auto refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
+    this->ppe                      = PressurePoissonEquation(
         dimension,
         dt,
         relaxationCoefficient,

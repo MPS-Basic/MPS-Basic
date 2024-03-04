@@ -31,16 +31,6 @@ public:
     );
 
 private:
-    int dimension;
-    RefValues refValuesForNumberDensity;
-    RefValues refValuesForLaplacian;
-    double reForNumberDensity;
-    double reForLaplacian;
-    double dt;
-    double fluidDensity;
-    double compressibility;
-    double relaxationCoefficient;
-
     std::vector<Particle> particles;
 
     Eigen::SparseMatrix<double, Eigen::RowMajor>
@@ -59,13 +49,6 @@ private:
      *
      */
     void exceptionalProcessingForBoundaryCondition();
-
-    /**
-     * @brief Solve the pressure Poisson equation
-     * @details
-     * The pressure Poisson equation is solved using the BiCGSTAB method.
-     */
-    void solveSimultaneousEquations();
 
     /**
      * @brief remove negative pressure for stability
