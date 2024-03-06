@@ -30,7 +30,7 @@ void ParticlesExporter::toProf(const fs::path& path, const double& time) {
     }
 }
 
-void ParticlesExporter::toVtu(const fs::path& path, const double& time) {
+void ParticlesExporter::toVtu(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
     std::ofstream ofs(path);
     if (ofs.fail()) {
         cerr << "cannot write " << path << endl;
@@ -43,11 +43,20 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time) {
     ofs << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
     ofs << "<VTKFile byte_order='LittleEndian' version='0.1' type = 'UnstructuredGrid'>" << endl;
     ofs << "<UnstructuredGrid>" << endl;
-    ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>" << endl;
+
+    // -----------------
+    // --- Time data ---
+    // -----------------
+    ofs << "<FieldData>" << endl;
+    ofs << "<DataArray type='Float64' Name='Time' NumberOfComponents='1' NumberOfTuples='1' format='ascii'>" << endl;
+    ofs << time << endl;
+    ofs << "</DataArray>" << endl;
+    ofs << "</FieldData>" << endl;
 
     /// ------------------
     /// ----- Points -----
     /// ------------------
+    ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>" << endl;
     ofs << "<Points>" << endl;
     ofs << "<DataArray NumberOfComponents='3' type='Float64' "
            "Name='position' format='ascii'>"
@@ -87,6 +96,16 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time) {
     dataArrayBegin(ofs, "1", "Float64", "Number Density");
     for (const auto& p : particles)
         ofs << p.numberDensity << endl;
+    dataArrayEnd(ofs);
+
+    dataArrayBegin(ofs, "1", "Float64", "Number Density Ratio");
+    for (auto& p : particles)
+        ofs << p.numberDensity / n0ForNumberDensity << std::endl;
+    dataArrayEnd(ofs);
+
+    dataArrayBegin(ofs, "1", "Int32", "Boundary Condition");
+    for (auto& p : particles)
+        ofs << static_cast<int>(p.boundaryCondition) << std::endl;
     dataArrayEnd(ofs);
 
     ofs << "</PointData>" << endl;

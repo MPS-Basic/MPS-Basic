@@ -21,12 +21,11 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
+    this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
 
     refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
     refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
     refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
-
-    bucket.set(settings.reMax, settings.cflCondition, domain, particles.size());
 }
 
 /**
@@ -36,18 +35,15 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
  * Next, the minimum pressure is found, the pressure gradient is calculated, and the position of the particle is determined according to the pressure gradient.
  */
 void MPS::stepForward() {
-    bucket.storeParticles(particles, domain);
-    setNeighbors(settings.reMax);
+    neighborSearcher.setNeighbors(particles);
     calGravity();
     calViscosity(settings.re_forLaplacian);
     moveParticle();
 
-    bucket.storeParticles(particles, domain);
-    setNeighbors(settings.reMax);
+    neighborSearcher.setNeighbors(particles);
     collision();
 
-    bucket.storeParticles(particles, domain);
-    setNeighbors(settings.reMax);
+    neighborSearcher.setNeighbors(particles);
     calNumberDensity(settings.re_forNumberDensity);
     setBoundaryCondition();
     auto pressures = pressureCalculator->calc(particles);
@@ -188,19 +184,17 @@ void MPS::calNumberDensity(const double& re) {
  * @brief Redefine particle's boundary condition(Ghost, FreeSurface, Inner) using number density
  */
 void MPS::setBoundaryCondition() {
-    double n0   = refValuesForNumberDensity.n0;
-    double beta = settings.surfaceDetectionRatio;
-
 #pragma omp parallel for
     for (auto& pi : particles) {
         if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
             pi.boundaryCondition = FluidState::Ignored;
 
-        } else if (pi.numberDensity < beta * n0) {
-            pi.boundaryCondition = FluidState::FreeSurface;
-
-        } else {
-            pi.boundaryCondition = FluidState::Inner;
+        } else { // Fluid particles
+            if (isFreeSurface(pi)) {
+                pi.boundaryCondition = FluidState::FreeSurface;
+            } else {
+                pi.boundaryCondition = FluidState::Inner;
+            }
         }
     }
 }
@@ -209,6 +203,51 @@ void MPS::setBoundaryCondition() {
  * @brief Find minimum pressure for gradient
  * @param re effective radius
  */
+bool MPS::isFreeSurface(const Particle& pi) {
+    bool isFreeSurface;
+
+    // based on number density
+    double n0   = refValuesForNumberDensity.n0;
+    double beta = settings.surfaceDetection_numberDensity_threshold;
+    if (pi.numberDensity < beta * n0) {
+        isFreeSurface = true;
+    } else {
+        isFreeSurface = false;
+    }
+
+    // based on particle distribution
+    if (isFreeSurface && settings.surfaceDetection_particleDistribution) {
+        if (!isParticleDistributionBiased(pi)) {
+            isFreeSurface = false;
+        }
+    }
+
+    return isFreeSurface;
+}
+
+bool MPS::isParticleDistributionBiased(const Particle& pi) {
+    Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
+    for (auto& neighbor : pi.neighbors) {
+        auto& pj = particles[neighbor.id];
+
+        rij_sum += pj.position - pi.position;
+    }
+
+    double alpha = settings.surfaceDetection_particleDistribution_threshold;
+    if (abs(rij_sum.x()) > alpha * settings.particleDistance) {
+        return true;
+
+    } else if (abs(rij_sum.y()) > alpha * settings.particleDistance) {
+        return true;
+
+    } else if (abs(rij_sum.z()) > alpha * settings.particleDistance) {
+        return true;
+
+    } else {
+        return false;
+    }
+}
+
 void MPS::setMinimumPressure(const double& re) {
 #pragma omp parallel for
     for (auto& p : particles) {
@@ -298,6 +337,7 @@ void MPS::calCourant() {
         cerr << "ERROR: Courant number is larger than CFL condition. Courant = " << courant << endl;
     }
 }
+<<<<<<< HEAD
 
 /**
  * @brief Redefine neighboring particles
@@ -336,3 +376,5 @@ void MPS::setNeighbors(const double& re) {
         }
     }
 }
+=======
+>>>>>>> 4e02f3316c9bd93917e402bf58e3b01b2ca132cf

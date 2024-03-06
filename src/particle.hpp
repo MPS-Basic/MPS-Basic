@@ -2,6 +2,7 @@
 
 #include "Eigen/Dense"
 #include "common.hpp"
+#include <vector>
 
 /**
  * @brief Enum class for particle type

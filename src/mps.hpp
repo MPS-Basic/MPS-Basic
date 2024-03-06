@@ -4,6 +4,7 @@
 #include "common.hpp"
 #include "domain.hpp"
 #include "input.hpp"
+#include "neighbor_searcher.hpp"
 #include "pressure_calculator/interface.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
@@ -26,7 +27,6 @@ public:
     RefValues refValuesForLaplacian;     ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
     RefValues refValuesForGradient;      ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
     std::vector<Particle> particles;     ///< Particles in the simulation
-    Bucket bucket;                       ///< Bucket for neighbor search
     Domain domain{};                     ///< Domain of the simulation
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator; ///< Interface for pressure calculation
@@ -40,6 +40,8 @@ public:
     void stepForward();
 
 private:
+    NeighborSearcher neighborSearcher; ///< Neighbor searcher for neighbor search
+
     /**
      * @brief calculate gravity term
      */
@@ -82,6 +84,23 @@ private:
      */
     void setBoundaryCondition();
 
+    bool isFreeSurface(const Particle& pi);
+
+    /**
+     * @brief check if particle distribution is biased.
+     * @details
+     * Particle number density can be low even in the fluid region, making the free surface detection based on particle
+     * number density vulnerable. Even when a specific particle's the particle number density is lower than criteria,
+     * it can be considered as inner particle if the particle distribution around the particle is not biased. In this
+     * way we can avoid the free surface detection error.
+     * This is based on Khayyer et al. (https://doi.org/10.1016/j.apor.2009.06.003)
+     *
+     * @param pi Particle to check
+     * @return true particle distribution is biased = free surface
+     * @return false particle distribution is not biased = not free surface
+     */
+    bool isParticleDistributionBiased(const Particle& pi);
+
     /**
      * @brief set minimum pressure for pressure gradient calculation
      * @param re effective radius \f$r_e\f$
@@ -114,10 +133,4 @@ private:
      * @brief calculate Courant number
      */
     void calCourant();
-
-    /**
-     * @brief search neighbors of each particle
-     * @param re effective radius
-     */
-    void setNeighbors(const double& re);
 };

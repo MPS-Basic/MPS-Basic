@@ -18,8 +18,12 @@ kinematicViscosity: 1.0e-06 # 少数第一位まで書かないと文字列と�
 # gravity
 gravity: [0.0, -9.8, 0.0]
 
-# free surface detection ratio of the number density
-surfaceDetectionRatio: 0.97
+# free surface detection
+# surface detection based on number density
+surfaceDetection-numberDensity-threshold: 0.97 # threshold ratio of the number density
+# surface detection based on particle distribution
+surfaceDetection-particleDistribution: true
+surfaceDetection-particleDistribution-threshold: 1.0
 
 # pressure calculation method
 pressureCalculationMethod: Implicit # Implicit or Explicit

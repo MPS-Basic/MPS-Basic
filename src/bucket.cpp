@@ -14,8 +14,14 @@ void Bucket::generate(const int& particleNum) {
  * @brief Divide domain into lattice segments
  */
 void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, const size_t& particleSize) {
+Bucket::Bucket(const double& reMax, const Domain& domain, const size_t& particleSize) {
+    this->length = reMax;
+    this->domain = domain;
 
-    length = reMax * (1.0 + CFL);
+    this->numX = (int) (domain.xLength / length) + 3;
+    this->numY = (int) (domain.yLength / length) + 3;
+    this->numZ = (int) (domain.zLength / length) + 3;
+    this->num  = numX * numY * numZ;
 
     numX     = (int) (domain.xLength / length) + 3; //bucket number in X direction
     numY     = (int) (domain.yLength / length) + 3; //bucket number in Y direction
@@ -31,6 +37,12 @@ void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, c
  * @brief Store particles in the bucket
  */
 void Bucket::storeParticles(std::vector<Particle>& particles, const Domain& domain) {
+    this->first.resize(num);
+    this->last.resize(num);
+    this->next.resize(particleSize);
+}
+
+void Bucket::storeParticles(std::vector<Particle>& particles) {
 
 #pragma omp parallel for
     for (int i = 0; i < num; i++) {
