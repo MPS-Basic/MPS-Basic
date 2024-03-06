@@ -10,7 +10,7 @@
  * @brief Struct for settings of calculation
  *
  * @details This struct contains the settings for the simulation. It is used to
- * load the settings from the input file.
+ * load the settings from the input file. In the "input" folder, there should be a configuration file with the necessary information.
  */
 struct Settings {
     // computational condition
