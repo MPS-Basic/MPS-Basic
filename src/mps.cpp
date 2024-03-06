@@ -130,6 +130,7 @@ void MPS::moveParticle() {
 
 /**
  * @brief If particles get closer than collision distance, perform collision processing
+ */
 void MPS::collision() {
     for (auto& pi : particles) {
         if (pi.type != ParticleType::Fluid)
