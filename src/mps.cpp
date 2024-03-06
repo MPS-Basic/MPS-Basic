@@ -12,6 +12,11 @@
 using std::cerr;
 using std::endl;
 
+/**
+ * @brief Initialize settings 
+ * @details Initialize settings variable and prepare some values for calculating MPS method.
+ * constructor of MPS method. 
+ */
 MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
@@ -24,6 +29,12 @@ MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pr
     refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
 }
 
+/**
+ * @brief Process simulation
+ * @details First of all, gravity and forces move particles into temporary positions. 
+ * Next, the position of the colliding particle is adjusted, the particle number density is calculated and the particle boundary conditions are redefined. 
+ * Next, the minimum pressure is found, the pressure gradient is calculated, and the position of the particle is determined according to the pressure gradient.
+ */
 void MPS::stepForward() {
     neighborSearcher.setNeighbors(particles);
     calGravity();
@@ -56,6 +67,9 @@ void MPS::stepForward() {
     calCourant();
 }
 
+/**
+ * @brief Calculate gravitational acceleration and add to acceleration
+ */
 void MPS::calGravity() {
 #pragma omp parallel for
     for (auto& p : particles) {
@@ -68,6 +82,9 @@ void MPS::calGravity() {
     }
 }
 
+/**
+ * @brief Calculate viscous force and add to acceleration using laplacian model
+ */
 void MPS::calViscosity(const double& re) {
     double n0     = refValuesForLaplacian.n0;
     double lambda = refValuesForLaplacian.lambda;
@@ -94,6 +111,9 @@ void MPS::calViscosity(const double& re) {
     }
 }
 
+/**
+ * @brief Move particles using temporal acceleration
+ */
 void MPS::moveParticle() {
 #pragma omp parallel for
     for (auto& p : particles) {
@@ -105,6 +125,9 @@ void MPS::moveParticle() {
     }
 }
 
+/**
+ * @brief If particles get closer than collision distance, perform collision processing
+ */
 void MPS::collision() {
     for (auto& pi : particles) {
         if (pi.type != ParticleType::Fluid)
@@ -141,6 +164,10 @@ void MPS::collision() {
     }
 }
 
+/**
+ * @brief Calculate number density
+ * @param re effective radius
+ */
 void MPS::calNumberDensity(const double& re) {
 #pragma omp parallel for
     for (auto& pi : particles) {
@@ -215,6 +242,10 @@ bool MPS::isParticleDistributionBiased(const Particle& pi) {
     }
 }
 
+/**
+ * @brief Find minimum pressure for gradient
+ * @param re effective radius
+ */
 void MPS::setMinimumPressure(const double& re) {
 #pragma omp parallel for
     for (auto& p : particles) {
@@ -240,6 +271,10 @@ void MPS::setMinimumPressure(const double& re) {
     }
 }
 
+/**
+ * @brief Calculate pressure gradient force and add to acceleration
+ * @param re effective radius
+ */
 void MPS::calPressureGradient(const double& re) {
     double a = settings.dim / refValuesForGradient.n0;
 
@@ -267,6 +302,9 @@ void MPS::calPressureGradient(const double& re) {
     }
 }
 
+/**
+ * @brief Move particles using pressure gradient force
+ */
 void MPS::moveParticleUsingPressureGradient() {
 #pragma omp parallel for
     for (auto&& p : particles) {
@@ -279,6 +317,9 @@ void MPS::moveParticleUsingPressureGradient() {
     }
 }
 
+/**
+ * @brief Check for errors with courant number
+ */
 void MPS::calCourant() {
     courant = 0.0;
 

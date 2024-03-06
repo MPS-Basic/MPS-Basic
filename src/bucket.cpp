@@ -3,10 +3,16 @@
 using std::cerr;
 using std::endl;
 
+/**
+ * @brief Change the length of "next" array to match the number of particles
+ */
 void Bucket::generate(const int& particleNum) {
     next.resize(particleNum);
 }
 
+/**
+ * @brief Divide domain into lattice segments. This is constructor of bucket method.
+ */
 Bucket::Bucket(const double& reMax, const Domain& domain, const size_t& particleSize) {
     this->length = reMax;
     this->domain = domain;
@@ -21,6 +27,9 @@ Bucket::Bucket(const double& reMax, const Domain& domain, const size_t& particle
     this->next.resize(particleSize);
 }
 
+/**
+ * @brief Store particles in the bucket
+ */
 void Bucket::storeParticles(std::vector<Particle>& particles) {
 
 #pragma omp parallel for
