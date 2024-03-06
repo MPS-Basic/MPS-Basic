@@ -11,7 +11,6 @@ namespace fs = std::filesystem;
 
 /**
  * @brief entry point of the program
- * 
  * @param argc number of arguments
  * @param argv array of arguments
  * @return return code
