@@ -24,7 +24,7 @@ void Bucket::set(const double& reMax, const double& CFL, const Domain& domain, c
 
     first.resize(num);            //Array of minimum particle number in each bucket
     last.resize(num);             //Array of maximum particle number in each bucket
-    next.resize(particleSize);    //
+    next.resize(particleSize);
 }
 
 /**

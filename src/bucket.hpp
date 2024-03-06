@@ -19,7 +19,7 @@ private:
 public:
     int num{}, numX{}, numY{};
     double length{};
-    std::vector<int> next, first, last; 
+    std::vector<int> next, first, last;
 
     /**
      * @brief Change the length of "next" array to match the number of particles in the domain
@@ -30,7 +30,7 @@ public:
     /**
      * @brief Divide domain into lattice segments
      * @param reMax Maximum of effective radius
-     * @param CFL  Courant-Friedrichs-Lewy Condition
+     * @param CFL  CFL Condition
      * @param domain domain of the simulation
      * @param particleSize Number of fluid particles in the domain
      */
