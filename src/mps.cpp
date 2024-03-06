@@ -71,7 +71,7 @@ void MPS::stepForward() {
 }
 
 /**
- * @brief Calculate gravitational acceleration and add to velocity
+ * @brief Calculate gravitational acceleration and add to acceleration
  */
 void MPS::calGravity() {
 #pragma omp parallel for
@@ -86,7 +86,7 @@ void MPS::calGravity() {
 }
 
 /**
- * @brief Calculate viscous force and add to velocity using laplacian model
+ * @brief Calculate viscous force and add to acceleration using laplacian model
  */
 void MPS::calViscosity(const double& re) {
     double n0     = refValuesForLaplacian.n0;
@@ -115,7 +115,7 @@ void MPS::calViscosity(const double& re) {
 }
 
 /**
- * @brief Move particles using provisional velocity
+ * @brief Move particles using temporal acceleration
  */
 void MPS::moveParticle() {
 #pragma omp parallel for
@@ -129,8 +129,7 @@ void MPS::moveParticle() {
 }
 
 /**
- * @brief If particles are closer than collision distance, correct their position
- */
+ * @brief If particles get closer than collision distance, perform collision processing
 void MPS::collision() {
     for (auto& pi : particles) {
         if (pi.type != ParticleType::Fluid)
@@ -235,7 +234,7 @@ void MPS::setMinimumPressure(const double& re) {
 }
 
 /**
- * @brief Calculate pressure gradient force and add to velocity
+ * @brief Calculate pressure gradient force and add to acceleration
  * @param re effective radius
  */
 void MPS::calPressureGradient(const double& re) {
@@ -300,7 +299,7 @@ void MPS::calCourant() {
 }
 
 /**
- * @brief Redefine neighborhood particles
+ * @brief Redefine neighboring particles
  * @param re effective radius
  */
 void MPS::setNeighbors(const double& re) {
