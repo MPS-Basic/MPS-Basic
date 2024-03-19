@@ -21,12 +21,14 @@ Let's take a look at the example of pressure calculation.
 PressureCalculator::Interface class defines
 how all the pressure calculator class should act.
 ```cpp
+namespace PressureCalculator {
 class Interface {
 public:
     virtual std::vector<double> calc(const std::vector<Particle>& particles) = 0;
 
     virtual ~Interface(){};
 };
+}
 ```
 A virtual function is a member function that is declared in a base class
 and is potentially overridden (redefined) in derived classes.
@@ -43,7 +45,7 @@ Therefore, there is no need for us to modify any other parts of the code
 even when we change pressure calculation class from
 `PressureCalculator::Implicit` to `PressureCalculator::Explicit`, for example.
 
-`virtual ~Interface(){};` is a deconstructor.
+`virtual ~Interface(){};` is a destructor.
 It doesn't have any process in this code, but it's recommended to declare it here
 by c++ rule.
 
