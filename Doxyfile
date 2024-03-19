@@ -949,6 +949,7 @@ INPUT                  = src\
                          docs/building_environment\
                          docs/input-output.md\
                          docs/improved_algorithms\
+                         docs/coding_techniques.md\
                          CONTRIBUTING.md\
 # the order of input files is important for the order of the pages in the TreeView
 
