@@ -44,7 +44,9 @@ std::vector<double> PressurePoissonEquation::solve() {
     coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
     solver.compute(coefficientMatrix);
-    Eigen::VectorXd pressure = solver.solve(sourceTerm);
+    Eigen::VectorXd pressure;
+    pressure.resize(particlesCount);
+    pressure = solver.solve(sourceTerm);
     if (solver.info() != Eigen::Success) {
         cerr << "Pressure calculation failed." << endl;
         std::exit(-1);
