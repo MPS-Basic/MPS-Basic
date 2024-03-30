@@ -37,15 +37,15 @@ Implicit::Implicit(
 }
 
 std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
-    std::vector<int> ignoreIds;
+    // Pressure update is performed only for inner particles.
+    std::vector<int> excludedIds;
     for (auto& p : particles) {
         if (p.boundaryCondition != FluidState::Inner) {
-            ignoreIds.push_back(p.id);
+            excludedIds.push_back(p.id);
         }
     }
 
-    std::sort(ignoreIds.begin(), ignoreIds.end());
-    this->ppe.make(particles, ignoreIds);
+    this->ppe.make(particles, excludedIds);
     this->pressure = this->ppe.solve();
     removeNegativePressure();
 
@@ -55,18 +55,7 @@ std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
 Implicit::~Implicit() {
 }
 
-// void Implicit::applyBoundaryCondition(const std::vector<Particle>& particles) {
-//     std::vector<int> NotInnerParticleIds;
-//     for (size_t i = 0; i < particles.size(); i++) {
-//         if (particles[i].boundaryCondition != FluidState::Inner) {
-//             NotInnerParticleIds.push_back(i);
-//         }
-//     }
-
-//     this->ppe.removeParticlesFromCalculation(NotInnerParticleIds);
-// }
-
-// this function is not used.
+// NOTE: This function is not used.
 void Implicit::exceptionalProcessingForBoundaryCondition() {
     std::vector<bool> checked(particles.size(), false);
     std::vector<bool> connected(particles.size(), false);
