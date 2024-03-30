@@ -36,50 +36,6 @@ void PressurePoissonEquation::make(const std::vector<Particle>& particles, const
     setMatrixTriplets(particles, ignoreIds);
 }
 
-// 指定した粒子を計算から除外する
-// void PressurePoissonEquation::removeParticlesFromCalculation(const std::vector<int>& ids) {
-//     // Zero out the row and column of id in the matrix.
-//     for (auto& triplet : matrixTriplets) {
-//         if (triplet.row() == id || triplet.col() == id) {
-//             triplet = Eigen::Triplet<double>(triplet.row(), triplet.col(), 0.0);
-//         }
-//     }
-
-//     // Zero out the id-th element of the source term.
-//     for (int i = 0; i < sourceTerm.size(); i++) {
-//         if (i == id) {
-//             sourceTerm[i] = 0.0;
-//         }
-//     }
-// }
-
-// // coefficientMatrix の指定された行を0にする
-// void PressurePoissonEquation::zeroOutMatrixRow(int row) {
-//     for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
-//         for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
-//             if (it.row() == row) {
-//                 it.valueRef() = 0.0;
-//             }
-//         }
-//     }
-// }
-
-// // coefficientMatrix の指定された列を0にする
-// void PressurePoissonEquation::zeroOutMatrixColumn(int column) {
-//     for (int i = 0; i < coefficientMatrix.outerSize(); ++i) {
-//         for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, i); it; ++it) {
-//             if (it.col() == column) {
-//                 it.valueRef() = 0.0;
-//             }
-//         }
-//     }
-// }
-
-// // sourceTerm の指定された要素を0にする
-// void PressurePoissonEquation::zeroOutSourceTerm(int index) {
-//     sourceTerm[index] = 0.0;
-// }
-
 std::vector<double> PressurePoissonEquation::solve() {
     using std::cerr;
     using std::endl;
