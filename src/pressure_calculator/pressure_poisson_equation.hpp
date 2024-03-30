@@ -45,6 +45,7 @@ private:
         coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 
+    void resetEquation();
     void setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
     void setMatrixTriplets(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
     // void zeroOutMatrixRow(int row);

@@ -32,21 +32,25 @@ PressurePoissonEquation::PressurePoissonEquation(
 
 void PressurePoissonEquation::make(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds) {
     this->particlesCount = particles.size();
+    resetEquation();
     setSourceTerm(particles, ignoreIds);
     setMatrixTriplets(particles, ignoreIds);
+}
+
+void PressurePoissonEquation::resetEquation() {
+    coefficientMatrix.resize(particlesCount, particlesCount);
+    sourceTerm.resize(particlesCount);
+    matrixTriplets.clear();
 }
 
 std::vector<double> PressurePoissonEquation::solve() {
     using std::cerr;
     using std::endl;
 
-    coefficientMatrix.resize(particlesCount, particlesCount);
     coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
     solver.compute(coefficientMatrix);
-    Eigen::VectorXd pressure;
-    pressure.resize(particlesCount);
-    pressure = solver.solve(sourceTerm);
+    Eigen::VectorXd pressure = solver.solve(sourceTerm);
     if (solver.info() != Eigen::Success) {
         cerr << "Pressure calculation failed." << endl;
         std::exit(-1);
@@ -66,8 +70,6 @@ std::vector<double> PressurePoissonEquation::solve() {
 void PressurePoissonEquation::setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
-
-    sourceTerm.resize(particlesCount);
 
 #pragma omp parallel for
     for (auto& pi : particles) {
