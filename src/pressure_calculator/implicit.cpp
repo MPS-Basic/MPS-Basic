@@ -45,7 +45,6 @@ std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
         }
     }
 
-    std::sort(excludedIds.begin(), excludedIds.end());
     this->ppe.make(particles, excludedIds);
     this->pressure = this->ppe.solve();
     removeNegativePressure();

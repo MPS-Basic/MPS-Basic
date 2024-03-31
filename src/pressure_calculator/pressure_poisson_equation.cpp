@@ -31,10 +31,13 @@ PressurePoissonEquation::PressurePoissonEquation(
 }
 
 void PressurePoissonEquation::make(const std::vector<Particle>& particles, const std::vector<int>& excludedIds) {
-    this->particlesCount = particles.size();
+    this->particlesCount               = particles.size();
+    std::vector<int> sortedExcludedIds = excludedIds;
+    std::sort(sortedExcludedIds.begin(), sortedExcludedIds.end());
+
     resetEquation();
-    setSourceTerm(particles, excludedIds);
-    setMatrixTriplets(particles, excludedIds);
+    setSourceTerm(particles, sortedExcludedIds);
+    setMatrixTriplets(particles, sortedExcludedIds);
 }
 
 void PressurePoissonEquation::resetEquation() {
@@ -67,6 +70,12 @@ std::vector<double> PressurePoissonEquation::solve() {
     return pressureStdVec;
 }
 
+/**
+ * @brief Set the source term for the pressure Poisson equation
+ * @param particles Particles
+ * @param excludedIds Ids of particles to exclude from the pressure update.
+ * @attention excludedIds should be sorted.
+ */
 void PressurePoissonEquation::setSourceTerm(
     const std::vector<Particle>& particles, const std::vector<int>& excludedIds
 ) {
@@ -83,6 +92,12 @@ void PressurePoissonEquation::setSourceTerm(
     }
 }
 
+/**
+ * @brief Set the matrix triplets for the pressure Poisson equation
+ * @param particles Particles
+ * @param excludedIds Ids of particles to exclude from the pressure update.
+ * @attention excludedIds should be sorted.
+ */
 void PressurePoissonEquation::setMatrixTriplets(
     const std::vector<Particle>& particles, const std::vector<int>& excludedIds
 ) {
