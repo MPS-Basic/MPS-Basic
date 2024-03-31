@@ -24,7 +24,18 @@ public:
         double reForNumberDensity
     );
 
+    /**
+     * @brief Make coefficient matrix and source term for pressure Poisson equation
+     * @param particles Particles
+     * @param excludedIds Ids of particles to exclude from the pressure update. Default is empty. These particles do
+     * interact as neighboring particles in the pressure update of other particles.
+     */
     void make(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
+
+    /**
+     * @brief Solve pressure Poisson equation
+     * @return Calculated pressure. The size of the vector is the same as the number of particles.
+     */
     std::vector<double> solve();
 
 private:
@@ -48,9 +59,6 @@ private:
     void resetEquation();
     void setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
     void setMatrixTriplets(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
-    // void zeroOutMatrixRow(int row);
-    // void zeroOutMatrixColumn(int column);
-    // void zeroOutSourceTerm(int index);
 };
 
 } // namespace PressureCalculator
