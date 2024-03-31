@@ -40,8 +40,6 @@ private:
 
     PressurePoissonEquation pressurePoissonEquation;
 
-    // void applyBoundaryCondition(const std::vector<Particle>& particles);
-
     /**
      * @brief If there is no Dirichlet boundary condition on the fluid,
            increase the diagonal terms of the matrix for an exception. This
