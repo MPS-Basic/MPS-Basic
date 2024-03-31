@@ -32,21 +32,8 @@ public:
 
 private:
     std::vector<Particle> particles;
-
-    Eigen::SparseMatrix<double, Eigen::RowMajor>
-        coefficientMatrix;        ///< Coefficient matrix for pressure Poisson equation
-    Eigen::VectorXd sourceTerm;   ///< Source term for pressure Poisson equation
-    std::vector<double> pressure; ///< Solution of pressure Poisson equation
-
+    std::vector<double> pressure; ///< Solution of pressure calculation
     PressurePoissonEquation pressurePoissonEquation;
-
-    /**
-     * @brief If there is no Dirichlet boundary condition on the fluid,
-           increase the diagonal terms of the matrix for an exception. This
-           allows us to solve the matrix without Dirichlet boundary conditions.
-     *
-     */
-    void exceptionalProcessingForBoundaryCondition();
 
     /**
      * @brief remove negative pressure for stability

@@ -55,43 +55,6 @@ std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
 Implicit::~Implicit() {
 }
 
-// NOTE: This function is not used.
-void Implicit::exceptionalProcessingForBoundaryCondition() {
-    std::vector<bool> checked(particles.size(), false);
-    std::vector<bool> connected(particles.size(), false);
-
-    for (auto& pi : particles) {
-        if (pi.boundaryCondition == FluidState::FreeSurface)
-            connected[pi.id] = true;
-        if (connected[pi.id])
-            continue;
-        // BFS for connected components
-        std::queue<size_t> queue;
-        queue.push(pi.id);
-        checked[pi.id] = true;
-        while (!queue.empty()) {
-            // pop front element
-            auto v = queue.front();
-            queue.pop();
-            // search for adjacent nodes
-            for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(coefficientMatrix, v); it; ++it) {
-                auto nv = it.col();
-                if (!checked[nv]) {
-                    if (connected[nv]) { // connected to boundary
-                        connected[v] = true;
-                        checked[v]   = true;
-                        break;
-
-                    } else {
-                        queue.push(nv);
-                        checked[nv] = true;
-                    }
-                }
-            }
-        }
-    }
-}
-
 void Implicit::removeNegativePressure() {
 #pragma omp parallel for
     for (auto& p : pressure) {
