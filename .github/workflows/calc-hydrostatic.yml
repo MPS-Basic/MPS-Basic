@@ -13,20 +13,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true # Fetch submodules: true
-          
+
       - name: Set variables
         id: strings
         shell: bash
         run: |
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
           echo "pr-comment=${{ github.workspace }}/pr_comment.md" >> "$GITHUB_OUTPUT"
-          
+
       - name: Install dependencies for Ubuntu # Install ninja, OpenMP, and Python packages
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build libomp-15-dev
           pip3 install meshio matplotlib PyGithub pyimgur
-          
+
       - name: Configure CMake
         run: >
          cmake
@@ -35,22 +35,22 @@ jobs:
          -DCMAKE_CXX_COMPILER=clang++-15
          -S ${{ github.workspace }}
          -B  ${{ steps.strings.outputs.build-output-dir }}
-          
+
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
-        
+
       - name: Generate input
         run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
-        
+
       - name: Create result directory
         run: mkdir -p ${{ github.workspace }}/result/hydrostatic
-        
+
       - name: Run
         run: >
           ${{ steps.strings.outputs.build-output-dir }}/mps
           --setting ${{ github.workspace }}/input/hydrostatic/settings.yml
           --output ${{ github.workspace }}/result/hydrostatic
-          
+
       - name: Visualize results
         run: >
           python3 ${{ github.workspace }}/ci/visualize_vtk.py
@@ -60,11 +60,11 @@ jobs:
       - name: Upload to Imgur and create comment
         run: |
           URL=$(python3 ${{ github.workspace }}/ci/upload_image.py ${{ github.workspace }}/result/hydrostatic/output_0100.png ${{ secrets.IMGUR_CLIENT_ID }})
-          echo -e "Hydrostatic problem was calculated.\n <img src=${URL}>" > ${{ steps.strings.outputs.pr-comment }}
-          
+          calculationTime=$(grep -o 'Total Simulation time = [0-9]\+h [0-9]\+m [0-9]\+s' ${{ github.workspace }}/result/hydrostatic/console.log | sed 's/Total Simulation time = //')
+          echo -e "Hydrostatic problem was calculated. It took ${calculationTime}.\n <img src=${URL}>" > ${{ steps.strings.outputs.pr-comment }}
+
       - name: Comment on PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           URL: ${{ github.event.pull_request.html_url }}
         run: gh pr comment -F ${{ steps.strings.outputs.pr-comment }} "${URL}"
-        
