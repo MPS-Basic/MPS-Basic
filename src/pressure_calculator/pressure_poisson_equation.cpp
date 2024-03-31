@@ -30,11 +30,11 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void PressurePoissonEquation::make(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds) {
+void PressurePoissonEquation::make(const std::vector<Particle>& particles, const std::vector<int>& excludedIds) {
     this->particlesCount = particles.size();
     resetEquation();
-    setSourceTerm(particles, ignoreIds);
-    setMatrixTriplets(particles, ignoreIds);
+    setSourceTerm(particles, excludedIds);
+    setMatrixTriplets(particles, excludedIds);
 }
 
 void PressurePoissonEquation::resetEquation() {
@@ -67,13 +67,15 @@ std::vector<double> PressurePoissonEquation::solve() {
     return pressureStdVec;
 }
 
-void PressurePoissonEquation::setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds) {
+void PressurePoissonEquation::setSourceTerm(
+    const std::vector<Particle>& particles, const std::vector<int>& excludedIds
+) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        if (std::binary_search(ignoreIds.begin(), ignoreIds.end(), pi.id)) {
+        if (std::binary_search(excludedIds.begin(), excludedIds.end(), pi.id)) {
             sourceTerm[pi.id] = 0.0;
         } else {
             sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
@@ -82,13 +84,13 @@ void PressurePoissonEquation::setSourceTerm(const std::vector<Particle>& particl
 }
 
 void PressurePoissonEquation::setMatrixTriplets(
-    const std::vector<Particle>& particles, const std::vector<int>& ignoreIds
+    const std::vector<Particle>& particles, const std::vector<int>& excludedIds
 ) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
 
     for (auto& pi : particles) {
-        if (std::binary_search(ignoreIds.begin(), ignoreIds.end(), pi.id)) {
+        if (std::binary_search(excludedIds.begin(), excludedIds.end(), pi.id)) {
             continue;
         }
 

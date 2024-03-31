@@ -24,7 +24,7 @@ public:
         double reForNumberDensity
     );
 
-    void make(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
+    void make(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
     std::vector<double> solve();
 
 private:
@@ -46,8 +46,8 @@ private:
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 
     void resetEquation();
-    void setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
-    void setMatrixTriplets(const std::vector<Particle>& particles, const std::vector<int>& ignoreIds = {});
+    void setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
+    void setMatrixTriplets(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
     // void zeroOutMatrixRow(int row);
     // void zeroOutMatrixColumn(int column);
     // void zeroOutSourceTerm(int index);

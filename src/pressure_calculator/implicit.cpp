@@ -37,15 +37,15 @@ Implicit::Implicit(
 }
 
 std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
-    std::vector<int> ignoreIds;
+    std::vector<int> excludedIds;
     for (auto& p : particles) {
         if (p.boundaryCondition != FluidState::Inner) {
-            ignoreIds.push_back(p.id);
+            excludedIds.push_back(p.id);
         }
     }
 
-    std::sort(ignoreIds.begin(), ignoreIds.end());
-    this->ppe.make(particles, ignoreIds);
+    std::sort(excludedIds.begin(), excludedIds.end());
+    this->ppe.make(particles, excludedIds);
     this->pressure = this->ppe.solve();
     removeNegativePressure();
 
