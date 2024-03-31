@@ -50,6 +50,7 @@ jobs:
           ${{ steps.strings.outputs.build-output-dir }}/mps
           --setting ${{ github.workspace }}/input/hydrostatic/settings.yml
           --output ${{ github.workspace }}/result/hydrostatic
+          2> ${{ github.workspace }}/result/hydrostatic/error.log | tee ${{ github.workspace }}/result/hydrostatic/console.log
 
       - name: Visualize results
         run: >
