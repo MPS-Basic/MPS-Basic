@@ -38,7 +38,7 @@ private:
     Eigen::VectorXd sourceTerm;   ///< Source term for pressure Poisson equation
     std::vector<double> pressure; ///< Solution of pressure Poisson equation
 
-    PressurePoissonEquation ppe;
+    PressurePoissonEquation pressurePoissonEquation;
 
     // void applyBoundaryCondition(const std::vector<Particle>& particles);
 

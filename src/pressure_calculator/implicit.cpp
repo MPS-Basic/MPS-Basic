@@ -22,7 +22,7 @@ Implicit::Implicit(
 ) {
     auto refValuesForNumberDensity = RefValues(dimension, particleDistance, reForNumberDensity);
     auto refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
-    this->ppe                      = PressurePoissonEquation(
+    this->pressurePoissonEquation  = PressurePoissonEquation(
         dimension,
         dt,
         relaxationCoefficient,
@@ -45,8 +45,8 @@ std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
         }
     }
 
-    this->ppe.make(particles, excludedIds);
-    this->pressure = this->ppe.solve();
+    this->pressurePoissonEquation.make(particles, excludedIds);
+    this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();
 
     return this->pressure;
