@@ -96,7 +96,8 @@ void PressurePoissonEquation::setMatrixTriplets(
         }
 
         double coefficient_ii = 0.0;
-        for (auto& pj : pi.neighbors) {
+        for (auto& neighbor : pi.neighbors) {
+            auto& pj = particles[neighbor.id];
             if (pj.boundaryCondition == FluidState::Ignored) {
                 continue;
             }
