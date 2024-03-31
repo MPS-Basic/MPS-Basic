@@ -9,6 +9,5 @@ doxygen/
 *.log
 *.bat
 *.ps1j
-!scripts/windows.ps1
 !input/dambreak/*
 !input/hydrostatic/*
