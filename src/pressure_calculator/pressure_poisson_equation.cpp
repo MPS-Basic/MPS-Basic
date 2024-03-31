@@ -30,27 +30,22 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void PressurePoissonEquation::make(const std::vector<Particle>& particles, const std::vector<int>& excludedIds) {
-    this->particlesCount               = particles.size();
+void PressurePoissonEquation::setup(const std::vector<Particle>& particles, const std::vector<int>& excludedIds) {
+    this->particlesCount = particles.size();
+
     std::vector<int> sortedExcludedIds = excludedIds;
     std::sort(sortedExcludedIds.begin(), sortedExcludedIds.end());
 
     resetEquation();
     setSourceTerm(particles, sortedExcludedIds);
     setMatrixTriplets(particles, sortedExcludedIds);
-}
-
-void PressurePoissonEquation::resetEquation() {
-    coefficientMatrix.resize(particlesCount, particlesCount);
-    sourceTerm.resize(particlesCount);
-    matrixTriplets.clear();
+    coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
 }
 
 std::vector<double> PressurePoissonEquation::solve() {
     using std::cerr;
     using std::endl;
 
-    coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double, Eigen::RowMajor>> solver;
     solver.compute(coefficientMatrix);
     Eigen::VectorXd pressure = solver.solve(sourceTerm);
@@ -59,15 +54,17 @@ std::vector<double> PressurePoissonEquation::solve() {
         std::exit(-1);
     }
 
-    // this->pressure is defined as Eigen::VectorXd to solve pressure Poisson equation
-    // using the BiGCSTAB method in Eigen,
-    // but it is converted to std::vector<double> to return the result.
-    // This conversion is done by giving std::vector
-    // the pointers to the first and the last elements of the Eigen::VectorXd.
-    // If this type of conversion appears frequently,
-    // consider defining a function to convert the vector type.
+    // This conversion is done by giving std::vector the pointers to the first and the last elements of the
+    // Eigen::VectorXd. If this type of conversion appears frequently, consider defining a function to convert the
+    // vector type.
     std::vector<double> pressureStdVec(pressure.data(), pressure.data() + pressure.size());
     return pressureStdVec;
+}
+
+void PressurePoissonEquation::resetEquation() {
+    coefficientMatrix.resize(particlesCount, particlesCount);
+    sourceTerm.resize(particlesCount);
+    matrixTriplets.clear();
 }
 
 /**
@@ -94,6 +91,9 @@ void PressurePoissonEquation::setSourceTerm(
 
 /**
  * @brief Set the matrix triplets for the pressure Poisson equation
+ * @details Coefficient matrix is a sparse matrix and made by triplets. Triplets are the elements of the matrix that
+ * are not zero and represented by the row index, column index, and the value of the element. This function sets the
+ * triplets for the pressure Poisson equation.
  * @param particles Particles
  * @param excludedIds Ids of particles to exclude from the pressure update.
  * @attention excludedIds should be sorted.

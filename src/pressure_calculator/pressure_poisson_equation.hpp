@@ -7,6 +7,9 @@
 
 namespace PressureCalculator {
 
+/**
+ * @brief Class for setting up and solving pressure Poisson equation
+ */
 class PressurePoissonEquation {
 public:
     PressurePoissonEquation() = default;
@@ -25,12 +28,12 @@ public:
     );
 
     /**
-     * @brief Make coefficient matrix and source term for pressure Poisson equation
+     * @brief Setup pressure Poisson equation
      * @param particles Particles
      * @param excludedIds Ids of particles to exclude from the pressure update. Default is empty. These particles do
      * interact as neighboring particles in the pressure update of other particles.
      */
-    void make(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
+    void setup(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
 
     /**
      * @brief Solve pressure Poisson equation
@@ -51,7 +54,7 @@ private:
     double reForNumberDensity;
     size_t particlesCount;
 
-    std::vector<Eigen::Triplet<double>> matrixTriplets; ///< Triplet for coefficient matrix
+    std::vector<Eigen::Triplet<double>> matrixTriplets; ///< Triplets for coefficient matrix
     Eigen::SparseMatrix<double, Eigen::RowMajor>
         coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation

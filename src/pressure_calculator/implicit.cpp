@@ -45,7 +45,7 @@ std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
         }
     }
 
-    this->pressurePoissonEquation.make(particles, excludedIds);
+    this->pressurePoissonEquation.setup(particles, excludedIds);
     this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();
 
