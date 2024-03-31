@@ -8,6 +8,5 @@ doxygen/
 *.vtu
 *.log
 *.bat
-*.ps1j
 !input/dambreak/*
 !input/hydrostatic/*
