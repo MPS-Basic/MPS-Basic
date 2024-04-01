@@ -6,21 +6,11 @@
 
 class Particles {
 public:
-    std::vector<Particle>::iterator begin() {
-        return particles.begin();
-    }
-
-    std::vector<Particle>::const_iterator begin() const {
-        return particles.begin();
-    }
-
-    std::vector<Particle>::iterator end() {
-        return particles.end();
-    }
-
-    std::vector<Particle>::const_iterator end() const {
-        return particles.end();
-    }
+    // functions to make Particles iterable
+    std::vector<Particle>::iterator begin();
+    std::vector<Particle>::const_iterator begin() const;
+    std::vector<Particle>::iterator end();
+    std::vector<Particle>::const_iterator end() const;
 
 private:
     std::vector<Particle> particles;
