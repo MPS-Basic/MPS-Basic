@@ -4,6 +4,9 @@
 
 #include <vector>
 
+/**
+ * @brief A collection of particles
+ */
 class Particles {
 public:
     // functions to make Particles iterable
