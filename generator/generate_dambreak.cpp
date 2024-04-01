@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
             if (type != ParticleType::Ghost) {
                 Eigen::Vector3d vel = Eigen::Vector3d::Zero();
-                particles.emplace_back(particles.size(), type, pos, vel);
+                particles.add(Particle(particles.size(), type, pos, vel));
             }
         }
     }

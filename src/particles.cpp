@@ -21,3 +21,7 @@ std::vector<Particle>::const_iterator Particles::end() const {
 int Particles::size() {
     return particles.size();
 }
+
+void Particles::add(const Particle& particle) {
+    particles.emplace_back(particle);
+}

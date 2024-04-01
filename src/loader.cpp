@@ -125,7 +125,7 @@ std::pair<double, Particles> Loader::loadParticleProf(const fs::path& profPath) 
 
         type = static_cast<ParticleType>(type_int);
         if (type != ParticleType::Ghost) {
-            particles.emplace_back(particles.size(), type, pos, vel);
+            particles.add(Particle(particles.size(), type, pos, vel));
         }
     }
     ifs.close();

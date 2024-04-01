@@ -13,6 +13,7 @@ public:
     std::vector<Particle>::const_iterator end() const;
 
     int size();
+    void add(const Particle& particle);
 
 private:
     std::vector<Particle> particles;
