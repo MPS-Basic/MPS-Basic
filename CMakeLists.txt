@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
   src/main.cpp
   src/mps.cpp
   src/particle.cpp
+  src/particles.cpp
   src/particles_exporter.cpp
   src/refvalues.cpp
   src/saver.cpp
@@ -110,6 +111,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 # ------------------------------
 add_library(particles STATIC
   src/particle.cpp
+  src/particles.cpp
   src/particles_exporter.cpp
 )
 target_link_libraries(particles PUBLIC Eigen3::Eigen)
