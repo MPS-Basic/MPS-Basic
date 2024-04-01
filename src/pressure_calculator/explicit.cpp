@@ -18,7 +18,7 @@ std::vector<double> Explicit::calc(const Particles& particles) {
     pressure.resize(particles.size());
 
 #pragma omp parallel for
-    for (auto& pi : particles) {
+    for (const auto& pi : particles) {
         if (pi.type == ParticleType::Ghost) {
             pressure[pi.id] = 0;
         } else {
