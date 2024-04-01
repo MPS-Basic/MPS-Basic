@@ -98,31 +98,20 @@ void PressurePoissonEquation::setSourceTerm(
  * @param excludedIds Ids of particles to exclude from the pressure update.
  * @attention excludedIds should be sorted.
  */
-void PressurePoissonEquation::setMatrixTriplets(
-    const std::vector<Particle>& particles, const std::vector<int>& excludedIds
-) {
+void PressurePoissonEquation::setMatrixTriplets(const std::vector<Particle>& particles, const TargetIds& targetIds) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
 
-    for (auto& pi : particles) {
-        if (std::binary_search(excludedIds.begin(), excludedIds.end(), pi.id)) {
-            continue;
-        }
-
+    for (auto& i : targetIds) {
         double coefficient_ii = 0.0;
-        for (auto& neighbor : pi.neighbors) {
-            auto& pj = particles[neighbor.id];
-            if (pj.boundaryCondition == FluidState::Ignored) {
-                continue;
-            }
-
+        for (auto& j : targetIds[i]) {
             if (neighbor.distance < re) {
                 double coefficient_ij = a * weight(neighbor.distance, re) / fluidDensity;
-                matrixTriplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
+                matrixTriplets.emplace_back(i, j, -1.0 * coefficient_ij);
                 coefficient_ii += coefficient_ij;
             }
         }
         coefficient_ii += (compressibility) / (dt * dt);
-        matrixTriplets.emplace_back(pi.id, pi.id, coefficient_ii);
+        matrixTriplets.emplace_back(i, i, coefficient_ii);
     }
 }
