@@ -33,7 +33,7 @@ void NeighborSearcher::setNeighbors(std::vector<Particle>& particles) {
 
                         double dist = (pj.position - pi.position).norm();
                         if (j != pi.id && dist < re) {
-                            pi.neighbors.emplace_back(Neighbor(std::make_shared<Particle>(pj), dist));
+                            pi.neighbors.emplace_back(j, dist);
                         }
 
                         j = bucket.next[j];

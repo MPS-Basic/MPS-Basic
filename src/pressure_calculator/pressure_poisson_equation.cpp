@@ -111,14 +111,14 @@ void PressurePoissonEquation::setMatrixTriplets(
 
         double coefficient_ii = 0.0;
         for (auto& neighbor : pi.neighbors) {
-            std::shared_ptr<Particle> pj = neighbor.particle;
-            if (pj->boundaryCondition == FluidState::Ignored) {
+            auto& pj = particles[neighbor.id];
+            if (pj.boundaryCondition == FluidState::Ignored) {
                 continue;
             }
 
             if (neighbor.distance < re) {
                 double coefficient_ij = a * weight(neighbor.distance, re) / fluidDensity;
-                matrixTriplets.emplace_back(pi.id, pj->id, -1.0 * coefficient_ij);
+                matrixTriplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
                 coefficient_ii += coefficient_ij;
             }
         }

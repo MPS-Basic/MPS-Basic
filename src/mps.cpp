@@ -81,11 +81,11 @@ void MPS::calViscosity(const double& re) {
         Eigen::Vector3d viscosityTerm = Eigen::Vector3d::Zero();
 
         for (auto& neighbor : pi.neighbors) {
-            std::shared_ptr<Particle>& pj = neighbor.particle;
+            auto& pj = particles[neighbor.id];
 
             if (neighbor.distance < settings.re_forLaplacian) {
                 double w = weight(neighbor.distance, re);
-                viscosityTerm += (pj->velocity - pi.velocity) * w;
+                viscosityTerm += (pj.velocity - pi.velocity) * w;
             }
         }
 
@@ -111,28 +111,28 @@ void MPS::collision() {
             continue;
 
         for (auto& neighbor : pi.neighbors) {
-            std::shared_ptr<Particle>& pj = neighbor.particle;
-            if (pj->type == ParticleType::Fluid && pj->id >= pi.id)
+            Particle& pj = particles[neighbor.id];
+            if (pj.type == ParticleType::Fluid && pj.id >= pi.id)
                 continue;
 
             if (neighbor.distance < settings.collisionDistance) {
 
                 double invMi = pi.inverseDensity(settings.fluidDensity);
-                double invMj = pj->inverseDensity(settings.fluidDensity);
+                double invMj = pj.inverseDensity(settings.fluidDensity);
                 double mass  = 1.0 / (invMi + invMj);
 
-                Eigen::Vector3d normal = (pj->position - pi.position).normalized();
-                double relVel          = (pj->velocity - pi.velocity).dot(normal);
+                Eigen::Vector3d normal = (pj.position - pi.position).normalized();
+                double relVel          = (pj.velocity - pi.velocity).dot(normal);
                 double impulse         = 0.0;
                 if (relVel < 0.0)
                     impulse = -(1 + settings.coefficientOfRestitution) * relVel * mass;
                 pi.velocity -= impulse * invMi * normal;
-                pj->velocity += impulse * invMj * normal;
+                pj.velocity += impulse * invMj * normal;
 
                 double depth           = settings.collisionDistance - neighbor.distance;
                 double positionImpulse = depth * mass;
                 pi.position -= positionImpulse * invMi * normal;
-                pj->position += positionImpulse * invMj * normal;
+                pj.position += positionImpulse * invMj * normal;
 
                 // cerr << "WARNING: Collision between particles " << pi.id << " and " << pj.id << " occurred."
                 // << endl;
@@ -195,9 +195,9 @@ bool MPS::isFreeSurface(const Particle& pi) {
 bool MPS::isParticleDistributionBiased(const Particle& pi) {
     Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
     for (auto& neighbor : pi.neighbors) {
-        std::shared_ptr<Particle> pj = neighbor.particle;
+        auto& pj = particles[neighbor.id];
 
-        rij_sum += pj->position - pi.position;
+        rij_sum += pj.position - pi.position;
     }
 
     double alpha = settings.surfaceDetection_particleDistribution_threshold;
@@ -226,15 +226,15 @@ void MPS::setMinimumPressure(const double& re) {
             continue;
 
         for (auto& neighbor : pi.neighbors) {
-            std::shared_ptr<Particle>& pj = neighbor.particle;
-            if (pj->type == ParticleType::Ghost || pj->type == ParticleType::DummyWall)
+            Particle& pj = particles[neighbor.id];
+            if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
                 continue;
-            if (pj->id > pi.id)
+            if (pj.id > pi.id)
                 continue;
 
             if (neighbor.distance < re) {
-                pi.minimumPressure  = std::min(pi.minimumPressure, pj->pressure);
-                pj->minimumPressure = std::min(pj->minimumPressure, pi.pressure);
+                pi.minimumPressure = std::min(pi.minimumPressure, pj.pressure);
+                pj.minimumPressure = std::min(pj.minimumPressure, pi.pressure);
             }
         }
     }
@@ -250,16 +250,16 @@ void MPS::calPressureGradient(const double& re) {
 
         Eigen::Vector3d grad = Eigen::Vector3d::Zero();
         for (auto& neighbor : pi.neighbors) {
-            std::shared_ptr<Particle>& pj = neighbor.particle;
-            if (pj->type == ParticleType::Ghost || pj->type == ParticleType::DummyWall)
+            Particle& pj = particles[neighbor.id];
+            if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall)
                 continue;
 
             if (neighbor.distance < re) {
                 double w = weight(neighbor.distance, re);
                 // double dist2 = pow(neighbor.distance, 2);
-                double dist2 = (pj->position - pi.position).squaredNorm();
-                double pij   = (pj->pressure - pi.minimumPressure) / dist2;
-                grad += (pj->position - pi.position) * pij * w;
+                double dist2 = (pj.position - pi.position).squaredNorm();
+                double pij   = (pj.pressure - pi.minimumPressure) / dist2;
+                grad += (pj.position - pi.position) * pij * w;
             }
         }
         grad *= a;
