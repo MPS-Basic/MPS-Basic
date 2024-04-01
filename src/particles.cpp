@@ -17,3 +17,7 @@ std::vector<Particle>::iterator Particles::end() {
 std::vector<Particle>::const_iterator Particles::end() const {
     return particles.end();
 }
+
+int Particles::size() {
+    return particles.size();
+}
