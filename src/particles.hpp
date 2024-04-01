@@ -12,7 +12,6 @@ public:
     std::vector<Particle>::iterator end();
     std::vector<Particle>::const_iterator end() const;
 
-    int size();
     int size() const;
     void add(const Particle& particle);
     Particle& operator[](size_t index);

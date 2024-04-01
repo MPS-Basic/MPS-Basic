@@ -18,10 +18,6 @@ std::vector<Particle>::const_iterator Particles::end() const {
     return particles.end();
 }
 
-int Particles::size() {
-    return particles.size();
-}
-
 int Particles::size() const {
     return particles.size();
 }
