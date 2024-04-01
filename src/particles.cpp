@@ -22,6 +22,14 @@ int Particles::size() {
     return particles.size();
 }
 
+int Particles::size() const {
+    return particles.size();
+}
+
 void Particles::add(const Particle& particle) {
     particles.emplace_back(particle);
+}
+
+Particle& Particles::operator[](size_t index) {
+    return particles[index];
 }
