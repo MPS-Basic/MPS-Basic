@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../particle.hpp"
+#include "../particles.hpp"
 #include "../refvalues.hpp"
 #include "interface.hpp"
 
@@ -15,7 +15,7 @@ public:
      * @brief calculate pressure
      * @param particles particles
      */
-    std::vector<double> calc(const std::vector<Particle>& particles) override;
+    std::vector<double> calc(const Particles& particles) override;
     ~Implicit() override;
 
     Implicit(
@@ -40,7 +40,7 @@ private:
     double compressibility;
     double relaxationCoefficient;
 
-    std::vector<Particle> particles;
+    Particles particles;
 
     Eigen::SparseMatrix<double, Eigen::RowMajor>
         coefficientMatrix;      ///< Coefficient matrix for pressure Poisson equation

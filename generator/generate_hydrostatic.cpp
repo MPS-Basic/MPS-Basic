@@ -1,4 +1,5 @@
 #include "../src/particle.hpp"
+#include "../src/particles.hpp"
 #include "../src/particles_exporter.hpp"
 
 #include <algorithm>
@@ -28,7 +29,7 @@ public:
 };
 
 int main(int argc, char** argv) {
-    std::vector<Particle> particles;
+    Particles particles;
 
     double l0 = 0.012;
 

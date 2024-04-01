@@ -31,7 +31,7 @@ Implicit::Implicit(
     this->refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
 }
 
-std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
+std::vector<double> Implicit::calc(const Particles& particles) {
     this->particles = particles;
     setSourceTerm();
     setMatrix();
