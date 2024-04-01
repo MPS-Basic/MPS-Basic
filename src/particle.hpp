@@ -2,6 +2,7 @@
 
 #include "Eigen/Dense"
 #include "common.hpp"
+
 #include <vector>
 
 /**
@@ -25,19 +26,34 @@ enum class FluidState {
     Splash          ///< splash fluid particle
 };
 
-/**
- * @brief Class for neighbor particle
- */
-class Neighbor {
-private:
-public:
-    int id;          ///< index of the neighbor particle
-    double distance; ///< distance between the particle and the neighbor particle
+// /**
+//  * @brief Class for neighbor particle
+//  */
+// class Neighbor {
+// private:
+// public:
+//     int id;          ///< index of the neighbor particle
+//     double distance; ///< distance between the particle and the neighbor particle
+//     bool;            ///< flag for ignored neighbor
 
-    Neighbor(int id, double distance) {
-        this->id       = id;
+//     Neighbor(int id, double distance, bool ignored) {
+//         this->id       = id;
+//         this->distance = distance;
+//         this->ignored  = ignored;
+//     }
+// };
+
+class Particle; // Forward declaration of Particle class
+
+class Neighbor {
+public:
+    std::shared_ptr<Particle> particle;
+    double distance;
+
+    Neighbor(std::shared_ptr<Particle> particle, double distance) {
+        this->particle = particle;
         this->distance = distance;
-    }
+    };
 };
 
 /**
