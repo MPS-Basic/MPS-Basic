@@ -36,7 +36,7 @@ Implicit::Implicit(
     );
 }
 
-std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
+std::vector<double> Implicit::calc(const Particles& particles) {
     // Boundary condition: Pressure update is performed only for inner particles.
     std::vector<int> excludedIds;
     for (auto& p : particles) {

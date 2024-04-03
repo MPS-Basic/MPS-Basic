@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 #include "domain.hpp"
-#include "particle.hpp"
+#include "particles.hpp"
 
 #include <iostream>
 #include <vector>
@@ -31,5 +31,5 @@ public:
      * @param particles particles to be stored
      * @param domain domain of the simulation
      */
-    void storeParticles(std::vector<Particle>& particles);
+    void storeParticles(Particles& particles);
 };

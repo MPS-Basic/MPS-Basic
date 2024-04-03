@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "input.hpp"
+#include "particles.hpp"
 
 #include <filesystem>
 #include <utility>
@@ -22,5 +23,5 @@ public:
 private:
     Settings loadSettingYaml(const std::filesystem::path& settingPath);
 
-    std::pair<double, std::vector<Particle>> loadParticleProf(const std::filesystem::path& profPath);
+    std::pair<double, Particles> loadParticleProf(const std::filesystem::path& profPath);
 };
