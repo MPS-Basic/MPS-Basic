@@ -30,15 +30,12 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void PressurePoissonEquation::setup(const Particles& particles, const std::vector<int>& excludedIds) {
+void PressurePoissonEquation::setup(const Particles& particles, const TargetIdMap& targetIdMap) {
     this->particlesCount = particles.size();
 
-    std::vector<int> sortedExcludedIds = excludedIds;
-    std::sort(sortedExcludedIds.begin(), sortedExcludedIds.end());
-
     resetEquation();
-    setSourceTerm(particles, sortedExcludedIds);
-    setMatrixTriplets(particles, sortedExcludedIds);
+    setSourceTerm(particles, targetIdMap);
+    setMatrixTriplets(particles, targetIdMap);
     coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
 }
 
@@ -73,16 +70,16 @@ void PressurePoissonEquation::resetEquation() {
  * @param excludedIds Ids of particles to exclude from the pressure update.
  * @attention excludedIds should be sorted.
  */
-void PressurePoissonEquation::setSourceTerm(const Particles& particles, const std::vector<int>& excludedIds) {
+void PressurePoissonEquation::setSourceTerm(const Particles& particles, const TargetIdMap& targetIdMap) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        if (std::binary_search(excludedIds.begin(), excludedIds.end(), pi.id)) {
-            sourceTerm[pi.id] = 0.0;
-        } else {
+        if (targetIdMap.has(pi.id)) {
             sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+        } else {
+            sourceTerm[pi.id] = 0.0;
         }
     }
 }
@@ -96,16 +93,25 @@ void PressurePoissonEquation::setSourceTerm(const Particles& particles, const st
  * @param excludedIds Ids of particles to exclude from the pressure update.
  * @attention excludedIds should be sorted.
  */
-void PressurePoissonEquation::setMatrixTriplets(const Particles& particles, const TargetIds& targetIds) {
+void PressurePoissonEquation::setMatrixTriplets(const Particles& particles, const TargetIdMap& targetIdMap) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
 
-    for (auto& i : targetIds) {
-        double coefficient_ii = 0.0;
-        for (auto& j : targetIds[i]) {
+    for (auto& targetIdPair : targetIdMap) {
+        double coefficient_ii   = 0.0;
+        auto i                  = targetIdPair.first;
+        auto& targetNeighborIds = targetIdPair.second;
+        auto& pi                = particles[i];
+
+        for (auto& neighbor : pi.neighbors) {
+            // neighbor.id が targetNeighborIds に含まれなければスキップ
+            if (targetNeighborIds.find(neighbor.id) == targetNeighborIds.end()) {
+                continue;
+            }
+
             if (neighbor.distance < re) {
                 double coefficient_ij = a * weight(neighbor.distance, re) / fluidDensity;
-                matrixTriplets.emplace_back(i, j, -1.0 * coefficient_ij);
+                matrixTriplets.emplace_back(i, neighbor.id, -1.0 * coefficient_ij);
                 coefficient_ii += coefficient_ij;
             }
         }

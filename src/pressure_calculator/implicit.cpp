@@ -2,6 +2,7 @@
 
 #include "../refvalues.hpp"
 #include "../weight.hpp"
+#include "target_id_map.hpp"
 
 #include <iostream>
 #include <queue>
@@ -38,14 +39,21 @@ Implicit::Implicit(
 
 std::vector<double> Implicit::calc(const Particles& particles) {
     // Boundary condition: Pressure update is performed only for inner particles.
-    std::vector<int> excludedIds;
-    for (auto& p : particles) {
-        if (p.boundaryCondition != FluidState::Inner) {
-            excludedIds.push_back(p.id);
+    TargetIdMap targetIdMap;
+    for (const auto& pi : particles) {
+        if (pi.boundaryCondition != FluidState::Inner) {
+            continue;
+        }
+
+        for (const auto& neighbor : pi.neighbors) {
+            const auto& pj = particles[neighbor.id];
+            if (pj.boundaryCondition != FluidState::Ignored) {
+                targetIdMap.add(pi.id, pj.id);
+            }
         }
     }
 
-    this->pressurePoissonEquation.setup(particles, excludedIds);
+    this->pressurePoissonEquation.setup(particles, targetIdMap);
     this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();
 
