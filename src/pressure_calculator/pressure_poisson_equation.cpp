@@ -30,7 +30,7 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void PressurePoissonEquation::setup(const std::vector<Particle>& particles, const std::vector<int>& excludedIds) {
+void PressurePoissonEquation::setup(const Particles& particles, const std::vector<int>& excludedIds) {
     this->particlesCount = particles.size();
 
     std::vector<int> sortedExcludedIds = excludedIds;
@@ -73,9 +73,7 @@ void PressurePoissonEquation::resetEquation() {
  * @param excludedIds Ids of particles to exclude from the pressure update.
  * @attention excludedIds should be sorted.
  */
-void PressurePoissonEquation::setSourceTerm(
-    const std::vector<Particle>& particles, const std::vector<int>& excludedIds
-) {
+void PressurePoissonEquation::setSourceTerm(const Particles& particles, const std::vector<int>& excludedIds) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
@@ -98,7 +96,7 @@ void PressurePoissonEquation::setSourceTerm(
  * @param excludedIds Ids of particles to exclude from the pressure update.
  * @attention excludedIds should be sorted.
  */
-void PressurePoissonEquation::setMatrixTriplets(const std::vector<Particle>& particles, const TargetIds& targetIds) {
+void PressurePoissonEquation::setMatrixTriplets(const Particles& particles, const TargetIds& targetIds) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
 
