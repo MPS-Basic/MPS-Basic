@@ -30,15 +30,14 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->reForNumberDensity    = reForNumberDensity;
 }
 
-void PressurePoissonEquation::setup(const std::vector<Particle>& particles, const std::vector<int>& excludedIds) {
+void PressurePoissonEquation::setup(
+    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+) {
     this->particlesCount = particles.size();
 
-    std::vector<int> sortedExcludedIds = excludedIds;
-    std::sort(sortedExcludedIds.begin(), sortedExcludedIds.end());
-
     resetEquation();
-    setSourceTerm(particles, sortedExcludedIds);
-    setMatrixTriplets(particles, sortedExcludedIds);
+    setSourceTerm(particles, isPressureUpdateTarget);
+    setMatrixTriplets(particles, isPressureUpdateTarget);
     coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
 }
 
@@ -74,17 +73,17 @@ void PressurePoissonEquation::resetEquation() {
  * @attention excludedIds should be sorted.
  */
 void PressurePoissonEquation::setSourceTerm(
-    const std::vector<Particle>& particles, const std::vector<int>& excludedIds
+    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
 ) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        if (std::binary_search(excludedIds.begin(), excludedIds.end(), pi.id)) {
-            sourceTerm[pi.id] = 0.0;
-        } else {
+        if (isPressureUpdateTarget(pi)) {
             sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+        } else {
+            sourceTerm[pi.id] = 0.0;
         }
     }
 }
@@ -99,13 +98,13 @@ void PressurePoissonEquation::setSourceTerm(
  * @attention excludedIds should be sorted.
  */
 void PressurePoissonEquation::setMatrixTriplets(
-    const std::vector<Particle>& particles, const std::vector<int>& excludedIds
+    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
 ) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
 
     for (auto& pi : particles) {
-        if (std::binary_search(excludedIds.begin(), excludedIds.end(), pi.id)) {
+        if (!isPressureUpdateTarget(pi)) {
             continue;
         }
 

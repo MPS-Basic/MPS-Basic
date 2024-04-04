@@ -30,10 +30,11 @@ public:
     /**
      * @brief Setup pressure Poisson equation
      * @param particles Particles
-     * @param excludedIds Ids of particles to exclude from the pressure update. Default is empty. These particles do
-     * interact as neighboring particles in the pressure update of other particles.
+     * @param isPressureUpdateTarget Function that gets a particle and returns true if the particle is a target for
+     * pressure update
      */
-    void setup(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
+    void
+    setup(const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget);
 
     /**
      * @brief Solve pressure Poisson equation
@@ -60,8 +61,12 @@ private:
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 
     void resetEquation();
-    void setSourceTerm(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
-    void setMatrixTriplets(const std::vector<Particle>& particles, const std::vector<int>& excludedIds = {});
+    void setSourceTerm(
+        const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    );
+    void setMatrixTriplets(
+        const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    );
 };
 
 } // namespace PressureCalculator
