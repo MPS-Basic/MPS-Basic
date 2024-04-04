@@ -32,3 +32,7 @@ void Particles::add(const Particle& particle) {
 Particle& Particles::operator[](size_t index) {
     return particles[index];
 }
+
+const Particle& Particles::operator[](size_t index) const {
+    return particles[index];
+}

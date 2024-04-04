@@ -31,7 +31,7 @@ PressurePoissonEquation::PressurePoissonEquation(
 }
 
 void PressurePoissonEquation::setup(
-    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    const Particles& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
 ) {
     this->particlesCount = particles.size();
 
@@ -73,7 +73,7 @@ void PressurePoissonEquation::resetEquation() {
  * update
  */
 void PressurePoissonEquation::setSourceTerm(
-    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    const Particles& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
 ) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
@@ -98,7 +98,7 @@ void PressurePoissonEquation::setSourceTerm(
  * update
  */
 void PressurePoissonEquation::setMatrixTriplets(
-    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    const Particles& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
 ) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;

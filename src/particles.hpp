@@ -37,6 +37,14 @@ public:
      */
     Particle& operator[](size_t index);
 
+    /**
+     * @brief Get a particle by index
+     *
+     * @param index the index of the particle
+     * @return const Particle& the particle
+     */
+    const Particle& operator[](size_t index) const;
+
 private:
     std::vector<Particle> particles;
 };
