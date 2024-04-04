@@ -69,8 +69,8 @@ void PressurePoissonEquation::resetEquation() {
 /**
  * @brief Set the source term for the pressure Poisson equation
  * @param particles Particles
- * @param excludedIds Ids of particles to exclude from the pressure update.
- * @attention excludedIds should be sorted.
+ * @param isPressureUpdateTarget Function that gets a particle and returns true if the particle is a target for pressure
+ * update
  */
 void PressurePoissonEquation::setSourceTerm(
     const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
@@ -94,8 +94,8 @@ void PressurePoissonEquation::setSourceTerm(
  * are not zero and represented by the row index, column index, and the value of the element. This function sets the
  * triplets for the pressure Poisson equation.
  * @param particles Particles
- * @param excludedIds Ids of particles to exclude from the pressure update.
- * @attention excludedIds should be sorted.
+ * @param isPressureUpdateTarget Function that gets a particle and returns true if the particle is a target for pressure
+ * update
  */
 void PressurePoissonEquation::setMatrixTriplets(
     const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
