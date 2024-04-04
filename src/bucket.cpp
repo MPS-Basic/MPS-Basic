@@ -21,7 +21,7 @@ Bucket::Bucket(const double& reMax, const Domain& domain, const size_t& particle
     this->next.resize(particleSize);
 }
 
-void Bucket::storeParticles(std::vector<Particle>& particles) {
+void Bucket::storeParticles(Particles& particles) {
 
 #pragma omp parallel for
     for (int i = 0; i < num; i++) {

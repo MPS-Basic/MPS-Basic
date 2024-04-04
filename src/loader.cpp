@@ -101,7 +101,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     return s;
 }
 
-std::pair<double, std::vector<Particle>> Loader::loadParticleProf(const fs::path& profPath) {
+std::pair<double, Particles> Loader::loadParticleProf(const fs::path& profPath) {
     std::ifstream ifs;
     ifs.open(profPath);
     if (ifs.fail()) {
@@ -109,7 +109,7 @@ std::pair<double, std::vector<Particle>> Loader::loadParticleProf(const fs::path
         std::exit(-1);
     }
 
-    std::vector<Particle> particles;
+    Particles particles;
     double startTime = NAN;
     int particleSize = 0;
     ifs >> startTime;
@@ -125,7 +125,7 @@ std::pair<double, std::vector<Particle>> Loader::loadParticleProf(const fs::path
 
         type = static_cast<ParticleType>(type_int);
         if (type != ParticleType::Ghost) {
-            particles.emplace_back(particles.size(), type, pos, vel);
+            particles.add(Particle(particles.size(), type, pos, vel));
         }
     }
     ifs.close();

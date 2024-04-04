@@ -13,12 +13,12 @@ Explicit::Explicit(double fluidDensity, double re, double soundSpeed, int dimens
 Explicit::~Explicit() {
 }
 
-std::vector<double> Explicit::calc(const std::vector<Particle>& particles) {
+std::vector<double> Explicit::calc(const Particles& particles) {
     std::vector<double> pressure;
     pressure.resize(particles.size());
 
 #pragma omp parallel for
-    for (auto& pi : particles) {
+    for (const auto& pi : particles) {
         if (pi.type == ParticleType::Ghost) {
             pressure[pi.id] = 0;
         } else {

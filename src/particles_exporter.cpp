@@ -9,7 +9,7 @@ using std::cerr;
 using std::endl;
 namespace fs = std::filesystem;
 
-void ParticlesExporter::setParticles(const std::vector<Particle>& particles) {
+void ParticlesExporter::setParticles(const Particles& particles) {
     this->particles = particles;
 }
 

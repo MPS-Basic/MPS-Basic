@@ -8,7 +8,7 @@ NeighborSearcher::NeighborSearcher(const double& re, const Domain& domain, const
     this->bucket = Bucket(re, domain, particleSize);
 }
 
-void NeighborSearcher::setNeighbors(std::vector<Particle>& particles) {
+void NeighborSearcher::setNeighbors(Particles& particles) {
     bucket.storeParticles(particles);
 
 #pragma omp parallel for

@@ -5,6 +5,7 @@
 #include "domain.hpp"
 #include "input.hpp"
 #include "neighbor_searcher.hpp"
+#include "particles.hpp"
 #include "pressure_calculator/interface.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
@@ -26,7 +27,7 @@ public:
     RefValues refValuesForNumberDensity; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
     RefValues refValuesForLaplacian;     ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
     RefValues refValuesForGradient;      ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
-    std::vector<Particle> particles;     ///< Particles in the simulation
+    Particles particles;                 ///< Particles in the simulation
     Domain domain{};                     ///< Domain of the simulation
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator; ///< Interface for pressure calculation
