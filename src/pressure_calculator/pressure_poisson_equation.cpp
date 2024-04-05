@@ -81,6 +81,7 @@ void PressurePoissonEquation::setSourceTerm(
 #pragma omp parallel for
     for (auto& pi : particles) {
         if (dirichletBoundaryCondition.contains(pi.id)) {
+            // When dirichlet boundary condition is set, the source term is the boundary condition value.
             sourceTerm[pi.id] = dirichletBoundaryCondition.value(pi.id);
         } else {
             sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
@@ -105,6 +106,8 @@ void PressurePoissonEquation::setMatrixTriplets(
 
     for (auto& pi : particles) {
         if (dirichletBoundaryCondition.contains(pi.id)) {
+            // When Dirichlet boundary conditions are set, only the diagonal term is set to 1 so that the pressure is at
+            // the specified value.
             matrixTriplets.emplace_back(pi.id, pi.id, 1.0);
             continue;
         }
