@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../particle.hpp"
+#include "dirichlet_boundary_condition.hpp"
 
 #include <Eigen/Sparse>
 #include <vector>
@@ -33,8 +34,7 @@ public:
      * @param isPressureUpdateTarget Function that gets a particle and returns true if the particle is a target for
      * pressure update
      */
-    void
-    setup(const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget);
+    void setup(const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition);
 
     /**
      * @brief Solve pressure Poisson equation
@@ -61,11 +61,10 @@ private:
     Eigen::VectorXd sourceTerm; ///< Source term for pressure Poisson equation
 
     void resetEquation();
-    void setSourceTerm(
-        const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
-    );
+    void
+    setSourceTerm(const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition);
     void setMatrixTriplets(
-        const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+        const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
     );
 };
 

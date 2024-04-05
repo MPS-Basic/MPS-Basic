@@ -31,13 +31,13 @@ PressurePoissonEquation::PressurePoissonEquation(
 }
 
 void PressurePoissonEquation::setup(
-    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
 ) {
     this->particlesCount = particles.size();
 
     resetEquation();
-    setSourceTerm(particles, isPressureUpdateTarget);
-    setMatrixTriplets(particles, isPressureUpdateTarget);
+    setSourceTerm(particles, dirichletBoundaryCondition);
+    setMatrixTriplets(particles, dirichletBoundaryCondition);
     coefficientMatrix.setFromTriplets(matrixTriplets.begin(), matrixTriplets.end());
 }
 
@@ -73,17 +73,17 @@ void PressurePoissonEquation::resetEquation() {
  * update
  */
 void PressurePoissonEquation::setSourceTerm(
-    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
 ) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        if (isPressureUpdateTarget(pi)) {
-            sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
+        if (dirichletBoundaryCondition.contains(pi.id)) {
+            sourceTerm[pi.id] = dirichletBoundaryCondition.value(pi.id);
         } else {
-            sourceTerm[pi.id] = 0.0;
+            sourceTerm[pi.id] = gamma * (1.0 / (dt * dt)) * ((pi.numberDensity - n0) / n0);
         }
     }
 }
@@ -98,13 +98,14 @@ void PressurePoissonEquation::setSourceTerm(
  * update
  */
 void PressurePoissonEquation::setMatrixTriplets(
-    const std::vector<Particle>& particles, const std::function<bool(const Particle&)>& isPressureUpdateTarget
+    const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
 ) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
 
     for (auto& pi : particles) {
-        if (!isPressureUpdateTarget(pi)) {
+        if (dirichletBoundaryCondition.contains(pi.id)) {
+            matrixTriplets.emplace_back(pi.id, pi.id, 1.0);
             continue;
         }
 
