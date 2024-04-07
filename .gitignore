@@ -8,7 +8,5 @@ doxygen/
 *.vtu
 *.log
 *.bat
-*.ps1
-!scripts/windows.ps1
-!input/*/input.prof
-!input/*/input.vtu
+!input/dambreak/*
+!input/hydrostatic/*
