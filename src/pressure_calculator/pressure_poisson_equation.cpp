@@ -31,7 +31,7 @@ PressurePoissonEquation::PressurePoissonEquation(
 }
 
 void PressurePoissonEquation::setup(
-    const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
+    const Particles& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
 ) {
     this->particlesCount = particles.size();
 
@@ -73,7 +73,7 @@ void PressurePoissonEquation::resetEquation() {
  * update
  */
 void PressurePoissonEquation::setSourceTerm(
-    const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
+    const Particles& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
 ) {
     double n0    = this->n0_forNumberDensity;
     double gamma = this->relaxationCoefficient;
@@ -99,7 +99,7 @@ void PressurePoissonEquation::setSourceTerm(
  * update
  */
 void PressurePoissonEquation::setMatrixTriplets(
-    const std::vector<Particle>& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
+    const Particles& particles, const DirichletBoundaryCondition& dirichletBoundaryCondition
 ) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;

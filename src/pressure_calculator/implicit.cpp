@@ -36,7 +36,7 @@ Implicit::Implicit(
     );
 }
 
-std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
+std::vector<double> Implicit::calc(const Particles& particles) {
     // Boundary condition: Particles other than inner particles set pressure to 0
     DirichletBoundaryCondition dirichletBoundaryCondition;
     for (const auto& p : particles) {

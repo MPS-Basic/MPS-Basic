@@ -1,4 +1,5 @@
 #include "../src/particle.hpp"
+#include "../src/particles.hpp"
 #include "../src/particles_exporter.hpp"
 
 #include <algorithm>
@@ -28,7 +29,7 @@ public:
 };
 
 int main(int argc, char** argv) {
-    std::vector<Particle> particles;
+    Particles particles;
 
     double l0 = 0.012;
 
@@ -49,19 +50,19 @@ int main(int argc, char** argv) {
             }
             // fluid region
             if (fluidDomain.sdf(r) < 0) {
-                particles.push_back(Particle(id, ParticleType::Fluid, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::Fluid, r_3d, Eigen::Vector3d::Zero()));
                 id++;
                 continue;
             }
             // wall region
             if (wallBB.sdf(r) < 0) {
-                particles.push_back(Particle(id, ParticleType::Wall, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::Wall, r_3d, Eigen::Vector3d::Zero()));
                 id++;
                 continue;
             }
             // dummy region
             if (dummyBB.sdf(r) < 0) {
-                particles.push_back(Particle(id, ParticleType::DummyWall, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::DummyWall, r_3d, Eigen::Vector3d::Zero()));
                 id++;
                 continue;
             }

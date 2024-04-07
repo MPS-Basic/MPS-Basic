@@ -1,4 +1,5 @@
 #include "../src/particle.hpp"
+#include "../src/particles.hpp"
 #include "../src/particles_exporter.hpp"
 
 #include <filesystem>
@@ -13,7 +14,7 @@ void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_rang
 bool isInside(Eigen::Vector3d& position, std::vector<double>& x_range, std::vector<double>& y_range, double& eps);
 
 int main(int argc, char** argv) {
-    std::vector<Particle> particles;
+    Particles particles;
 
     double l0  = 0.025;
     double eps = 0.01 * l0;
@@ -64,7 +65,7 @@ int main(int argc, char** argv) {
 
             if (type != ParticleType::Ghost) {
                 Eigen::Vector3d vel = Eigen::Vector3d::Zero();
-                particles.emplace_back(particles.size(), type, pos, vel);
+                particles.add(Particle(particles.size(), type, pos, vel));
             }
         }
     }
