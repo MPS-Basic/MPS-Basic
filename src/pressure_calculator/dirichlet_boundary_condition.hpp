@@ -4,6 +4,13 @@
 
 namespace PressureCalculator {
 
+/**
+ * @brief Dirichlet boundary condition
+ *
+ * @details Dirichlet boundary condition is used to set the pressure of particles on the boundary of the fluid domain.
+ * This class controls the id of particles that attach Dirichlet boundary conditions and the value of pressure for those
+ * particles.
+ */
 class DirichletBoundaryCondition {
 public:
     /**
