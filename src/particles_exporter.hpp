@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "particle.hpp"
+#include "particles.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -18,9 +18,9 @@
  */
 class ParticlesExporter {
 public:
-    std::vector<Particle> particles;
+    Particles particles;
 
-    void setParticles(const std::vector<Particle>& particles);
+    void setParticles(const Particles& particles);
     void toProf(const std::filesystem::path& path, const double& time);
     void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
 

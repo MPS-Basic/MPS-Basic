@@ -1,6 +1,6 @@
 #include "bucket.hpp"
 #include "domain.hpp"
-#include "particle.hpp"
+#include "particles.hpp"
 
 #include <vector>
 
@@ -10,7 +10,7 @@ public:
 
     NeighborSearcher(const double& re, const Domain& domain, const size_t& particleSize);
 
-    void setNeighbors(std::vector<Particle>& particles);
+    void setNeighbors(Particles& particles);
 
 private:
     double re;

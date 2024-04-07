@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../particle.hpp"
+#include "../particles.hpp"
 
 #include <vector>
 
@@ -20,7 +20,7 @@ public:
      *
      * @return pressures of particles
      */
-    virtual std::vector<double> calc(const std::vector<Particle>& particles) = 0;
+    virtual std::vector<double> calc(const Particles& particles) = 0;
 
     /**
      * @brief destructor
