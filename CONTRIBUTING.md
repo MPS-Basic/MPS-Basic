@@ -13,8 +13,19 @@ Thank you for considering contributing to MPS-Basic! We appreciate your interest
 ## Guidelines
 
 - **C++ Standard**: We adhere to C++17.
-- **Exceptions**: Do **NOT** use exceptions.
 - **Use range-based for `for (auto& e : v)` instead of `for (int i = 0; i < n; i++) `, whenever it is possible**.
+
+### Exceptions 
+Do **NOT** use exceptions in MPS-Basic. However, some libraries may use exceptions internally. In that case, **you need to catch the exceptions as soon as possible** and quit the program. Also, you need to show **where the exception is thrown** in the error message.
+
+Exception is a feature of C++, which stops subsequent code execution and jumps to the dedicated block to handle the error. It is useful in some cases, but it has disadvantages.
+- Advantages
+  - clear meanings of telling errors
+- Disadvantages
+  - It stops everything, which makes memory management difficult.
+  - Unless you catch the exception, it will propagate to the uppper level, which makes it difficult to debug.
+
+So, we decided not to use exceptions in MPS-Basic.
 
 ### Macros
 - Currently no macros are approved.
