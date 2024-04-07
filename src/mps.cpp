@@ -35,8 +35,10 @@ void MPS::stepForward() {
 
     neighborSearcher.setNeighbors(particles);
     calNumberDensity(settings.re_forNumberDensity);
+    addSpacePotentialParticles();
     setBoundaryCondition();
-    auto pressures = pressureCalculator->calc(particles);
+    auto boundaryCondition = particles.getBoundaryCondition();
+    auto pressures         = pressureCalculator->calc(particles, boundaryCondition);
     for (auto& particle : particles) {
         particle.pressure = pressures[particle.id];
     }
@@ -54,6 +56,24 @@ void MPS::stepForward() {
     }
 
     calCourant();
+}
+
+void addSPacePotentialParticles() {
+    for (const auto& p : particles) {
+        if (p.numberDensity < settings.n0_forNumberDensity) {
+            addSpacePotentialParticle(p);
+        }
+    }
+}
+
+void addSpacePotentialParticle(Particle& particle) {
+    auto neighbors = particles.getNeighbors(particle);
+    auto center    = neighbors.add(particle).center();
+    auto direction = (center - particle.position).normalized();
+    auto position  = particle.position + settings.particleDistance * direction;
+    auto spp       = Particle(particles.size(), ParticleType::SpacePotentialParticle, position, particle.velocity);
+    particles.add(spp);
+    particle.neighbors.push_back(Neighbor(spp.id, (position - particle.position).norm()));
 }
 
 void MPS::calGravity() {

@@ -134,4 +134,8 @@ private:
      * @brief calculate Courant number
      */
     void calCourant();
+
+    void addSpacePotentialParticles();
+
+    void addSpacePotentialParticle(const Particle& particle);
 };
