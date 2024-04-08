@@ -1,6 +1,7 @@
 #include "simulation.hpp"
 
 #include "input.hpp"
+#include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
 
@@ -11,12 +12,21 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-namespace fs     = std::filesystem;
-namespace chrono = std::chrono;
+namespace fs                                  = std::filesystem;
+namespace chrono                              = std::chrono;
+namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBoundaryConditionGenerator;
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
+
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
+    DirichletBoundaryConditionGenerator.reset(new DirichletBoundaryConditionGenerator::FreeSurface(
+        input.settings.dim,
+        input.settings.particleDistance,
+        input.settings.re_forNumberDensity,
+        input.settings.surfaceDetection_numberDensity_threshold
+    ));
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
     if (input.settings.pressureCalculationMethod == "Implicit") {
@@ -28,7 +38,8 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
             input.settings.dt,
             input.settings.fluidDensity,
             input.settings.compressibility,
-            input.settings.relaxationCoefficientForPressure
+            input.settings.relaxationCoefficientForPressure,
+            std::move(DirichletBoundaryConditionGenerator)
         ));
 
     } else if (input.settings.pressureCalculationMethod == "Explicit") {
