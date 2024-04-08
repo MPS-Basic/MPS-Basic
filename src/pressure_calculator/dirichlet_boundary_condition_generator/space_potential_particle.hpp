@@ -3,10 +3,10 @@
 #include "interface.hpp"
 
 namespace PressureCalculator::DirichletBoundaryConditionGenerator {
-class SpacePotentialParticle {
+class SpacePotentialParticle : public Interface {
 private:
 public:
-    DirichletBoundaryCondition generate(Particles& particles) override;
+    virtual DirichletBoundaryCondition generate(Particles& particles) override;
     ~SpacePotentialParticle() override;
 };
 } // namespace PressureCalculator::DirichletBoundaryConditionGenerator

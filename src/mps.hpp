@@ -137,5 +137,7 @@ private:
 
     void addSpacePotentialParticles();
 
-    void addSpacePotentialParticle(const Particle& particle);
+    void addSpacePotentialParticle(Particle& particle);
+
+    void removeSpacePotentialParticles();
 };

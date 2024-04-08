@@ -1,5 +1,6 @@
 #include "space_potential_particle.hpp"
 
+using PressureCalculator::DirichletBoundaryCondition;
 using PressureCalculator::DirichletBoundaryConditionGenerator::SpacePotentialParticle;
 
 DirichletBoundaryCondition SpacePotentialParticle::generate(Particles& particles) {

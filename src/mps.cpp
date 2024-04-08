@@ -44,6 +44,7 @@ void MPS::stepForward() {
     setMinimumPressure(settings.re_forGradient);
     calPressureGradient(settings.re_forGradient);
     moveParticleUsingPressureGradient();
+    removeSpacePotentialParticles();
 
     // Update pressure again when using EMPS
     if (auto explicitPressureCalculator = dynamic_cast<PressureCalculator::Explicit*>(pressureCalculator.get())) {
@@ -56,22 +57,26 @@ void MPS::stepForward() {
     calCourant();
 }
 
-void addSPacePotentialParticles() {
-    for (const auto& p : particles) {
-        if (p.numberDensity < settings.n0_forNumberDensity) {
-            addSpacePotentialParticle(p);
+void MPS::addSpacePotentialParticles() {
+    for (auto& particle : particles) {
+        if (particle.numberDensity < refValuesForNumberDensity.n0) {
+            addSpacePotentialParticle(particle);
         }
     }
 }
 
-void addSpacePotentialParticle(Particle& particle) {
+void MPS::addSpacePotentialParticle(Particle& particle) {
     auto neighbors = particles.getNeighbors(particle);
-    auto center    = neighbors.add(particle).center();
+    neighbors.add(particle);
+
+    auto center    = neighbors.center();
     auto direction = (center - particle.position).normalized();
     auto position  = particle.position + settings.particleDistance * direction;
-    auto spp       = Particle(particles.size(), ParticleType::SpacePotentialParticle, position, particle.velocity);
+    auto distance  = (position - particle.position).norm();
+    auto spp       = Particle(particles.size(), ParticleType::SPP, position, particle.velocity);
+
     particles.add(spp);
-    particle.neighbors.push_back(Neighbor(spp.id, (position - particle.position).norm()));
+    particle.neighbors.emplace_back(Neighbor(spp.id, distance));
 }
 
 void MPS::calGravity() {
@@ -257,6 +262,16 @@ void MPS::moveParticleUsingPressureGradient() {
         }
 
         p.acceleration.setZero();
+    }
+}
+
+void MPS::removeSpacePotentialParticles() {
+    for (auto it = particles.begin(); it != particles.end();) {
+        if (it->type == ParticleType::SPP) {
+            it = particles.erase(it);
+        } else {
+            ++it;
+        }
     }
 }
 

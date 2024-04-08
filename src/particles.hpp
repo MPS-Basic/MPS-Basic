@@ -30,6 +30,14 @@ public:
     void add(const Particle& particle);
 
     /**
+     * @brief Erase a particle from the collection
+     *
+     * @param it iterator to the particle to erase
+     * @return std::vector<Particle>::iterator iterator to the particle after the erased particle
+     */
+    std::vector<Particle>::iterator erase(std::vector<Particle>::iterator it);
+
+    /**
      * @brief Get a particle by index
      *
      * @param index the index of the particle

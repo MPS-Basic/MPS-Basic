@@ -29,10 +29,32 @@ void Particles::add(const Particle& particle) {
     particles.emplace_back(particle);
 }
 
+std::vector<Particle>::iterator Particles::erase(std::vector<Particle>::iterator it) {
+    return particles.erase(it);
+}
+
 Particle& Particles::operator[](size_t index) {
     return particles[index];
 }
 
 const Particle& Particles::operator[](size_t index) const {
     return particles[index];
+}
+
+Particles Particles::getNeighbors(const Particle& particle) const {
+    Particles neighbors;
+    for (const auto& neighbor : particle.neighbors) {
+        neighbors.add(particles[neighbor.id]);
+    }
+    return neighbors;
+}
+
+// TODO: A better way may exist.
+Eigen::Vector3d Particles::center() const {
+    Eigen::Vector3d center = Eigen::Vector3d::Zero();
+    for (const auto& p : particles) {
+        center += p.position;
+    }
+    center /= particles.size();
+    return center;
 }
