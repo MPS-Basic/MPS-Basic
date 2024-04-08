@@ -36,11 +36,16 @@ Implicit::Implicit(
     );
 }
 
-std::vector<double> Implicit::calc(const std::vector<Particle>& particles) {
-    // Boundary condition: Pressure update is performed only for inner particles.
-    auto isPressureUpdateTarget = [](const Particle& p) { return p.boundaryCondition == FluidState::Inner; };
+std::vector<double> Implicit::calc(const Particles& particles) {
+    // Boundary condition: Particles other than inner particles set pressure to 0
+    DirichletBoundaryCondition dirichletBoundaryCondition;
+    for (const auto& p : particles) {
+        if (p.boundaryCondition != FluidState::Inner) {
+            dirichletBoundaryCondition.set(p.id, 0.0);
+        }
+    }
 
-    this->pressurePoissonEquation.setup(particles, isPressureUpdateTarget);
+    this->pressurePoissonEquation.setup(particles, dirichletBoundaryCondition);
     this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();
 

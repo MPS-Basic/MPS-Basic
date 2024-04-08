@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME}
   src/main.cpp
   src/mps.cpp
   src/particle.cpp
+  src/particles.cpp
   src/particles_exporter.cpp
   src/refvalues.cpp
   src/saver.cpp
@@ -18,6 +19,7 @@ add_executable(${PROJECT_NAME}
   src/pressure_calculator/implicit.cpp
   src/pressure_calculator/explicit.cpp
   src/pressure_calculator/pressure_poisson_equation.cpp
+  src/pressure_calculator/dirichlet_boundary_condition.cpp
   src/neighbor_searcher.cpp
 )
 
@@ -111,6 +113,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 # ------------------------------
 add_library(particles STATIC
   src/particle.cpp
+  src/particles.cpp
   src/particles_exporter.cpp
 )
 target_link_libraries(particles PUBLIC Eigen3::Eigen)

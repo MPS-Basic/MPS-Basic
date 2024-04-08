@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../particle.hpp"
+#include "../particles.hpp"
 #include "../refvalues.hpp"
 #include "interface.hpp"
 #include "pressure_poisson_equation.hpp"
@@ -16,7 +16,7 @@ public:
      * @brief calculate pressure
      * @param particles particles
      */
-    std::vector<double> calc(const std::vector<Particle>& particles) override;
+    std::vector<double> calc(const Particles& particles) override;
     ~Implicit() override;
 
     Implicit(
@@ -31,7 +31,7 @@ public:
     );
 
 private:
-    std::vector<Particle> particles;
+    Particles particles;
     std::vector<double> pressure; ///< Solution of pressure calculation
     PressurePoissonEquation pressurePoissonEquation;
 
