@@ -35,7 +35,6 @@ void MPS::stepForward() {
 
     neighborSearcher.setNeighbors(particles);
     calNumberDensity(settings.re_forNumberDensity);
-    setBoundaryCondition();
     auto pressures = pressureCalculator->calc(particles);
     for (auto& particle : particles) {
         particle.pressure = pressures[particle.id];
@@ -154,44 +153,7 @@ void MPS::calNumberDensity(const double& re) {
     }
 }
 
-void MPS::setBoundaryCondition() {
-#pragma omp parallel for
-    for (auto& pi : particles) {
-        if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
-            pi.boundaryCondition = FluidState::Ignored;
-
-        } else { // Fluid particles
-            if (isFreeSurface(pi)) {
-                pi.boundaryCondition = FluidState::FreeSurface;
-            } else {
-                pi.boundaryCondition = FluidState::Inner;
-            }
-        }
-    }
-}
-
-bool MPS::isFreeSurface(const Particle& pi) {
-    bool isFreeSurface;
-
-    // based on number density
-    double n0   = refValuesForNumberDensity.n0;
-    double beta = settings.surfaceDetection_numberDensity_threshold;
-    if (pi.numberDensity < beta * n0) {
-        isFreeSurface = true;
-    } else {
-        isFreeSurface = false;
-    }
-
-    // based on particle distribution
-    if (isFreeSurface && settings.surfaceDetection_particleDistribution) {
-        if (!isParticleDistributionBiased(pi)) {
-            isFreeSurface = false;
-        }
-    }
-
-    return isFreeSurface;
-}
-
+// TODO: Move this function to Free Surface Detector
 bool MPS::isParticleDistributionBiased(const Particle& pi) {
     Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
     for (auto& neighbor : pi.neighbors) {
