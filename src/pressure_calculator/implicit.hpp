@@ -7,6 +7,7 @@
 #include "pressure_poisson_equation.hpp"
 
 #include <Eigen/Sparse>
+#include <memory>
 #include <vector>
 
 namespace PressureCalculator {
