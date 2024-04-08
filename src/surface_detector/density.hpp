@@ -1,22 +1,16 @@
-#pragma onece 
+#pragma once
 
 #include "interface.hpp"
 
-namespace SurfaceDetector
-{
-    class Density : public Interface
-    {
-    public:
-        /**
-         * @brief detect free surface for all particles
-         * @param particles particles
-         * @return fluid state of particles
-         */
-        std::vector<FluidState> isFreeSurface(const std::vector<Particle> &particles) override;
-        /**
-         * @brief destructor
-         * 
-         */
-        ~Density() override;
-    };
+namespace SurfaceDetector {
+class Density : public Interface {
+public:
+    bool isFreeSurface(const Particle& particles) override;
+    ~Density() override;
+    Density(double beta, double n0);
+
+private:
+    double beta; ///< threshold ratio for number density
+    double n0;   ///< reference value for number density
+};
 } // namespace SurfaceDetector

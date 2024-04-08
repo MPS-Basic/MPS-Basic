@@ -12,11 +12,16 @@
 using std::cerr;
 using std::endl;
 
-MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
+MPS::MPS(
+    const Input& input,
+    std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
+    std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector
+) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
+    this->surfaceDetector    = std::move(surfaceDetector);
     this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
 
     refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
@@ -161,7 +166,7 @@ void MPS::setBoundaryCondition() {
             pi.boundaryCondition = FluidState::Ignored;
 
         } else { // Fluid particles
-            if (isFreeSurface(pi)) {
+            if (surfaceDetector->isFreeSurface(pi)) {
                 pi.boundaryCondition = FluidState::FreeSurface;
             } else {
                 pi.boundaryCondition = FluidState::Inner;
