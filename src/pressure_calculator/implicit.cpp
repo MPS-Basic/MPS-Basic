@@ -39,7 +39,7 @@ Implicit::Implicit(
 }
 
 std::vector<double> Implicit::calc(Particles& particles) {
-    auto dirichletBoundaryCondition = DirichletBoundaryConditionGenerator->determine(particles);
+    auto dirichletBoundaryCondition = DirichletBoundaryConditionGenerator->generate(particles);
     this->pressurePoissonEquation.setup(particles, dirichletBoundaryCondition);
     this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();

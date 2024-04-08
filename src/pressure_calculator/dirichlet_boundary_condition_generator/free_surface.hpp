@@ -6,7 +6,7 @@
 namespace PressureCalculator::DirichletBoundaryConditionGenerator {
 class FreeSurface : public Interface {
 public:
-    DirichletBoundaryCondition determine(Particles& particles) override;
+    DirichletBoundaryCondition generate(Particles& particles) override;
     ~FreeSurface() override;
     FreeSurface(int dim, double particleDistance, double re_forNumberDensity, double beta);
 

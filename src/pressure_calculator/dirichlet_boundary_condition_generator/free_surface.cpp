@@ -5,7 +5,7 @@
 using PressureCalculator::DirichletBoundaryCondition;
 using PressureCalculator::DirichletBoundaryConditionGenerator::FreeSurface;
 
-DirichletBoundaryCondition FreeSurface::determine(Particles& particles) {
+DirichletBoundaryCondition FreeSurface::generate(Particles& particles) {
     setBoundaryCondition(particles);
 
     // Boundary condition: Particles other than inner particles set pressure to 0
