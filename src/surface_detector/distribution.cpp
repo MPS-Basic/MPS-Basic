@@ -6,7 +6,7 @@ using SurfaceDetector::Distribution;
 
 bool Distribution::isFreeSurface(const Particles& particles, const Particle& particle) {
     // main: surface, sub: surface -> surface (true)
-    // main: surface, sub: inner   -> inner   (true)
+    // main: surface, sub: inner   -> inner   (false)
     // main: inner,   sub: surface -> inner   (false)
     // main: inner,   sub: inner   -> inner   (false)
     if (mainDetection(particles, particle)) {
