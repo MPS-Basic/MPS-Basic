@@ -8,5 +8,6 @@ private:
 public:
     virtual DirichletBoundaryCondition generate(Particles& particles) override;
     ~SpacePotentialParticle() override;
+    SpacePotentialParticle() = default;
 };
 } // namespace PressureCalculator::DirichletBoundaryConditionGenerator
