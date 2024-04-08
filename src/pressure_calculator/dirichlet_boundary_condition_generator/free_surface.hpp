@@ -3,7 +3,7 @@
 #include "../../particle.hpp"
 #include "interface.hpp"
 
-namespace PressureCalculator::DirichletBoundaryConditionDeterminer {
+namespace PressureCalculator::DirichletBoundaryConditionGenerator {
 class FreeSurface : public Interface {
 public:
     DirichletBoundaryCondition determine(Particles& particles) override;
@@ -16,4 +16,4 @@ private:
     void setBoundaryCondition(Particles& particles);
     bool isFreeSurface(const Particle& pi);
 };
-}; // namespace PressureCalculator::DirichletBoundaryConditionDeterminer
+}; // namespace PressureCalculator::DirichletBoundaryConditionGenerator

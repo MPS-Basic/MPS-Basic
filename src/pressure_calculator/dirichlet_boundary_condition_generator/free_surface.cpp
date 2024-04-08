@@ -3,7 +3,7 @@
 #include "../../refvalues.hpp"
 
 using PressureCalculator::DirichletBoundaryCondition;
-using PressureCalculator::DirichletBoundaryConditionDeterminer::FreeSurface;
+using PressureCalculator::DirichletBoundaryConditionGenerator::FreeSurface;
 
 DirichletBoundaryCondition FreeSurface::determine(Particles& particles) {
     setBoundaryCondition(particles);

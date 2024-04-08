@@ -2,7 +2,7 @@
 
 #include "../particles.hpp"
 #include "../refvalues.hpp"
-#include "dirichlet_boundary_condition_determiner/interface.hpp"
+#include "dirichlet_boundary_condition_generator/interface.hpp"
 #include "interface.hpp"
 #include "pressure_poisson_equation.hpp"
 
@@ -29,13 +29,13 @@ public:
         double fluidDensity,
         double compressibility,
         double relaxationCoefficient,
-        std::unique_ptr<DirichletBoundaryConditionDeterminer::Interface> dirichletBoundaryConditionDeterminer
+        std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator
     );
 
 private:
     Particles particles;
     std::vector<double> pressure; ///< Solution of pressure calculation
-    std::unique_ptr<DirichletBoundaryConditionDeterminer::Interface> dirichletBoundaryConditionDeterminer;
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
     PressurePoissonEquation pressurePoissonEquation;
 
     /**

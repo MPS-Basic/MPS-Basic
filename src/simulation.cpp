@@ -1,7 +1,7 @@
 #include "simulation.hpp"
 
 #include "input.hpp"
-#include "pressure_calculator/dirichlet_boundary_condition_determiner/free_surface.hpp"
+#include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
 
@@ -12,16 +12,16 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-namespace fs                                   = std::filesystem;
-namespace chrono                               = std::chrono;
-namespace DirichletBoundaryConditionDeterminer = PressureCalculator::DirichletBoundaryConditionDeterminer;
+namespace fs                                  = std::filesystem;
+namespace chrono                              = std::chrono;
+namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBoundaryConditionGenerator;
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
 
-    std::unique_ptr<DirichletBoundaryConditionDeterminer::Interface> dirichletBoundaryConditionDeterminer;
-    dirichletBoundaryConditionDeterminer.reset(new DirichletBoundaryConditionDeterminer::FreeSurface(
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
+    DirichletBoundaryConditionGenerator.reset(new DirichletBoundaryConditionGenerator::FreeSurface(
         input.settings.dim,
         input.settings.particleDistance,
         input.settings.re_forNumberDensity,
@@ -39,7 +39,7 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
             input.settings.fluidDensity,
             input.settings.compressibility,
             input.settings.relaxationCoefficientForPressure,
-            std::move(dirichletBoundaryConditionDeterminer)
+            std::move(DirichletBoundaryConditionGenerator)
         ));
 
     } else if (input.settings.pressureCalculationMethod == "Explicit") {

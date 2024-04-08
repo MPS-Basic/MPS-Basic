@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace PressureCalculator::DirichletBoundaryConditionDeterminer {
+namespace PressureCalculator::DirichletBoundaryConditionGenerator {
 
 class Interface {
 public:
@@ -13,4 +13,4 @@ public:
     virtual ~Interface(){};
 };
 
-} // namespace PressureCalculator::DirichletBoundaryConditionDeterminer
+} // namespace PressureCalculator::DirichletBoundaryConditionGenerator
