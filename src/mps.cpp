@@ -67,13 +67,25 @@ void MPS::addSpacePotentialParticles() {
 
 void MPS::addSpacePotentialParticle(Particle& particle) {
     auto neighbors = particles.getNeighbors(particle);
+    if (neighbors.size() == 0) {
+        // When there are no neighbors, there is no need to add a space potential particle.
+        return;
+    }
+
     neighbors.add(particle);
 
     auto center    = neighbors.center();
     auto direction = (center - particle.position).normalized();
     auto position  = particle.position + settings.particleDistance * direction;
     auto distance  = (position - particle.position).norm();
-    auto spp       = Particle(particles.size(), ParticleType::SPP, position, particle.velocity);
+
+    if (distance == 0) {
+        // When the distance is 0, space potential particle cannot be added because weight function cannot be
+        // calculated.
+        return;
+    }
+
+    auto spp = Particle(particles.size(), ParticleType::SPP, position, particle.velocity);
 
     particles.add(spp);
     particle.neighbors.emplace_back(Neighbor(spp.id, distance));

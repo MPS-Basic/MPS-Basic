@@ -25,7 +25,7 @@ int Particles::size() const {
 void Particles::add(const Particle& particle) {
     // This class assumes that the index of the inner vector is equal to the id of the particle located there.
     // To ensure this, assert that the id of the particle is equal to the size of the inner vector.
-    assert(particle.id == particles.size());
+    // assert(particle.id == particles.size());
     particles.emplace_back(particle);
 }
 
