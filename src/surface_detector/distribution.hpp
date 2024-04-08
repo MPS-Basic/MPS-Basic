@@ -8,10 +8,15 @@ public:
     bool isFreeSurface(const Particles& particles, const Particle& particle) override;
     ~Distribution() override;
 
-    Distribution(double particleDistance, double threshold);
+    Distribution(double n0, double particleDistance, double distributionThreshold, double numberDensityThreshold);
 
 private:
+    double n0;
     double particleDistance;
-    double threshold;
+    double distributionThreshold;
+    double numberDensityThreshold;
+
+    bool mainDetection(const Particles& particles, const Particle& particle);
+    bool subDetection(const Particles& particles, const Particle& particle);
 };
 } // namespace SurfaceDetector

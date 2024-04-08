@@ -29,8 +29,10 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     std::unique_ptr<SurfaceDetector::Interface> surfaceDetector;
     if (input.settings.surfaceDetection_particleDistribution) {
         surfaceDetector.reset(new SurfaceDetector::Distribution(
+            refValuesForNumberDensity.n0,
+            input.settings.particleDistance,
             input.settings.surfaceDetection_particleDistribution_threshold,
-            input.settings.particleDistance
+            input.settings.surfaceDetection_numberDensity_threshold
         ));
 
     } else {
