@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME}
   src/pressure_calculator/explicit.cpp
   src/pressure_calculator/pressure_poisson_equation.cpp
   src/pressure_calculator/dirichlet_boundary_condition.cpp
-  src/pressure_calculator/dirichlet_boudary_condition_determiner/free_surface.cpp
+  src/pressure_calculator/dirichlet_boundary_condition_determiner/free_surface.cpp
   src/neighbor_searcher.cpp
 )
 

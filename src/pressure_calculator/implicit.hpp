@@ -2,7 +2,7 @@
 
 #include "../particles.hpp"
 #include "../refvalues.hpp"
-#include "dirichlet_boudary_condition_determiner/interface.hpp"
+#include "dirichlet_boundary_condition_determiner/interface.hpp"
 #include "interface.hpp"
 #include "pressure_poisson_equation.hpp"
 
