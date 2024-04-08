@@ -21,6 +21,11 @@ bool Distribution::mainDetection(const Particles& particles, const Particle& par
 }
 
 bool Distribution::subDetection(const Particles& particles, const Particle& particle) {
+    if (particle.neighbors.empty()) {
+        // If the particle has no neighbors, it is considered to be a free surface.
+        return true;
+    }
+
     Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
     for (auto& neighbor : particle.neighbors) {
         auto& pj = particles[neighbor.id];
