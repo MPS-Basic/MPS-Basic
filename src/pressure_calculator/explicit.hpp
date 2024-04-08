@@ -13,7 +13,7 @@ public:
      * @brief calculate pressure
      * @param particles particles
      */
-    std::vector<double> calc(const Particles& particles) override;
+    std::vector<double> calc(Particles& particles) override;
     ~Explicit() override;
 
     Explicit(double fluidDensity, double n0, double soundSpeed, int dimension, double particleDistance);

@@ -2,6 +2,7 @@
 
 #include "../particles.hpp"
 #include "../refvalues.hpp"
+#include "dirichlet_boudary_condition_determiner/interface.hpp"
 #include "interface.hpp"
 #include "pressure_poisson_equation.hpp"
 
@@ -16,7 +17,7 @@ public:
      * @brief calculate pressure
      * @param particles particles
      */
-    std::vector<double> calc(const Particles& particles) override;
+    std::vector<double> calc(Particles& particles) override;
     ~Implicit() override;
 
     Implicit(
@@ -27,12 +28,14 @@ public:
         double dt,
         double fluidDensity,
         double compressibility,
-        double relaxationCoefficient
+        double relaxationCoefficient,
+        std::unique_ptr<DirichletBoundaryConditionDeterminer::Interface> dirichletBoundaryConditionDeterminer
     );
 
 private:
     Particles particles;
     std::vector<double> pressure; ///< Solution of pressure calculation
+    std::unique_ptr<DirichletBoundaryConditionDeterminer::Interface> dirichletBoundaryConditionDeterminer;
     PressurePoissonEquation pressurePoissonEquation;
 
     /**

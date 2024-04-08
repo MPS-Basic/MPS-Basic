@@ -18,11 +18,13 @@ Implicit::Implicit(
     double dt,
     double fluidDensity,
     double compressibility,
-    double relaxationCoefficient
+    double relaxationCoefficient,
+    std::unique_ptr<DirichletBoundaryConditionDeterminer::Interface> dirichletBoundaryConditionDeterminer
 ) {
-    auto refValuesForNumberDensity = RefValues(dimension, particleDistance, reForNumberDensity);
-    auto refValuesForLaplacian     = RefValues(dimension, particleDistance, reForLaplacian);
-    this->pressurePoissonEquation  = PressurePoissonEquation(
+    auto refValuesForNumberDensity             = RefValues(dimension, particleDistance, reForNumberDensity);
+    auto refValuesForLaplacian                 = RefValues(dimension, particleDistance, reForLaplacian);
+    this->dirichletBoundaryConditionDeterminer = std::move(dirichletBoundaryConditionDeterminer);
+    this->pressurePoissonEquation              = PressurePoissonEquation(
         dimension,
         dt,
         relaxationCoefficient,
@@ -36,15 +38,8 @@ Implicit::Implicit(
     );
 }
 
-std::vector<double> Implicit::calc(const Particles& particles) {
-    // Boundary condition: Particles other than inner particles set pressure to 0
-    DirichletBoundaryCondition dirichletBoundaryCondition;
-    for (const auto& p : particles) {
-        if (p.boundaryCondition != FluidState::Inner) {
-            dirichletBoundaryCondition.set(p.id, 0.0);
-        }
-    }
-
+std::vector<double> Implicit::calc(Particles& particles) {
+    auto dirichletBoundaryCondition = dirichletBoundaryConditionDeterminer->determine(particles);
     this->pressurePoissonEquation.setup(particles, dirichletBoundaryCondition);
     this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();
