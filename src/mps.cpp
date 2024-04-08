@@ -166,7 +166,7 @@ void MPS::setBoundaryCondition() {
             pi.boundaryCondition = FluidState::Ignored;
 
         } else { // Fluid particles
-            if (surfaceDetector->isFreeSurface(pi)) {
+            if (surfaceDetector->isFreeSurface(particles, pi)) {
                 pi.boundaryCondition = FluidState::FreeSurface;
             } else {
                 pi.boundaryCondition = FluidState::Inner;

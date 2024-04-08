@@ -1,16 +1,18 @@
 #pragma once
 
 #include "../particle.hpp"
+#include "../particles.hpp"
 
 namespace SurfaceDetector {
 class Interface {
 public:
     /**
-     * @brief
+     * @brief Whether the particle is on the free surface
      * @param particles particles
-     * @return fluid state of particles
+     * @param particle particle inside the particles
+     * @return Whether the particle is on the free surface
      */
-    virtual bool isFreeSurface(const Particle& particle) = 0;
-    virtual ~Interface()                                 = default;
+    virtual bool isFreeSurface(const Particles& particles, const Particle& particle) = 0;
+    virtual ~Interface()                                                             = default;
 };
 } // namespace SurfaceDetector

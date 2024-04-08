@@ -4,6 +4,7 @@
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
 #include "surface_detector/density.hpp"
+#include "surface_detector/distribution.hpp"
 
 #include <cstdio>
 #include <iostream>
@@ -26,10 +27,18 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     );
 
     std::unique_ptr<SurfaceDetector::Interface> surfaceDetector;
-    surfaceDetector.reset(new SurfaceDetector::Density(
-        input.settings.surfaceDetection_numberDensity_threshold,
-        refValuesForNumberDensity.n0
-    ));
+    if (input.settings.surfaceDetection_particleDistribution) {
+        surfaceDetector.reset(new SurfaceDetector::Distribution(
+            input.settings.surfaceDetection_particleDistribution_threshold,
+            input.settings.particleDistance
+        ));
+
+    } else {
+        surfaceDetector.reset(new SurfaceDetector::Density(
+            input.settings.surfaceDetection_numberDensity_threshold,
+            refValuesForNumberDensity.n0
+        ));
+    }
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
     if (input.settings.pressureCalculationMethod == "Implicit") {

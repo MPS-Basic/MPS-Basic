@@ -5,7 +5,7 @@
 namespace SurfaceDetector {
 class Density : public Interface {
 public:
-    bool isFreeSurface(const Particle& particles) override;
+    bool isFreeSurface(const Particles& particles, const Particle& particle) override;
     ~Density() override;
     Density(double beta, double n0);
 

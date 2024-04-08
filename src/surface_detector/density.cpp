@@ -2,7 +2,7 @@
 
 using SurfaceDetector::Density;
 
-bool Density::isFreeSurface(const Particle& particle) {
+bool Density::isFreeSurface(const Particles& particles, const Particle& particle) {
     return particle.numberDensity < beta * n0;
 }
 
