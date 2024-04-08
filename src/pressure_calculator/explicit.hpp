@@ -7,6 +7,10 @@
 
 namespace PressureCalculator {
 
+/**
+ * @brief Class for explicit pressure calculation
+ * @details This class calculates pressure explicitly.
+ */
 class Explicit : public Interface {
 public:
     /**

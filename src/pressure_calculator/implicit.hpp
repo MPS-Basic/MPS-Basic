@@ -12,6 +12,12 @@
 
 namespace PressureCalculator {
 
+/**
+ * @brief Class for implicit pressure calculation
+ * @details This class has a Dirichlet boundary condition generator and a pressure Poisson solver. The generator is used
+ * within the pressure calculation process and the generated boundary condition is attached to the pressure Poisson
+ * equation.
+ */
 class Implicit : public Interface {
 public:
     /**
