@@ -29,7 +29,7 @@ public:
         double fluidDensity,
         double compressibility,
         double relaxationCoefficient,
-        std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator
+        std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& DirichletBoundaryConditionGenerator
     );
 
 private:

@@ -19,7 +19,7 @@ Implicit::Implicit(
     double fluidDensity,
     double compressibility,
     double relaxationCoefficient,
-    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& DirichletBoundaryConditionGenerator
 ) {
     auto refValuesForNumberDensity            = RefValues(dimension, particleDistance, reForNumberDensity);
     auto refValuesForLaplacian                = RefValues(dimension, particleDistance, reForLaplacian);
