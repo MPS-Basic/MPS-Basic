@@ -21,6 +21,8 @@ add_executable(${PROJECT_NAME}
   src/pressure_calculator/pressure_poisson_equation.cpp
   src/pressure_calculator/dirichlet_boundary_condition.cpp
   src/pressure_calculator/dirichlet_boundary_condition_generator/free_surface.cpp
+  src/surface_detector/density.cpp
+  src/surface_detector/distribution.cpp
   src/neighbor_searcher.cpp
 )
 

@@ -9,6 +9,7 @@
 #include "pressure_calculator/interface.hpp"
 #include "refvalues.hpp"
 #include "settings.hpp"
+#include "surface_detector/interface.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -36,12 +37,15 @@ public:
 
     MPS() = default;
 
-    MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator);
+    MPS(const Input& input,
+        std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
+        std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector);
 
     void stepForward();
 
 private:
-    NeighborSearcher neighborSearcher; ///< Neighbor searcher for neighbor search
+    NeighborSearcher neighborSearcher;                           ///< Neighbor searcher for neighbor search
+    std::unique_ptr<SurfaceDetector::Interface> surfaceDetector; ///< Interface for free surface detection
 
     /**
      * @brief calculate gravity term

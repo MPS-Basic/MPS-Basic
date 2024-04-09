@@ -4,6 +4,8 @@
 #include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
+#include "surface_detector/density.hpp"
+#include "surface_detector/distribution.hpp"
 
 #include <cstdio>
 #include <iostream>
@@ -27,6 +29,28 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
         input.settings.re_forNumberDensity,
         input.settings.surfaceDetection_numberDensity_threshold
     ));
+
+    RefValues refValuesForNumberDensity(
+        input.settings.dim,
+        input.settings.particleDistance,
+        input.settings.re_forNumberDensity
+    );
+
+    std::unique_ptr<SurfaceDetector::Interface> surfaceDetector;
+    if (input.settings.surfaceDetection_particleDistribution) {
+        surfaceDetector.reset(new SurfaceDetector::Distribution(
+            refValuesForNumberDensity.n0,
+            input.settings.particleDistance,
+            input.settings.surfaceDetection_particleDistribution_threshold,
+            input.settings.surfaceDetection_numberDensity_threshold
+        ));
+
+    } else {
+        surfaceDetector.reset(new SurfaceDetector::Density(
+            input.settings.surfaceDetection_numberDensity_threshold,
+            refValuesForNumberDensity.n0
+        ));
+    }
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
     if (input.settings.pressureCalculationMethod == "Implicit") {
@@ -57,7 +81,7 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
         std::exit(-1);
     }
 
-    mps          = MPS(input, std::move(pressureCalculator));
+    mps          = MPS(input, std::move(pressureCalculator), std::move(surfaceDetector));
     startTime    = input.startTime;
     time         = startTime;
     endTime      = input.settings.endTime;
