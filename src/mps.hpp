@@ -143,5 +143,8 @@ private:
 
     void addSpacePotentialParticle(Particle& particle);
 
+    Eigen::Vector3d
+    calcRelativePositionToNeighborCenter(const Particle& pi, const Particles& particles, double re, double n0);
+
     void removeSpacePotentialParticles();
 };

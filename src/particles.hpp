@@ -53,12 +53,6 @@ public:
      */
     const Particle& operator[](size_t index) const;
 
-    // 指定した粒子の近傍粒子を取得する
-    Particles getNeighbors(const Particle& particle) const;
-
-    // center を求める
-    Eigen::Vector3d center() const;
-
 private:
     std::vector<Particle> particles;
 };

@@ -115,7 +115,7 @@ void PressurePoissonEquation::setMatrixTriplets(
         double coefficient_ii = 0.0;
         for (auto& neighbor : pi.neighbors) {
             auto& pj = particles[neighbor.id];
-            if (pj.boundaryCondition == FluidState::Ignored) {
+            if (pj.type == ParticleType::Ghost || pj.type == ParticleType::DummyWall) {
                 continue;
             }
 

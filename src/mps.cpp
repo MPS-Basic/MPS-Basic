@@ -3,6 +3,7 @@
 #include "particle.hpp"
 #include "weight.hpp"
 
+#include <Eigen/Core>
 #include <queue>
 
 // This include is for checking if the pressure calculator is explicit.
@@ -71,18 +72,26 @@ void MPS::addSpacePotentialParticles() {
 }
 
 void MPS::addSpacePotentialParticle(Particle& particle) {
-    auto neighbors = particles.getNeighbors(particle);
-    if (neighbors.size() == 0) {
+    if (particle.neighbors.size() == 0) {
         // When there are no neighbors, there is no need to add a space potential particle.
         return;
     }
 
-    neighbors.add(particle);
+    auto neighborCenter = calcRelativePositionToNeighborCenter(
+        particle,
+        particles,
+        settings.re_forNumberDensity,
+        refValuesForNumberDensity.n0
+    );
+    auto direction = (neighborCenter - particle.position).normalized();
 
-    auto center    = neighbors.center();
-    auto direction = (center - particle.position).normalized();
-    auto position  = particle.position + settings.particleDistance * direction;
-    auto distance  = (position - particle.position).norm();
+    auto ri = particle.position;
+    auto re = settings.re_forNumberDensity;
+    auto n0 = refValuesForNumberDensity.n0;
+    auto ni = particle.numberDensity;
+
+    Eigen::Vector3d rSPP = ri - direction * re / (n0 - ni + 1);
+    auto distance        = (rSPP - ri).norm();
 
     if (distance == 0) {
         // When the distance is 0, space potential particle cannot be added because weight function cannot be
@@ -90,10 +99,19 @@ void MPS::addSpacePotentialParticle(Particle& particle) {
         return;
     }
 
-    auto spp = Particle(particles.size(), ParticleType::SPP, position, particle.velocity);
-
+    auto spp = Particle(particles.size(), ParticleType::SPP, rSPP, particle.velocity);
     particles.add(spp);
     particle.neighbors.emplace_back(Neighbor(spp.id, distance));
+}
+
+Eigen::Vector3d
+MPS::calcRelativePositionToNeighborCenter(const Particle& pi, const Particles& particles, double re, double n0) {
+    Eigen::Vector3d r_ig = Eigen::Vector3d::Zero();
+    for (const auto& neighbor : pi.neighbors) {
+        const auto& pj = particles[neighbor.id];
+        r_ig += (pj.position - pi.position) * weight(neighbor.distance, re);
+    }
+    return r_ig / n0;
 }
 
 void MPS::calGravity() {
