@@ -16,10 +16,18 @@ bool Distribution::isFreeSurface(const Particles& particles, const Particle& par
     }
 }
 
+/**
+ * @brief Main detection based on number density
+ * @return true if the particle is considered to be a free surface
+ */
 bool Distribution::mainDetection(const Particles& particles, const Particle& particle) {
-    return particle.numberDensity < numberDensityThreshold * n0;
+    return particle.numberDensity < numberDensityThresholdRatio * n0;
 }
 
+/**
+ * @brief Sub detection based on particle distribution
+ * @return true if the particle is considered to be a free surface
+ */
 bool Distribution::subDetection(const Particles& particles, const Particle& particle) {
     if (particle.neighbors.empty()) {
         // If the particle has no neighbors, it is considered to be a free surface.
@@ -33,7 +41,7 @@ bool Distribution::subDetection(const Particles& particles, const Particle& part
         rij_sum += pj.position - particle.position;
     }
 
-    auto threshold = distributionThreshold * particleDistance;
+    auto threshold = distributionThresholdRatio * particleDistance;
 
     if (abs(rij_sum.x()) > threshold) {
         return true;
@@ -50,10 +58,10 @@ bool Distribution::subDetection(const Particles& particles, const Particle& part
 }
 
 Distribution::Distribution(
-    double n0, double particleDistance, double distributionThreshold, double numberDensityThreshold
+    double n0, double particleDistance, double distributionThresholdRatio, double numberDensityThresholdRatio
 )
-    : n0(n0), particleDistance(particleDistance), distributionThreshold(distributionThreshold),
-      numberDensityThreshold(numberDensityThreshold) {
+    : n0(n0), particleDistance(particleDistance), distributionThresholdRatio(distributionThresholdRatio),
+      numberDensityThresholdRatio(numberDensityThresholdRatio) {
 }
 
 Distribution::~Distribution() {
