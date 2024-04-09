@@ -1,7 +1,10 @@
 #pragma once
 
 #include "../../particle.hpp"
+#include "../../surface_detector/interface.hpp"
 #include "interface.hpp"
+
+#include <memory>
 
 namespace PressureCalculator::DirichletBoundaryConditionGenerator {
 /**
@@ -16,20 +19,10 @@ public:
      */
     DirichletBoundaryCondition generate(Particles& particles) override;
     ~FreeSurface() override;
-
-    /**
-     * @brief Constructor
-     * @param dim Dimension
-     * @param particleDistance Particle distance
-     * @param re_forNumberDensity Reference number density
-     * @param beta Threshold ratio of particle number density for surface particle determination
-     */
-    FreeSurface(int dim, double particleDistance, double re_forNumberDensity, double beta);
+    FreeSurface(std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector);
 
 private:
-    double n0;
-    double beta;
+    std::unique_ptr<SurfaceDetector::Interface> surfaceDetector;
     void setBoundaryCondition(Particles& particles);
-    bool isFreeSurface(const Particle& pi);
 };
 }; // namespace PressureCalculator::DirichletBoundaryConditionGenerator

@@ -22,14 +22,6 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
 
-    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
-    DirichletBoundaryConditionGenerator.reset(new DirichletBoundaryConditionGenerator::FreeSurface(
-        input.settings.dim,
-        input.settings.particleDistance,
-        input.settings.re_forNumberDensity,
-        input.settings.surfaceDetection_numberDensity_threshold
-    ));
-
     RefValues refValuesForNumberDensity(
         input.settings.dim,
         input.settings.particleDistance,
@@ -51,6 +43,10 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
             refValuesForNumberDensity.n0
         ));
     }
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
+    DirichletBoundaryConditionGenerator.reset(
+        new DirichletBoundaryConditionGenerator::FreeSurface(std::move(surfaceDetector))
+    );
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
     if (input.settings.pressureCalculationMethod == "Implicit") {
