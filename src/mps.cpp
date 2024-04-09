@@ -175,51 +175,6 @@ void MPS::setBoundaryCondition() {
     }
 }
 
-bool MPS::isFreeSurface(const Particle& pi) {
-    bool isFreeSurface;
-
-    // based on number density
-    double n0   = refValuesForNumberDensity.n0;
-    double beta = settings.surfaceDetection_numberDensity_threshold;
-    if (pi.numberDensity < beta * n0) {
-        isFreeSurface = true;
-    } else {
-        isFreeSurface = false;
-    }
-
-    // based on particle distribution
-    if (isFreeSurface && settings.surfaceDetection_particleDistribution) {
-        if (!isParticleDistributionBiased(pi)) {
-            isFreeSurface = false;
-        }
-    }
-
-    return isFreeSurface;
-}
-
-bool MPS::isParticleDistributionBiased(const Particle& pi) {
-    Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
-    for (auto& neighbor : pi.neighbors) {
-        auto& pj = particles[neighbor.id];
-
-        rij_sum += pj.position - pi.position;
-    }
-
-    double alpha = settings.surfaceDetection_particleDistribution_threshold;
-    if (abs(rij_sum.x()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else if (abs(rij_sum.y()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else if (abs(rij_sum.z()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else {
-        return false;
-    }
-}
-
 void MPS::setMinimumPressure(const double& re) {
 #pragma omp parallel for
     for (auto& p : particles) {
