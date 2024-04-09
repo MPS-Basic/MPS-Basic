@@ -12,11 +12,16 @@
 using std::cerr;
 using std::endl;
 
-MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
+MPS::MPS(
+    const Input& input,
+    std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
+    std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector
+) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
+    this->surfaceDetector    = std::move(surfaceDetector);
     this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
 
     refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
@@ -189,27 +194,19 @@ void MPS::calNumberDensity(const double& re) {
     }
 }
 
-// TODO: Move this function to Free Surface Detector
-bool MPS::isParticleDistributionBiased(const Particle& pi) {
-    Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
-    for (auto& neighbor : pi.neighbors) {
-        auto& pj = particles[neighbor.id];
+void MPS::setBoundaryCondition() {
+#pragma omp parallel for
+    for (auto& pi : particles) {
+        if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
+            pi.boundaryCondition = FluidState::Ignored;
 
-        rij_sum += pj.position - pi.position;
-    }
-
-    double alpha = settings.surfaceDetection_particleDistribution_threshold;
-    if (abs(rij_sum.x()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else if (abs(rij_sum.y()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else if (abs(rij_sum.z()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else {
-        return false;
+        } else { // Fluid particles
+            if (surfaceDetector->isFreeSurface(particles, pi)) {
+                pi.boundaryCondition = FluidState::FreeSurface;
+            } else {
+                pi.boundaryCondition = FluidState::Inner;
+            }
+        }
     }
 }
 

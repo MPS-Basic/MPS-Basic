@@ -22,10 +22,8 @@ DirichletBoundaryCondition FreeSurface::generate(Particles& particles) {
 FreeSurface::~FreeSurface() {
 }
 
-FreeSurface::FreeSurface(int dim, double particleDistance, double re_forNumberDensity, double beta) {
-    auto refValues = RefValues(dim, particleDistance, re_forNumberDensity);
-    this->n0       = refValues.n0;
-    this->beta     = beta;
+FreeSurface::FreeSurface(std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector) {
+    this->surfaceDetector = std::move(surfaceDetector);
 }
 
 void FreeSurface::setBoundaryCondition(Particles& particles) {
@@ -35,15 +33,11 @@ void FreeSurface::setBoundaryCondition(Particles& particles) {
             pi.boundaryCondition = FluidState::Ignored;
 
         } else { // Fluid particles
-            if (isFreeSurface(pi)) {
+            if (surfaceDetector->isFreeSurface(particles, pi)) {
                 pi.boundaryCondition = FluidState::FreeSurface;
             } else {
                 pi.boundaryCondition = FluidState::Inner;
             }
         }
     }
-}
-
-bool FreeSurface::isFreeSurface(const Particle& pi) {
-    return pi.numberDensity < beta * n0;
 }
