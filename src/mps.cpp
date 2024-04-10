@@ -31,6 +31,7 @@ MPS::MPS(
 }
 
 void MPS::stepForward() {
+    removeSpacePotentialParticles();
     neighborSearcher.setNeighbors(particles);
     calGravity();
     calViscosity(settings.re_forLaplacian);
@@ -50,7 +51,6 @@ void MPS::stepForward() {
     setMinimumPressure(settings.re_forGradient);
     calPressureGradient(settings.re_forGradient);
     moveParticleUsingPressureGradient();
-    removeSpacePotentialParticles();
 
     // Update pressure again when using EMPS
     if (auto explicitPressureCalculator = dynamic_cast<PressureCalculator::Explicit*>(pressureCalculator.get())) {
@@ -65,7 +65,7 @@ void MPS::stepForward() {
 
 void MPS::addSpacePotentialParticles() {
     for (auto& particle : particles) {
-        if (particle.numberDensity < refValuesForNumberDensity.n0) {
+        if (particle.numberDensity < refValuesForNumberDensity.n0 && particle.type != ParticleType::DummyWall) {
             addSpacePotentialParticle(particle);
         }
     }
