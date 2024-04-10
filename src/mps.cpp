@@ -28,7 +28,7 @@ void MPS::stepForward() {
     neighborSearcher.setNeighbors(particles);
     calGravity();
     calViscosity(settings.re_forLaplacian);
-    moveParticle();
+    particles.move(settings.dt);
 
     neighborSearcher.setNeighbors(particles);
     collision();
@@ -43,7 +43,7 @@ void MPS::stepForward() {
 
     setMinimumPressure(settings.re_forGradient);
     calPressureGradient(settings.re_forGradient);
-    moveParticleUsingPressureGradient();
+    particles.move(settings.dt);
 
     // Update pressure again when using EMPS
     if (auto explicitPressureCalculator = dynamic_cast<PressureCalculator::Explicit*>(pressureCalculator.get())) {
