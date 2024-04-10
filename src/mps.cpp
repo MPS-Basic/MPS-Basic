@@ -94,17 +94,6 @@ void MPS::calViscosity(const double& re) {
     }
 }
 
-void MPS::moveParticle() {
-#pragma omp parallel for
-    for (auto& p : particles) {
-        if (p.type == ParticleType::Fluid) {
-            p.velocity += p.acceleration * settings.dt;
-            p.position += p.velocity * settings.dt;
-        }
-        p.acceleration.setZero();
-    }
-}
-
 void MPS::collision() {
     for (auto& pi : particles) {
         if (pi.type != ParticleType::Fluid)
@@ -264,18 +253,6 @@ void MPS::calPressureGradient(const double& re) {
         }
         grad *= a;
         pi.acceleration -= grad * pi.inverseDensity(settings.fluidDensity);
-    }
-}
-
-void MPS::moveParticleUsingPressureGradient() {
-#pragma omp parallel for
-    for (auto&& p : particles) {
-        if (p.type == ParticleType::Fluid) {
-            p.velocity += p.acceleration * settings.dt;
-            p.position += p.acceleration * settings.dt * settings.dt;
-        }
-
-        p.acceleration.setZero();
     }
 }
 

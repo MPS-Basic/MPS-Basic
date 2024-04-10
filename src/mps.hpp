@@ -60,16 +60,6 @@ private:
     void calViscosity(const double& re);
 
     /**
-     * @brief move particles in prediction step
-     * @details
-     * The position and velocity of each particle are updated as
-     * \f[
-     * \mathbf{u}_i^* = \mathbf{u}_i^k + (\nu\langle \nabla^2\mathbf{u}\rangle^k_i+\mathbf{g})\Delta t.
-     * \f]
-     */
-    void moveParticle();
-
-    /**
      *@brief calculate collision between particles when they are too close
      */
     void collision();
@@ -119,16 +109,6 @@ private:
      * the particle \f$i\f$.
      */
     void calPressureGradient(const double& re);
-
-    /**
-     * @brief move particles in correction step
-     * @details
-     * The position and velocity of each particle are updated as
-     * \f[
-     * \mathbf{u}_i^{k+1} = \mathbf{u}_i^* - \frac{1}{\rho^0} \langle\nabla P^{k+1} \rangle_i \Delta t.
-     * \f]
-     */
-    void moveParticleUsingPressureGradient();
 
     /**
      * @brief calculate Courant number
