@@ -12,11 +12,16 @@
 using std::cerr;
 using std::endl;
 
-MPS::MPS(const Input& input, std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator) {
+MPS::MPS(
+    const Input& input,
+    std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
+    std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector
+) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
     this->pressureCalculator = std::move(pressureCalculator);
+    this->surfaceDetector    = std::move(surfaceDetector);
     this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
 
     refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
@@ -161,57 +166,12 @@ void MPS::setBoundaryCondition() {
             pi.boundaryCondition = FluidState::Ignored;
 
         } else { // Fluid particles
-            if (isFreeSurface(pi)) {
+            if (surfaceDetector->isFreeSurface(particles, pi)) {
                 pi.boundaryCondition = FluidState::FreeSurface;
             } else {
                 pi.boundaryCondition = FluidState::Inner;
             }
         }
-    }
-}
-
-bool MPS::isFreeSurface(const Particle& pi) {
-    bool isFreeSurface;
-
-    // based on number density
-    double n0   = refValuesForNumberDensity.n0;
-    double beta = settings.surfaceDetection_numberDensity_threshold;
-    if (pi.numberDensity < beta * n0) {
-        isFreeSurface = true;
-    } else {
-        isFreeSurface = false;
-    }
-
-    // based on particle distribution
-    if (isFreeSurface && settings.surfaceDetection_particleDistribution) {
-        if (!isParticleDistributionBiased(pi)) {
-            isFreeSurface = false;
-        }
-    }
-
-    return isFreeSurface;
-}
-
-bool MPS::isParticleDistributionBiased(const Particle& pi) {
-    Eigen::Vector3d rij_sum = Eigen::Vector3d::Zero();
-    for (auto& neighbor : pi.neighbors) {
-        auto& pj = particles[neighbor.id];
-
-        rij_sum += pj.position - pi.position;
-    }
-
-    double alpha = settings.surfaceDetection_particleDistribution_threshold;
-    if (abs(rij_sum.x()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else if (abs(rij_sum.y()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else if (abs(rij_sum.z()) > alpha * settings.particleDistance) {
-        return true;
-
-    } else {
-        return false;
     }
 }
 
