@@ -36,3 +36,12 @@ Particle& Particles::operator[](size_t index) {
 const Particle& Particles::operator[](size_t index) const {
     return particles[index];
 }
+
+void Particles::move(double dt) {
+#pragma omp parallel for
+    for (auto& p : particles) {
+        if (p.type == ParticleType::Fluid) {
+            p.move(dt);
+        }
+    }
+}

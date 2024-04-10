@@ -45,6 +45,14 @@ public:
      */
     const Particle& operator[](size_t index) const;
 
+    /**
+     * @brief Move fluid particles by acceleration
+     *
+     * @param dt time step
+     * @warning This function resets the acceleration to zero after moving the particles
+     */
+    void move(double dt);
+
 private:
     std::vector<Particle> particles;
 };
