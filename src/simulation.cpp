@@ -5,8 +5,8 @@
 #include "pressure_calculator/dirichlet_boundary_condition_generator/space_potential_particle.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
-#include "surface_detector/density.hpp"
 #include "surface_detector/distribution.hpp"
+#include "surface_detector/number_density.hpp"
 
 #include <cstdio>
 #include <iostream>
@@ -39,7 +39,7 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
         ));
 
     } else {
-        surfaceDetector.reset(new SurfaceDetector::Density(
+        surfaceDetector.reset(new SurfaceDetector::NumberDensity(
             input.settings.surfaceDetection_numberDensity_threshold,
             refValuesForNumberDensity.n0
         ));
