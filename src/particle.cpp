@@ -1,10 +1,12 @@
 #include "particle.hpp"
+
 Particle::Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel) {
     this->id       = id;
     this->type     = type;
     this->position = pos;
     this->velocity = vel;
 }
+
 double Particle::inverseDensity(double& density) const {
     switch (type) {
     case ParticleType::Ghost:
@@ -18,4 +20,10 @@ double Particle::inverseDensity(double& density) const {
     default:
         return 0;
     }
+}
+
+void Particle::move(double dt) {
+    velocity += acceleration * dt;
+    position += velocity * dt;
+    acceleration.setZero();
 }

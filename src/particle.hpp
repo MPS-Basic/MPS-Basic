@@ -2,6 +2,7 @@
 
 #include "Eigen/Dense"
 #include "common.hpp"
+
 #include <vector>
 
 /**
@@ -76,4 +77,11 @@ public:
      * @return inverse of density
      */
     double inverseDensity(double& density) const;
+
+    /**
+     * @brief Move the particle by acceleration
+     * @param dt time step
+     * @warning This function resets the acceleration to zero after moving the particle
+     */
+    void move(double dt);
 };
