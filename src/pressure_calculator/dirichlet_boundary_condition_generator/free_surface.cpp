@@ -26,6 +26,10 @@ FreeSurface::FreeSurface(std::unique_ptr<SurfaceDetector::Interface>&& surfaceDe
     this->surfaceDetector = std::move(surfaceDetector);
 }
 
+/**
+ * @brief Set boundary condition for particles. It changes particle objects directly.
+ * @param particles Particles
+ */
 void FreeSurface::setBoundaryCondition(Particles& particles) {
 #pragma omp parallel for
     for (auto& pi : particles) {
