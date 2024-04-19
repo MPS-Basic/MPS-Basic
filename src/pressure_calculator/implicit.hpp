@@ -36,13 +36,13 @@ public:
         double fluidDensity,
         double compressibility,
         double relaxationCoefficient,
-        std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& DirichletBoundaryConditionGenerator
+        std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& dirichletBoundaryConditionGenerator
     );
 
 private:
     Particles particles;
     std::vector<double> pressure; ///< Solution of pressure calculation
-    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> dirichletBoundaryConditionGenerator;
     PressurePoissonEquation pressurePoissonEquation;
 
     /**

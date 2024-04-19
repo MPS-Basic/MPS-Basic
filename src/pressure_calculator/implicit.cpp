@@ -19,11 +19,11 @@ Implicit::Implicit(
     double fluidDensity,
     double compressibility,
     double relaxationCoefficient,
-    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& DirichletBoundaryConditionGenerator
+    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& dirichletBoundaryConditionGenerator
 ) {
     auto refValuesForNumberDensity            = RefValues(dimension, particleDistance, reForNumberDensity);
     auto refValuesForLaplacian                = RefValues(dimension, particleDistance, reForLaplacian);
-    this->DirichletBoundaryConditionGenerator = std::move(DirichletBoundaryConditionGenerator);
+    this->dirichletBoundaryConditionGenerator = std::move(dirichletBoundaryConditionGenerator);
     this->pressurePoissonEquation             = PressurePoissonEquation(
         dimension,
         dt,
@@ -39,7 +39,7 @@ Implicit::Implicit(
 }
 
 std::vector<double> Implicit::calc(Particles& particles) {
-    auto dirichletBoundaryCondition = DirichletBoundaryConditionGenerator->generate(particles);
+    auto dirichletBoundaryCondition = dirichletBoundaryConditionGenerator->generate(particles);
     this->pressurePoissonEquation.setup(particles, dirichletBoundaryCondition);
     this->pressure = this->pressurePoissonEquation.solve();
     removeNegativePressure();
