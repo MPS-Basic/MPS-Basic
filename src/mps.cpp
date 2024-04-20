@@ -40,7 +40,6 @@ void MPS::stepForward() {
 
     neighborSearcher.setNeighbors(particles);
     calNumberDensity(settings.re_forNumberDensity);
-    setBoundaryCondition();
     auto pressures = pressureCalculator->calc(particles);
     for (auto& particle : particles) {
         particle.pressure = pressures[particle.id];

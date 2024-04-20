@@ -20,7 +20,7 @@ public:
      *
      * @return pressures of particles
      */
-    virtual std::vector<double> calc(const Particles& particles) = 0;
+    virtual std::vector<double> calc(Particles& particles) = 0;
 
     /**
      * @brief destructor
