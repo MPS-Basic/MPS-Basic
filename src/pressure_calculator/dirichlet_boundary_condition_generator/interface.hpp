@@ -9,6 +9,8 @@ namespace PressureCalculator::DirichletBoundaryConditionGenerator {
 
 /**
  * @brief Interface for Dirichlet boundary condition generator
+ * @details This interface is used to generate Dirichlet boundary condition for the pressure Poisson equation. The
+ * function `generate` returns a Dirichlet boundary condition object and is used in the pressure calculation process.
  */
 class Interface {
 public:
