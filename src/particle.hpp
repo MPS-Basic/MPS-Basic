@@ -2,6 +2,8 @@
 
 #include "Eigen/Dense"
 #include "common.hpp"
+
+#include <string>
 #include <vector>
 
 /**
@@ -46,8 +48,10 @@ public:
 class Particle {
 private:
 public:
-    int id;            ///< index of the particle
-    ParticleType type; ///< type of the particle
+    int id;                ///< index of the particle
+    ParticleType type;     ///< type of the particle
+    std::string fluidType; ///< type of the fluid. This is used for multi-fluid simulation. When treating only one
+                           ///< fluid, this property is not used. Default value is an empty string.
 
     Eigen::Vector3d position;                               ///< position of the particle
     Eigen::Vector3d velocity;                               ///< velocity of the particle
@@ -68,7 +72,9 @@ public:
      * @param pos  position of the particle
      * @param vel 	velocity of the particle
      */
-    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel);
+    Particle(
+        int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, std::string fluidType = std::string()
+    );
 
     /**
      * @brief calculate inverse of density
