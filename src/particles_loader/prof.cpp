@@ -1,12 +1,20 @@
 #include "prof.hpp"
 
+#include <fstream>
+#include <iostream>
+
 using ParticlesLoader::Prof;
+using std::cerr;
+using std::endl;
+
+Prof::Prof() {
+}
 
 std::pair<double, Particles> Prof::load(const fs::path& path) {
     std::ifstream ifs;
-    ifs.open(profPath);
+    ifs.open(path);
     if (ifs.fail()) {
-        cerr << "cannot read prof file: " << fs::absolute(profPath) << endl;
+        cerr << "cannot read prof file: " << fs::absolute(path) << endl;
         std::exit(-1);
     }
 

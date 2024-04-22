@@ -1,7 +1,6 @@
 #include "loader.hpp"
 
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 
@@ -10,11 +9,15 @@ using std::cout;
 using std::endl;
 namespace fs = std::filesystem;
 
+Loader::Loader(std::unique_ptr<ParticlesLoader::Interface>&& particlesLoader) {
+    this->particlesLoader = std::move(particlesLoader);
+}
+
 Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory) {
     Input input;
     input.settings = loadSettingYaml(settingPath);
 
-    auto [startTime, particles] = loadParticleProf(input.settings.profPath);
+    auto [startTime, particles] = this->particlesLoader->load(input.settings.profPath);
     input.startTime             = startTime;
     input.particles             = particles;
 
@@ -99,37 +102,4 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.profPath            = fs::weakly_canonical(yamlDir / relativeProfPath);
 
     return s;
-}
-
-std::pair<double, Particles> Loader::loadParticleProf(const fs::path& profPath) {
-    std::ifstream ifs;
-    ifs.open(profPath);
-    if (ifs.fail()) {
-        cerr << "cannot read prof file: " << fs::absolute(profPath) << endl;
-        std::exit(-1);
-    }
-
-    Particles particles;
-    double startTime = NAN;
-    int particleSize = 0;
-    ifs >> startTime;
-    ifs >> particleSize;
-    for (int i = 0; i < particleSize; i++) {
-        int type_int = 0;
-        ParticleType type;
-        Eigen::Vector3d pos, vel;
-
-        ifs >> type_int;
-        ifs >> pos.x() >> pos.y() >> pos.z();
-        ifs >> vel.x() >> vel.y() >> vel.z();
-
-        type = static_cast<ParticleType>(type_int);
-        if (type != ParticleType::Ghost) {
-            particles.add(Particle(particles.size(), type, pos, vel));
-        }
-    }
-    ifs.close();
-    ifs.clear();
-
-    return {startTime, particles};
 }
