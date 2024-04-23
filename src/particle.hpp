@@ -72,9 +72,7 @@ public:
      * @param pos  position of the particle
      * @param vel 	velocity of the particle
      */
-    Particle(
-        int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, std::string fluidType = std::string()
-    );
+    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel);
 
     /**
      * @brief calculate inverse of density
