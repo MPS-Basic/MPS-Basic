@@ -30,6 +30,12 @@ Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory)
     return input;
 }
 
+/**
+ * @brief Get the Particles Loader object according to the input file extension
+ * @param particlesPath Path to the particles file
+ * @return std::unique_ptr<ParticlesLoader::Interface> Particles Loader object
+ * @details Supported file formats: prof, csv
+ */
 std::unique_ptr<ParticlesLoader::Interface> Loader::getParticlesLoader(const fs::path& particlesPath) {
     auto extension = particlesPath.extension();
     if (extension == ".csv") {
@@ -42,6 +48,12 @@ std::unique_ptr<ParticlesLoader::Interface> Loader::getParticlesLoader(const fs:
     }
 }
 
+/**
+ * @brief Copy the input file to the output directory
+ * @param inputFilePath Path to the input file
+ * @param outputDirectory Path to the output directory
+ * @warning If the file already exists in the output directory, the program will exit.
+ */
 void Loader::copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory) {
     auto outputFilePath = outputDirectory / inputFilePath.filename();
     if (fs::exists(outputFilePath)) {
