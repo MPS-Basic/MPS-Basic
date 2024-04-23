@@ -22,13 +22,13 @@ std::pair<double, Particles> Csv::load(const fs::path& path) {
 
     in.read_header(io::ignore_missing_column, "type", "fluidType", "x", "y", "z", "vx", "vy", "vz");
     int type;
-    int fluidType;
+    std::string fluidType = std::string();
     double x, y, z, vx, vy, vz;
     Particles particles;
     while (in.read_row(type, fluidType, x, y, z, vx, vy, vz)) {
         Eigen::Vector3d pos(x, y, z);
         Eigen::Vector3d vel(vx, vy, vz);
-        particles.add(Particle(particles.size(), static_cast<ParticleType>(type), pos, vel));
+        particles.add(Particle(particles.size(), static_cast<ParticleType>(type), pos, vel, fluidType));
     }
 
     return std::make_pair(startTime, particles);

@@ -1,10 +1,11 @@
 #include "particle.hpp"
 
-Particle::Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel) {
-    this->id       = id;
-    this->type     = type;
-    this->position = pos;
-    this->velocity = vel;
+Particle::Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, std::string fluidType) {
+    this->id        = id;
+    this->type      = type;
+    this->position  = pos;
+    this->velocity  = vel;
+    this->fluidType = fluidType;
 }
 
 double Particle::inverseDensity(double& density) const {
