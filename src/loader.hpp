@@ -3,10 +3,13 @@
 #include "common.hpp"
 #include "input.hpp"
 #include "particles.hpp"
+#include "particles_loader/interface.hpp"
 
 #include <filesystem>
 #include <utility>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 /**
  * @brief Class for loading setting file and particle file
@@ -18,10 +21,22 @@
  */
 class Loader {
 public:
-    Input load(const std::filesystem::path& settingPath, const std::filesystem::path& outputDirectory);
+    Loader() = default;
+
+    /**
+     * @brief Load the setting file and the particle file
+     * @note This function copy the setting file and the particle file to the
+     * output directory.
+     * @param settingPath Path to the setting file
+     * @param outputDirectory Path to the output directory
+     * @return Input object
+     */
+    Input load(const fs::path& settingPath, const fs::path& outputDirectory);
 
 private:
-    Settings loadSettingYaml(const std::filesystem::path& settingPath);
+    std::unique_ptr<ParticlesLoader::Interface> particlesLoader;
 
-    std::pair<double, Particles> loadParticleProf(const std::filesystem::path& profPath);
+    std::unique_ptr<ParticlesLoader::Interface> getParticlesLoader(const fs::path& particlesPath);
+    void copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory);
+    Settings loadSettingYaml(const fs::path& settingPath);
 };
