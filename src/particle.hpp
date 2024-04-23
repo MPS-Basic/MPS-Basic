@@ -48,10 +48,10 @@ public:
 class Particle {
 private:
 public:
-    int id;                ///< index of the particle
-    ParticleType type;     ///< type of the particle
-    std::string fluidType; ///< type of the fluid. This is used for multi-fluid simulation. When treating only one
-                           ///< fluid, this property is not used. Default value is an empty string.
+    int id;            ///< index of the particle
+    ParticleType type; ///< type of the particle
+    int fluidType;     ///< type of the fluid. This is used for multi-fluid simulation. When treating only one
+                       ///< fluid, this property is not used. Default value is an empty string.
 
     Eigen::Vector3d position;                               ///< position of the particle
     Eigen::Vector3d velocity;                               ///< velocity of the particle
