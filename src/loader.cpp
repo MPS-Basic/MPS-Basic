@@ -17,25 +17,24 @@ Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory)
     Input input;
     input.settings = loadSettingYaml(settingPath);
 
-    auto [startTime, particles] = this->particlesLoader->load(input.settings.profPath);
+    auto [startTime, particles] = this->particlesLoader->load(input.settings.particlesPath);
     input.startTime             = startTime;
     input.particles             = particles;
 
-    auto outputSettingPath = outputDirectory / settingPath.filename();
-    if (fs::exists(outputSettingPath)) {
-        cerr << "setting file already exists in the output directory: " << outputSettingPath << endl;
-        std::exit(-1);
-    } else {
-        fs::copy_file(settingPath, outputSettingPath);
-    }
-    auto outputProfPath = outputDirectory / input.settings.profPath.filename();
-    if (fs::exists(outputProfPath)) {
-        cerr << "prof file already exists in the output directory: " << outputProfPath << endl;
-        std::exit(-1);
-    } else {
-        fs::copy_file(input.settings.profPath, outputProfPath);
-    }
+    copyInputFileToOutputDirectory(settingPath, outputDirectory);
+    copyInputFileToOutputDirectory(input.settings.particlesPath, outputDirectory);
+
     return input;
+}
+
+void Loader::copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory) {
+    auto outputFilePath = outputDirectory / inputFilePath.filename();
+    if (fs::exists(outputFilePath)) {
+        cerr << "file " << outputFilePath << " already exists in the output directory" << endl;
+        std::exit(-1);
+    } else {
+        fs::copy_file(inputFilePath, outputFilePath);
+    }
 }
 
 Settings Loader::loadSettingYaml(const fs::path& settingPath) {
@@ -96,10 +95,10 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.domain.yLength = s.domain.yMax - s.domain.yMin;
     s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
-    // profpath
+    // particlesPath
     auto yamlDir          = settingPath.parent_path();
-    auto relativeProfPath = yaml["profPath"].as<std::string>();
-    s.profPath            = fs::weakly_canonical(yamlDir / relativeProfPath);
+    auto relativeProfPath = yaml["particlesPath"].as<std::string>();
+    s.particlesPath       = fs::weakly_canonical(yamlDir / relativeProfPath);
 
     return s;
 }

@@ -34,5 +34,6 @@ public:
 
 private:
     std::unique_ptr<ParticlesLoader::Interface> particlesLoader;
+    void copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory);
     Settings loadSettingYaml(const fs::path& settingPath);
 };
