@@ -16,14 +16,6 @@ Csv::Csv() {
 }
 
 std::pair<double, Particles> Csv::load(const fs::path& path) {
-    // load csv data like following
-    // 0.0 (start time)
-    // 3 (number of particles)
-    // type, x, y, z, vx, vy, vz (header)
-    // 0,0,0,0,0,0 (type, x, y, z, vx, vy, vz)
-    // 1,1,1,1,1,1
-    // 2,2,2,2,2,2
-
     io::CSVReader<7> in(path.string());
     double startTime    = std::stod(in.next_line());
     double numParticles = std::stod(in.next_line());
