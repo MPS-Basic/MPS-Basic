@@ -22,7 +22,7 @@ std::pair<double, Particles> Csv::load(const fs::path& path) {
 
     in.read_header(io::ignore_missing_column, "type", "fluidType", "x", "y", "z", "vx", "vy", "vz");
     int type;
-    std::string fluidType = std::string();
+    int fluidType = 0;
     double x, y, z, vx, vy, vz;
     Particles particles;
     while (in.read_row(type, fluidType, x, y, z, vx, vy, vz)) {

@@ -1,6 +1,6 @@
 #include "particle.hpp"
 
-Particle::Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, std::string fluidType) {
+Particle::Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, int fluidType) {
     this->id        = id;
     this->type      = type;
     this->position  = pos;
