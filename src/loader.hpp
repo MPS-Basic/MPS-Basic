@@ -22,10 +22,11 @@ namespace fs = std::filesystem;
 class Loader {
 public:
     Loader() = default;
-    Loader(std::unique_ptr<ParticlesLoader::Interface>&& particlesLoader);
 
     /**
      * @brief Load the setting file and the particle file
+     * @note This function copy the setting file and the particle file to the
+     * output directory.
      * @param settingPath Path to the setting file
      * @param outputDirectory Path to the output directory
      * @return Input object
@@ -34,6 +35,8 @@ public:
 
 private:
     std::unique_ptr<ParticlesLoader::Interface> particlesLoader;
+
+    std::unique_ptr<ParticlesLoader::Interface> getParticlesLoader(const fs::path& particlesPath);
     void copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory);
     Settings loadSettingYaml(const fs::path& settingPath);
 };

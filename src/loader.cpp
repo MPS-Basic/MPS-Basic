@@ -1,5 +1,8 @@
 #include "loader.hpp"
 
+#include "particles_loader/csv.hpp"
+#include "particles_loader/prof.hpp"
+
 #include <cmath>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
@@ -7,24 +10,36 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-namespace fs = std::filesystem;
 
-Loader::Loader(std::unique_ptr<ParticlesLoader::Interface>&& particlesLoader) {
-    this->particlesLoader = std::move(particlesLoader);
-}
+namespace fs = std::filesystem;
 
 Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory) {
     Input input;
+
     input.settings = loadSettingYaml(settingPath);
 
-    auto [startTime, particles] = this->particlesLoader->load(input.settings.particlesPath);
+    auto particlesPath          = input.settings.particlesPath;
+    this->particlesLoader       = getParticlesLoader(particlesPath);
+    auto [startTime, particles] = this->particlesLoader->load(particlesPath);
     input.startTime             = startTime;
     input.particles             = particles;
 
     copyInputFileToOutputDirectory(settingPath, outputDirectory);
-    copyInputFileToOutputDirectory(input.settings.particlesPath, outputDirectory);
+    copyInputFileToOutputDirectory(particlesPath, outputDirectory);
 
     return input;
+}
+
+std::unique_ptr<ParticlesLoader::Interface> Loader::getParticlesLoader(const fs::path& particlesPath) {
+    auto extension = particlesPath.extension();
+    if (extension == ".csv") {
+        return std::make_unique<ParticlesLoader::Csv>();
+    } else if (extension == ".prof") {
+        return std::make_unique<ParticlesLoader::Prof>();
+    } else {
+        cerr << "unsupported file format: " << particlesPath.extension() << endl;
+        std::exit(-1);
+    }
 }
 
 void Loader::copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory) {

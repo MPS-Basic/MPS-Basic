@@ -21,7 +21,6 @@ namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBou
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     // TODO: Separate the following code into somewhere else.
-    loader      = Loader(std::make_unique<ParticlesLoader::Csv>());
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
 
