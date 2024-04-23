@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
   src/particles.cpp
   src/particles_exporter.cpp
   src/particles_loader/prof.cpp
+  src/particles_loader/csv.cpp
   src/refvalues.cpp
   src/saver.cpp
   src/simulation.cpp
@@ -111,6 +112,11 @@ if(NOT yaml-cpp_POPULATED)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
+
+# -------------------------------
+# ----- fast-cpp-csv-parser -----
+# -------------------------------
+target_include_directories(${PROJECT_NAME} PUBLIC fast-cpp-csv-parser)
 
 # ------------------------------
 # ----- particle generator -----

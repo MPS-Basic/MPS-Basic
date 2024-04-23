@@ -44,4 +44,4 @@ radiusRatioForLaplacian: 3.1
 
 # i/o
 # relative path from the directory where this file is located
-profPath: ./input.prof
+profPath: ./input.csv
