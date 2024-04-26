@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
   src/particle.cpp
   src/particles.cpp
   src/particles_exporter.cpp
+  src/particles_loader/prof.cpp
   src/refvalues.cpp
   src/saver.cpp
   src/simulation.cpp
