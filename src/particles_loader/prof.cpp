@@ -33,12 +33,8 @@ std::pair<double, Particles> Prof::load(const fs::path& path) {
         ifs >> vel.x() >> vel.y() >> vel.z();
 
         type = static_cast<ParticleType>(type_int);
-        if (type != ParticleType::Ghost) {
-            particles.add(Particle(particles.size(), type, pos, vel));
-        }
+        particles.add(Particle(particles.size(), type, pos, vel));
     }
-    ifs.close();
-    ifs.clear();
 
     return {startTime, particles};
 }
