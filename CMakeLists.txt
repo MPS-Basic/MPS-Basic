@@ -116,7 +116,18 @@ target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 # -------------------------------
 # ----- fast-cpp-csv-parser -----
 # -------------------------------
-target_include_directories(${PROJECT_NAME} PUBLIC fast-cpp-csv-parser)
+FetchContent_Declare(
+  fast-cpp-csv-parser
+  GIT_REPOSITORY https://github.com/ben-strasser/fast-cpp-csv-parser.git
+  GIT_TAG a71a87e700b0fb92645c6b124742cbf326e0f7b1
+)
+
+if(NOT fast-cpp-csv-parser_POPULATED)
+  message(STATUS "Fetching fast-cpp-csv-parser...")
+  FetchContent_Populate(fast-cpp-csv-parser)
+endif()
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${fast-cpp-csv-parser_SOURCE_DIR})
 
 # ------------------------------
 # ----- particle generator -----
