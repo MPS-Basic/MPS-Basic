@@ -20,6 +20,7 @@ namespace chrono                              = std::chrono;
 namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBoundaryConditionGenerator;
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
+    // TODO: Separate the following code into somewhere else.
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
 

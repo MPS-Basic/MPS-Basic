@@ -21,6 +21,8 @@
  */
 class Simulation {
 public:
+    // TODO: The following members should be private.
+
     MPS mps;
     Loader loader;
     Saver saver;
