@@ -64,12 +64,13 @@ Open this in ParaView to check if the input file is generated correctly.
 ```csv
 0  // time
 627  // number of particles
-type,x,y,z,vx,vy,vz
-3,-0.1,-0.1,0,0,0,0
-3,-0.1,-0.075,0,0,0,0
-3,-0.1,-0.05,0,0,0,0
+type,x,y,z,vx,vy,vz,fluidType
+3,-0.1,-0.1,0,0,0,0,0
+3,-0.1,-0.075,0,0,0,0,0
+3,-0.1,-0.05,0,0,0,0,0
 ...
 ```
 
 - Header is required for CSV data.
 - The order of columns can be changed.
+- fluidType is optional. In single phase simulation, it is not used.
