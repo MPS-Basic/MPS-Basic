@@ -1,5 +1,8 @@
 #include "loader.hpp"
 
+#include "particles_loader/csv.hpp"
+#include "particles_loader/prof.hpp"
+
 #include <cmath>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
@@ -7,35 +10,58 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-namespace fs = std::filesystem;
 
-Loader::Loader(std::unique_ptr<ParticlesLoader::Interface>&& particlesLoader) {
-    this->particlesLoader = std::move(particlesLoader);
-}
+namespace fs = std::filesystem;
 
 Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory) {
     Input input;
+
     input.settings = loadSettingYaml(settingPath);
 
-    auto [startTime, particles] = this->particlesLoader->load(input.settings.profPath);
+    auto particlesPath          = input.settings.particlesPath;
+    this->particlesLoader       = getParticlesLoader(particlesPath);
+    auto [startTime, particles] = this->particlesLoader->load(particlesPath);
     input.startTime             = startTime;
     input.particles             = particles;
 
-    auto outputSettingPath = outputDirectory / settingPath.filename();
-    if (fs::exists(outputSettingPath)) {
-        cerr << "setting file already exists in the output directory: " << outputSettingPath << endl;
-        std::exit(-1);
-    } else {
-        fs::copy_file(settingPath, outputSettingPath);
-    }
-    auto outputProfPath = outputDirectory / input.settings.profPath.filename();
-    if (fs::exists(outputProfPath)) {
-        cerr << "prof file already exists in the output directory: " << outputProfPath << endl;
-        std::exit(-1);
-    } else {
-        fs::copy_file(input.settings.profPath, outputProfPath);
-    }
+    copyInputFileToOutputDirectory(settingPath, outputDirectory);
+    copyInputFileToOutputDirectory(particlesPath, outputDirectory);
+
     return input;
+}
+
+/**
+ * @brief Get the Particles Loader object according to the input file extension
+ * @param particlesPath Path to the particles file
+ * @return std::unique_ptr<ParticlesLoader::Interface> Particles Loader object
+ * @details Supported file formats: prof, csv
+ */
+std::unique_ptr<ParticlesLoader::Interface> Loader::getParticlesLoader(const fs::path& particlesPath) {
+    auto extension = particlesPath.extension();
+    if (extension == ".csv") {
+        return std::make_unique<ParticlesLoader::Csv>();
+    } else if (extension == ".prof") {
+        return std::make_unique<ParticlesLoader::Prof>();
+    } else {
+        cerr << "unsupported file format: " << particlesPath.extension() << endl;
+        std::exit(-1);
+    }
+}
+
+/**
+ * @brief Copy the input file to the output directory
+ * @param inputFilePath Path to the input file
+ * @param outputDirectory Path to the output directory
+ * @warning If the file already exists in the output directory, the program will exit.
+ */
+void Loader::copyInputFileToOutputDirectory(const fs::path& inputFilePath, const fs::path& outputDirectory) {
+    auto outputFilePath = outputDirectory / inputFilePath.filename();
+    if (fs::exists(outputFilePath)) {
+        cerr << "file " << outputFilePath << " already exists in the output directory" << endl;
+        std::exit(-1);
+    } else {
+        fs::copy_file(inputFilePath, outputFilePath);
+    }
 }
 
 Settings Loader::loadSettingYaml(const fs::path& settingPath) {
@@ -96,10 +122,10 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.domain.yLength = s.domain.yMax - s.domain.yMin;
     s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
-    // profpath
+    // particlesPath
     auto yamlDir          = settingPath.parent_path();
-    auto relativeProfPath = yaml["profPath"].as<std::string>();
-    s.profPath            = fs::weakly_canonical(yamlDir / relativeProfPath);
+    auto relativeProfPath = yaml["particlesPath"].as<std::string>();
+    s.particlesPath       = fs::weakly_canonical(yamlDir / relativeProfPath);
 
     return s;
 }

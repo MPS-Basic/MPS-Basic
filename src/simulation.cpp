@@ -1,7 +1,6 @@
 #include "simulation.hpp"
 
 #include "input.hpp"
-#include "particles_loader/prof.hpp"
 #include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
@@ -21,7 +20,6 @@ namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBou
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     // TODO: Separate the following code into somewhere else.
-    loader      = Loader(std::make_unique<ParticlesLoader::Prof>());
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
 
