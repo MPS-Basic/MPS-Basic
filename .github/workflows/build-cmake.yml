@@ -36,12 +36,9 @@ jobs:
             c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
-
+  
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: true
+    - uses: actions/checkout@v4
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -54,9 +51,9 @@ jobs:
     - name: Install dependencies for Ubuntu # Install OpenMP, ninja
       if: matrix.os == 'ubuntu-latest'
       run: |
-        sudo apt-get update
+        sudo apt-get update 
         sudo apt-get install -y ninja-build libomp-dev
-
+      
     - uses: ilammy/msvc-dev-cmd@v1 # Set up MSVC environment for Windows
       if: matrix.os == 'windows-latest'
     - name: Install dependencies for Windows # Install ninja
@@ -68,20 +65,20 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         cmake
-        -G ${{ steps.strings.outputs.cmake-generator }}
+        -G ${{ steps.strings.outputs.cmake-generator }} 
         -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_Fortran_COMPILER=""
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
-
+    
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test on Ubuntu
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest'  
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ./mps_test
     - name: Test on Windows
