@@ -6,7 +6,7 @@ namespace ParticlesLoader {
 
 /**
  * @brief Class for loading particles from a prof file
- * @details For more details on the prof file format, please refer to the @ref csv.
+ * @details For more details on the csv file format, please refer to the @ref csv.
  */
 class Csv : public Interface {
 public:

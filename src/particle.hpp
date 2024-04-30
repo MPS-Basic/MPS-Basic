@@ -3,7 +3,6 @@
 #include "Eigen/Dense"
 #include "common.hpp"
 
-#include <string>
 #include <vector>
 
 /**
