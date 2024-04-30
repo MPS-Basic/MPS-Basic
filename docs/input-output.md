@@ -6,7 +6,7 @@
 ### Input Files
 Two input files are required.
 
-- Particles Data: [Profile data](#profile) or [CSV data](#csv) to specify particles positions at the begining of the simulation
+- Particles Data: [Profile data](#profile) or [CSV data](#csv) to specify particles positions at the begining of the simulation. Multiphase simulation is only supported by CSV data.
 - Settings: YAML data `***.yml` to specify simulation settings
 
 @note
