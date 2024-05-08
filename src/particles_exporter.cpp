@@ -108,6 +108,11 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         ofs << static_cast<int>(p.boundaryCondition) << std::endl;
     dataArrayEnd(ofs);
 
+    dataArrayBegin(ofs, "1", "Int32", "Fluid Type");
+    for (auto& p : particles)
+        ofs << p.fluidType << std::endl;
+    dataArrayEnd(ofs);
+
     ofs << "</PointData>" << endl;
 
     // -----------------

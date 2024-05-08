@@ -50,6 +50,8 @@ private:
 public:
     int id;            ///< index of the particle
     ParticleType type; ///< type of the particle
+    int fluidType = 0; ///< type of the fluid. This is used for simulation of multiple fluid types. When treating only
+                       ///< one fluid, this property is not used. Default value is 0.
 
     Eigen::Vector3d position;                               ///< position of the particle
     Eigen::Vector3d velocity;                               ///< velocity of the particle
@@ -70,7 +72,7 @@ public:
      * @param pos  position of the particle
      * @param vel 	velocity of the particle
      */
-    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel);
+    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, int fluidType = 0);
 
     /**
      * @brief calculate inverse of density

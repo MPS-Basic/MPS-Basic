@@ -1,6 +1,7 @@
 #include "simulation.hpp"
 
 #include "input.hpp"
+#include "particles_loader/csv.hpp"
 #include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
 #include "pressure_calculator/dirichlet_boundary_condition_generator/space_potential_particle.hpp"
 #include "pressure_calculator/explicit.hpp"
