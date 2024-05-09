@@ -79,7 +79,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.numPhysicalCores = yaml["numPhysicalCores"].as<int>();
 
     // physical properties
-    s.fluidDensity       = yaml["fluidDensity"].as<double>();
+    s.defaultDensity     = yaml["defaultDensity"].as<double>();
     s.kinematicViscosity = yaml["kinematicViscosity"].as<double>();
 
     // gravity

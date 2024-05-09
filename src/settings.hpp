@@ -26,7 +26,7 @@ struct Settings {
 
     // physical properties
     double kinematicViscosity{}; ///< Kinematic viscosity
-    double fluidDensity{};       ///< Fluid density
+    double defaultDensity{};     ///< default density for fluid and wall particles.
 
     // gravity
     Eigen::Vector3d gravity; ///< Gravity
