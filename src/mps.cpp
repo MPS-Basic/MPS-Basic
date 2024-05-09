@@ -121,8 +121,8 @@ void MPS::collision() {
 
             if (neighbor.distance < settings.collisionDistance) {
 
-                double invMi = pi.inverseDensity(settings.fluidDensity);
-                double invMj = pj.inverseDensity(settings.fluidDensity);
+                double invMi = pi.inverseDensityForCollision();
+                double invMj = pj.inverseDensityForCollision();
                 double mass  = 1.0 / (invMi + invMj);
 
                 Eigen::Vector3d normal = (pj.position - pi.position).normalized();
@@ -222,7 +222,7 @@ void MPS::calPressureGradient(const double& re) {
             }
         }
         grad *= a;
-        pi.acceleration -= grad * pi.inverseDensity(settings.fluidDensity);
+        pi.acceleration -= grad / pi.density;
     }
 }
 

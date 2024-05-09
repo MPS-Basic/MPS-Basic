@@ -4,10 +4,9 @@
 
 using PressureCalculator::Explicit;
 
-Explicit::Explicit(double fluidDensity, double re, double soundSpeed, int dimension, double particleDistance) {
-    this->fluidDensity = fluidDensity;
-    this->soundSpeed   = soundSpeed;
-    this->n0           = RefValues(dimension, particleDistance, re).n0;
+Explicit::Explicit(double re, double soundSpeed, int dimension, double particleDistance) {
+    this->soundSpeed = soundSpeed;
+    this->n0         = RefValues(dimension, particleDistance, re).n0;
 }
 
 Explicit::~Explicit() {
@@ -24,7 +23,7 @@ std::vector<double> Explicit::calc(Particles& particles) {
         } else {
             auto ni  = pi.numberDensity;
             auto c   = this->soundSpeed;
-            auto rho = this->fluidDensity;
+            auto rho = pi.density;
 
             if (ni > n0) {
                 pressure[pi.id] = c * c * rho * (ni - n0) / n0;

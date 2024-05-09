@@ -33,7 +33,6 @@ public:
         double re_forGradient,
         double re_forLaplacian,
         double dt,
-        double fluidDensity,
         double compressibility,
         double relaxationCoefficient,
         std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& dirichletBoundaryConditionGenerator

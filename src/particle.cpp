@@ -8,13 +8,13 @@ Particle::Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector
     this->fluidType = fluidType;
 }
 
-double Particle::inverseDensity(double& density) const {
+double Particle::inverseDensityForCollision() const {
     switch (type) {
     case ParticleType::Ghost:
         return std::numeric_limits<double>::infinity();
 
     case ParticleType::Fluid:
-        return 1 / density;
+        return 1 / this->density;
 
     case ParticleType::Wall:
     case ParticleType::DummyWall:

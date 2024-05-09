@@ -10,7 +10,6 @@ PressurePoissonEquation::PressurePoissonEquation(
     int dimension,
     double dt,
     double relaxationCoefficient,
-    double fluidDensity,
     double compressibility,
     double n0_forNumberDensity,
     double n0_forLaplacian,
@@ -21,7 +20,6 @@ PressurePoissonEquation::PressurePoissonEquation(
     this->dimension             = dimension;
     this->dt                    = dt;
     this->relaxationCoefficient = relaxationCoefficient;
-    this->fluidDensity          = fluidDensity;
     this->compressibility       = compressibility;
     this->n0_forNumberDensity   = n0_forNumberDensity;
     this->n0_forLaplacian       = n0_forLaplacian;
@@ -120,7 +118,7 @@ void PressurePoissonEquation::setMatrixTriplets(
             }
 
             if (neighbor.distance < re) {
-                double coefficient_ij = a * weight(neighbor.distance, re) / fluidDensity;
+                double coefficient_ij = a * weight(neighbor.distance, re) / pi.density;
                 matrixTriplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
                 coefficient_ii += coefficient_ij;
             }
