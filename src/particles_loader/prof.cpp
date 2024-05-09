@@ -10,7 +10,7 @@ using std::endl;
 Prof::Prof() {
 }
 
-std::pair<double, Particles> Prof::load(const fs::path& path) {
+std::pair<double, Particles> Prof::load(const fs::path& path, double defaultDensity) {
     std::ifstream ifs;
     ifs.open(path);
     if (ifs.fail()) {
@@ -33,7 +33,7 @@ std::pair<double, Particles> Prof::load(const fs::path& path) {
         ifs >> vel.x() >> vel.y() >> vel.z();
 
         type = static_cast<ParticleType>(type_int);
-        particles.add(Particle(particles.size(), type, pos, vel));
+        particles.add(Particle(particles.size(), type, pos, vel, defaultDensity));
     }
 
     return {startTime, particles};

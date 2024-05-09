@@ -71,8 +71,10 @@ public:
      * @param type  type of the particle
      * @param pos  position of the particle
      * @param vel 	velocity of the particle
+     * @param density density of the particle
+     * @param fluidType type of the fluid (optional). Default value is 0.
      */
-    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, int fluidType = 0);
+    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, double density, int fluidType = 0);
 
     /**
      * @brief calculate inverse of density for collision

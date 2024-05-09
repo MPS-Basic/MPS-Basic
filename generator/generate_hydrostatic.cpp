@@ -50,19 +50,19 @@ int main(int argc, char** argv) {
             }
             // fluid region
             if (fluidDomain.sdf(r) < 0) {
-                particles.add(Particle(id, ParticleType::Fluid, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::Fluid, r_3d, Eigen::Vector3d::Zero(), 1000.0));
                 id++;
                 continue;
             }
             // wall region
             if (wallBB.sdf(r) < 0) {
-                particles.add(Particle(id, ParticleType::Wall, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::Wall, r_3d, Eigen::Vector3d::Zero(), 1000.0));
                 id++;
                 continue;
             }
             // dummy region
             if (dummyBB.sdf(r) < 0) {
-                particles.add(Particle(id, ParticleType::DummyWall, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::DummyWall, r_3d, Eigen::Vector3d::Zero(), 1000.0));
                 id++;
                 continue;
             }
