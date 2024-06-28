@@ -144,6 +144,25 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     ofs << "</VTKFile>" << endl;
 }
 
+void ParticlesExporter::toCsv(const fs::path& path, const double& time) {
+    std::ofstream ofs(path);
+    if (ofs.fail()) {
+        cerr << "cannot write " << path << endl;
+        std::exit(-1);
+    }
+
+    ofs << time << endl;
+    ofs << particles.size() << endl;
+    ofs << "type,fluidType,x,y,z,vx,vy,vz" << endl;
+    for (const auto& p : particles) {
+        ofs << static_cast<int>(p.type) << ",";
+        ofs << p.fluidType << ",";
+        ofs << p.position.x() << "," << p.position.y() << "," << p.position.z() << ",";
+        ofs << p.velocity.x() << "," << p.velocity.y() << "," << p.velocity.z();
+        ofs << endl;
+    }
+}
+
 void ParticlesExporter::dataArrayBegin(
     std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
 ) {
