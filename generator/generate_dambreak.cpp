@@ -16,8 +16,9 @@ bool isInside(Eigen::Vector3d& position, std::vector<double>& x_range, std::vect
 int main(int argc, char** argv) {
     Particles particles;
 
-    double l0  = 0.025;
-    double eps = 0.01 * l0;
+    double l0      = 0.025;
+    double eps     = 0.01 * l0;
+    double density = 1000.0;
 
     std::vector<double> fluid_x_range{0.0, 1.0};
     std::vector<double> fluid_y_range{0.0, 0.6};
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
 
             if (type != ParticleType::Ghost) {
                 Eigen::Vector3d vel = Eigen::Vector3d::Zero();
-                particles.add(Particle(particles.size(), type, pos, vel, 1000.0));
+                particles.add(Particle(particles.size(), type, pos, vel, density));
             }
         }
     }

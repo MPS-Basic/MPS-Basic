@@ -121,8 +121,8 @@ void MPS::collision() {
 
             if (neighbor.distance < settings.collisionDistance) {
 
-                double invMi = pi.inverseDensityForCollision();
-                double invMj = pj.inverseDensityForCollision();
+                double invMi = pi.inverseDensity();
+                double invMj = pj.inverseDensity();
                 double mass  = 1.0 / (invMi + invMj);
 
                 Eigen::Vector3d normal = (pj.position - pi.position).normalized();

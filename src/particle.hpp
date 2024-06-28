@@ -83,5 +83,5 @@ public:
      * collision process. You should not use this function outside of the collision process. If you want to, you should
      * change this function name correctly.
      */
-    double inverseDensityForCollision() const;
+    double inverseDensity() const;
 };
