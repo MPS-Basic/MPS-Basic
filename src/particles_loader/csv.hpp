@@ -10,7 +10,7 @@ namespace ParticlesLoader {
  */
 class Csv : public Interface {
 public:
-    std::pair<double, Particles> load(const fs::path& path) override;
+    std::pair<double, Particles> load(const fs::path& path, double defaultDensity) override;
     ~Csv() override;
     Csv();
 };

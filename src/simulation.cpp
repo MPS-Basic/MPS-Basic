@@ -58,7 +58,6 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
             input.settings.re_forNumberDensity,
             input.settings.re_forLaplacian,
             input.settings.dt,
-            input.settings.fluidDensity,
             input.settings.compressibility,
             input.settings.relaxationCoefficientForPressure,
             std::move(DirichletBoundaryConditionGenerator)
@@ -66,7 +65,6 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
 
     } else if (input.settings.pressureCalculationMethod == "Explicit") {
         pressureCalculator.reset(new PressureCalculator::Explicit(
-            input.settings.fluidDensity,
             input.settings.re_forNumberDensity,
             input.settings.soundSpeed,
             input.settings.dim,

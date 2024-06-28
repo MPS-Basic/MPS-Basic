@@ -31,7 +31,8 @@ public:
 int main(int argc, char** argv) {
     Particles particles;
 
-    double l0 = 0.012;
+    double l0      = 0.012;
+    double density = 1000.0;
 
     Box2d fluidDomain(-0.18, 0.18, 0, 0.48);
     Box2d emptyDomain(-0.18, 0.18, 0.48, 0.6);
@@ -50,19 +51,19 @@ int main(int argc, char** argv) {
             }
             // fluid region
             if (fluidDomain.sdf(r) < 0) {
-                particles.add(Particle(id, ParticleType::Fluid, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::Fluid, r_3d, Eigen::Vector3d::Zero(), density));
                 id++;
                 continue;
             }
             // wall region
             if (wallBB.sdf(r) < 0) {
-                particles.add(Particle(id, ParticleType::Wall, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::Wall, r_3d, Eigen::Vector3d::Zero(), density));
                 id++;
                 continue;
             }
             // dummy region
             if (dummyBB.sdf(r) < 0) {
-                particles.add(Particle(id, ParticleType::DummyWall, r_3d, Eigen::Vector3d::Zero()));
+                particles.add(Particle(id, ParticleType::DummyWall, r_3d, Eigen::Vector3d::Zero(), density));
                 id++;
                 continue;
             }
