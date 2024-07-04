@@ -20,10 +20,9 @@ public:
     std::vector<double> calc(Particles& particles) override;
     ~Explicit() override;
 
-    Explicit(double fluidDensity, double n0, double soundSpeed, int dimension, double particleDistance);
+    Explicit(double n0, double soundSpeed, int dimension, double particleDistance);
 
 private:
-    double fluidDensity;
     double n0;
     double soundSpeed;
 };

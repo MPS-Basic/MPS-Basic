@@ -57,6 +57,7 @@ public:
     Eigen::Vector3d acceleration = Eigen::Vector3d::Zero(); ///< acceleration of the particle
     double pressure              = 0;                       ///< pressure of the particle
     double numberDensity         = 0;                       ///< number density of the particle
+    double density               = 0; ///< density of the particle. It is used only for fluid and wall particles.
 
     FluidState boundaryCondition = FluidState::Ignored; ///< boundary condition of the particle
     double sourceTerm            = 0;                   ///< source term of the particle
@@ -70,13 +71,17 @@ public:
      * @param type  type of the particle
      * @param pos  position of the particle
      * @param vel 	velocity of the particle
+     * @param density density of the particle
+     * @param fluidType type of the fluid (optional). Default value is 0.
      */
-    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, int fluidType = 0);
+    Particle(int id, ParticleType type, Eigen::Vector3d pos, Eigen::Vector3d vel, double density, int fluidType = 0);
 
     /**
-     * @brief calculate inverse of density
-     * @param density density of the particle
+     * @brief calculate inverse of density for collision
      * @return inverse of density
+     * @warning This function returns 0 for wall particles. This is because we don't want to move wall particles in the
+     * collision process. You should not use this function outside of the collision process. If you want to, you should
+     * change this function name correctly.
      */
-    double inverseDensity(double& density) const;
+    double inverseDensity() const;
 };

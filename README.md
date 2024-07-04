@@ -11,13 +11,13 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 
 ## Requirements
 ### Execution
-- Git
-- cmake (newer than 3.9)
+- [Git](https://git-scm.com/)
+- [CMake](https://cmake.org/) (newer than 3.12)
 - C++ 17 compiler
 - OpenMP 5.0 and above (optional)
 
 ### Development
-- Doxygen and Graphviz (optional, for building documents)
+- [Doxygen](https://www.doxygen.nl/) and [Graphviz](https://graphviz.org/) (optional, for building documents)
 
 ### Dependencies
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)

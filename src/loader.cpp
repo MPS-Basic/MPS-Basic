@@ -20,7 +20,7 @@ Input Loader::load(const fs::path& settingPath, const fs::path& outputDirectory)
 
     auto particlesPath          = input.settings.particlesPath;
     this->particlesLoader       = getParticlesLoader(particlesPath);
-    auto [startTime, particles] = this->particlesLoader->load(particlesPath);
+    auto [startTime, particles] = this->particlesLoader->load(particlesPath, input.settings.defaultDensity);
     input.startTime             = startTime;
     input.particles             = particles;
 
@@ -79,7 +79,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.numPhysicalCores = yaml["numPhysicalCores"].as<int>();
 
     // physical properties
-    s.fluidDensity       = yaml["fluidDensity"].as<double>();
+    s.defaultDensity     = yaml["defaultDensity"].as<double>();
     s.kinematicViscosity = yaml["kinematicViscosity"].as<double>();
 
     // gravity

@@ -16,7 +16,6 @@ Implicit::Implicit(
     double reForNumberDensity,
     double reForLaplacian,
     double dt,
-    double fluidDensity,
     double compressibility,
     double relaxationCoefficient,
     std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& dirichletBoundaryConditionGenerator
@@ -28,7 +27,6 @@ Implicit::Implicit(
         dimension,
         dt,
         relaxationCoefficient,
-        fluidDensity,
         compressibility,
         refValuesForNumberDensity.n0,
         refValuesForLaplacian.n0,

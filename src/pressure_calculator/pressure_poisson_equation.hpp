@@ -19,7 +19,6 @@ public:
         int dimension,
         double dt,
         double relaxationCoefficient,
-        double fluidDensity,
         double compressibility,
         double n0_forNumberDensity,
         double n0_forLaplacian,
@@ -46,7 +45,6 @@ private:
     int dimension;
     double dt;
     double relaxationCoefficient;
-    double fluidDensity;
     double compressibility;
     double n0_forNumberDensity;
     double n0_forLaplacian;
