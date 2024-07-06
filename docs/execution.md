@@ -13,7 +13,11 @@
 - Doxygen and Graphviz (optional, for building documents)
 
 ### Dependencies
+- [argparse](https://github.com/p-ranav/argparse)
 - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
+- [fast-cpp-csv-parser](https://github.com/ben-strasser/fast-cpp-csv-parser)
+- [GoogleTest (only for testing)](https://github.com/google/googletest)
+- [yaml-cpp](https://github.com/jbeder/yaml-cpp)
 
 ## Command Line Execution
 
