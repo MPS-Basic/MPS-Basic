@@ -43,17 +43,15 @@ endif()
 # -----------------
 include(FetchContent)
 FetchContent_Declare(
-  eigen
+  Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
   GIT_TAG 3.4.0
 )
-set(BUILD_TESTING OFF)
-set(EIGEN_BUILD_TESTING OFF)
-set(EIGEN_MPL2_ONLY ON)
-set(EIGEN_BUILD_PKGCONFIG OFF)
-set(EIGEN_BUILD_DOC OFF)
-FetchContent_MakeAvailable(Eigen)
-target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
+if (NOT eigen_POPULATED)
+  message(STATUS "Fetching Eigen...")
+  FetchContent_Populate(Eigen)
+endif()
+target_include_directories(${PROJECT_NAME} PRIVATE ${eigen_SOURCE_DIR})
 
 # -----------------------
 # ----- Google Test -----
@@ -137,8 +135,9 @@ add_library(particles STATIC
   src/particles.cpp
   src/particles_exporter.cpp
 )
-target_link_libraries(particles PUBLIC Eigen3::Eigen)
+target_include_directories(particles PRIVATE ${eigen_SOURCE_DIR})
 add_subdirectory(generator)
+
 
 # --------------------
 # ----- argparse -----
