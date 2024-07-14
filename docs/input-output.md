@@ -34,7 +34,7 @@ Then you will see `build/generator/generate_***.exe`, so execute this.
 
 Example of making `input/dambreak/input.prof` for dambreak in Windows:
 ```powershell
-./buil/generator/generate_dambreak.exe
+./build/generator/generate_dambreak.exe
 ```
 
 Now you will see `input/dambreak/input.vtu`.
