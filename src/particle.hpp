@@ -13,6 +13,7 @@ enum class ParticleType {
     Fluid,     ///< Fluid particle
     Wall,      ///< Wall particle
     DummyWall, ///< Dummy wall particle (pressure is not calculated)
+    SPP,       ///< Space Potential Particle
 };
 
 /**
