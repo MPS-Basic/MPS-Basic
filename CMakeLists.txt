@@ -73,11 +73,25 @@ add_executable(
     test/refvalues_test.cpp
     src/weight.cpp
     test/weight_test.cpp
+    src/particle.cpp
+    src/particles.cpp
+    src/particles_exporter.cpp
+    test/particles_exporter_test.cpp
+)
+target_link_libraries( # required for FRIEND_TEST macro to test private members
+    ${PROJECT_NAME}
+    PRIVATE
+    GTest::gtest_main
 )
 target_include_directories(
     mps_test
     PRIVATE
     src/
+)
+target_include_directories(
+  mps_test 
+  PRIVATE
+  ${eigen_SOURCE_DIR}
 )
 target_link_libraries(
     mps_test

@@ -163,6 +163,11 @@ void ParticlesExporter::toCsv(const fs::path& path, const double& time) {
     }
 }
 
+bool ParticlesExporter::isLittleEndian() {
+    uint16_t i = 1; // 0x0001
+    return *reinterpret_cast<uint8_t*>(&i) == 1; // 0x01
+}
+
 void ParticlesExporter::dataArrayBegin(
     std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
 ) {

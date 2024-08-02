@@ -1,5 +1,6 @@
 #pragma once
 
+#include <gtest/gtest.h>
 #include "common.hpp"
 #include "particles.hpp"
 
@@ -17,6 +18,7 @@
  *
  */
 class ParticlesExporter {
+    FRIEND_TEST(ParticlesExporterTest, isLittleEndian);
 public:
     Particles particles;
 
@@ -26,8 +28,10 @@ public:
     void toCsv(const std::filesystem::path& path, const double& time);
 
 private:
+    static bool isLittleEndian();
     static void dataArrayBegin(
         std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
     );
     static void dataArrayEnd(std::ofstream& ofs);
+    
 };
