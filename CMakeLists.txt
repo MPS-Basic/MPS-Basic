@@ -39,17 +39,6 @@ else()
 endif()
 
 # -----------------
-# ------ VTK ------
-# -----------------
-include(FetchContent)
-FetchContent_Declare(
-  VTK
-  GIT_REPOSITORY https://gitlab.kitware.com/vtk/vtk.git
-  GIT_TAG v9.3.1
-)
-FetchContent_MakeAvailable(VTK)
-
-# -----------------
 # ----- Eigen -----
 # -----------------
 include(FetchContent)
