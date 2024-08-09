@@ -26,12 +26,4 @@ public:
     void toProf(const std::filesystem::path& path, const double& time);
     void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
     void toCsv(const std::filesystem::path& path, const double& time);
-
-private:
-    static bool isLittleEndian();
-    static void dataArrayBegin(
-        std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
-    );
-    static void dataArrayEnd(std::ofstream& ofs);
-    
 };
