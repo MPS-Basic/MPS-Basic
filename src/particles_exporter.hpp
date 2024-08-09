@@ -1,6 +1,5 @@
 #pragma once
 
-#include <gtest/gtest.h>
 #include "common.hpp"
 #include "particles.hpp"
 
@@ -18,7 +17,6 @@
  *
  */
 class ParticlesExporter {
-    FRIEND_TEST(ParticlesExporterTest, isLittleEndian);
 public:
     Particles particles;
 
