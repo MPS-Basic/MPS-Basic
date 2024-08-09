@@ -28,6 +28,25 @@ add_executable(${PROJECT_NAME}
   src/neighbor_searcher.cpp
 )
 
+#-------------------
+# ------ VTK -------
+#-------------------
+
+find_package(VTK COMPONENTS 
+  CommonCore
+  CommonDataModel
+  IOXML
+)
+
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "Unable to find the VTK. Please install it.")
+endif()
+
+vtk_module_autoinit(
+  TARGETS ${PROJECT_NAME}
+  MODULES ${VTK_LIBRARIES}
+)
+
 # ------------------
 # ----- OpenMP -----
 # ------------------

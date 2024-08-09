@@ -14,6 +14,7 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 - [Git](https://git-scm.com/)
 - [CMake](https://cmake.org/) (newer than 3.12)
 - C++ 17 compiler
+- [VTK](https://vtk.org/) (newer than 9.0.0)
 - OpenMP 5.0 and above (optional)
 
 ### Development
