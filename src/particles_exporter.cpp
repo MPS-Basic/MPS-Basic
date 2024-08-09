@@ -163,9 +163,11 @@ void ParticlesExporter::toCsv(const fs::path& path, const double& time) {
     }
 }
 
+/// @brief check the endian of the system
+/// @return true if the system is little endian
 bool ParticlesExporter::isLittleEndian() {
-    uint16_t i = 1; // 0x0001
-    return *reinterpret_cast<uint8_t*>(&i) == 1; // 0x01
+    uint16_t i = 1; // 0x0001 (little endian: 01 00, big endian: 00 01)
+    return *reinterpret_cast<uint8_t*>(&i) == 1; // little endian: 0x01, big endian: 0x00
 }
 
 void ParticlesExporter::dataArrayBegin(
