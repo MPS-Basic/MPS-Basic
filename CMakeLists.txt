@@ -3,6 +3,9 @@ project(mps VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# ------------------
+# ----- Target -----
+# ------------------
 # main executable
 add_executable(${PROJECT_NAME}
   src/bucket.cpp
@@ -27,24 +30,24 @@ add_executable(${PROJECT_NAME}
   src/surface_detector/distribution.cpp
   src/neighbor_searcher.cpp
 )
-
-#-------------------
-# ------ VTK -------
-#-------------------
-
-find_package(VTK COMPONENTS 
-  CommonCore
-  CommonDataModel
-  IOXML
+# unit test
+enable_testing()
+add_executable(
+    ${PROJECT_NAME}_test
+    src/refvalues.cpp
+    test/refvalues_test.cpp
+    src/weight.cpp
+    test/weight_test.cpp
+    src/particle.cpp
+    src/particles.cpp
+    src/particles_exporter.cpp
+    test/particles_exporter_test.cpp
 )
-
-if (NOT VTK_FOUND)
-  message(FATAL_ERROR "Unable to find the VTK. Please install it.")
-endif()
-
-vtk_module_autoinit(
-  TARGETS ${PROJECT_NAME}
-  MODULES ${VTK_LIBRARIES}
+# particle generator
+add_library(particles STATIC
+  src/particle.cpp
+  src/particles.cpp
+  src/particles_exporter.cpp
 )
 
 # ------------------
@@ -85,45 +88,53 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-add_executable(
-    mps_test
-    src/refvalues.cpp
-    test/refvalues_test.cpp
-    src/weight.cpp
-    test/weight_test.cpp
-    src/particle.cpp
-    src/particles.cpp
-    src/particles_exporter.cpp
-    test/particles_exporter_test.cpp
-)
 target_link_libraries( # required for FRIEND_TEST macro to test private members
     ${PROJECT_NAME}
     PRIVATE
     GTest::gtest_main
 )
 target_include_directories(
-    mps_test
+    ${PROJECT_NAME}_test
     PRIVATE
     src/
 )
 target_include_directories(
-  mps_test 
+  ${PROJECT_NAME}_test 
   PRIVATE
   ${eigen_SOURCE_DIR}
 )
 target_link_libraries(
-    mps_test
+    ${PROJECT_NAME}_test
+    PRIVATE
     GTest::gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(mps_test)
-# # coverage
-# if (CMAKE_COMPILER_IS_GNUCXX)
-#     set(CMAKE_C_FLAGS_PROFILE --coverage)
-#     set(CMAKE_CXX_FLAGS_PROFILE --coverage)
-# endif()
+gtest_discover_tests(${PROJECT_NAME}_test)
+
+#-------------------
+# ------ VTK -------
+#-------------------
+find_package(VTK COMPONENTS 
+  CommonCore
+  CommonDataModel
+  IOXML
+)
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "Unable to find the VTK. Please install it.")
+endif()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${VTK_LIBRARIES})
+vtk_module_autoinit(
+  TARGETS ${PROJECT_NAME}
+  MODULES ${VTK_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}_test PRIVATE ${VTK_LIBRARIES})
+vtk_module_autoinit(
+  TARGETS ${PROJECT_NAME}_test
+  MODULES ${VTK_LIBRARIES}
+)
 
 # --------------------
 # ----- yaml-cpp -----
@@ -163,14 +174,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${fast-cpp-csv-parser_SOURCE_
 # ------------------------------
 # ----- particle generator -----
 # ------------------------------
-add_library(particles STATIC
-  src/particle.cpp
-  src/particles.cpp
-  src/particles_exporter.cpp
-)
 target_include_directories(particles PRIVATE ${eigen_SOURCE_DIR})
+target_link_libraries(particles PRIVATE ${VTK_LIBRARIES})
+vtk_module_autoinit(
+  TARGETS particles
+  MODULES ${VTK_LIBRARIES}
+)
 add_subdirectory(generator)
-
 
 # --------------------
 # ----- argparse -----
