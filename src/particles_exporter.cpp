@@ -11,6 +11,7 @@
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkUnstructuredGrid.h>
+#include <vtkVertex.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
 using std::cerr;
@@ -62,7 +63,6 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     // ---------------------
     // ----- PointData -----
     // ---------------------
-
     // Particle Type
     vtkNew<vtkIntArray> particleTypeArray;
     particleTypeArray->SetName("Particle Type");
@@ -120,10 +120,26 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     }
     grid->GetPointData()->AddArray(fluidTypeArray);
 
+    // ---------------------
+    // ----- CellData ------
+    // ---------------------
+    vtkNew<vtkCellArray> cells;
+    for (vtkIdType i = 0; i < particles.size(); i++) {
+        vtkNew<vtkVertex> vertex;
+        vertex->GetPointIds()->SetId(0, i);
+        cells->InsertNextCell(vertex);
+    }
+    grid->SetCells(VTK_VERTEX, cells);
+
+    // ---------------------
+    // ---- Write file -----
+    // ---------------------
     vtkNew<vtkXMLUnstructuredGridWriter> writer;
     writer->SetFileName(path.c_str());
     writer->SetInputData(grid);
     writer->SetCompressorTypeToZLib();
+    writer->SetDataModeToAppended();
+    writer->SetEncodeAppendedData(false);
     writer->Write();
 }
 
