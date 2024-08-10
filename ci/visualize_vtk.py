@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 mesh = meshio.read(sys.argv[1])
 x = mesh.points[:, 0]
 y = mesh.points[:, 1]
-p  = mesh.point_data['Pressure'][:, 0]
-t = mesh.field_data['Time'][0, 0]
+p = mesh.point_data["Pressure"]
+t = mesh.field_data["Time"][0]
 
 fig = plt.figure(figsize=(6, 6))
 ax = fig.add_subplot(111)
