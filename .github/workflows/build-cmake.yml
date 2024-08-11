@@ -21,21 +21,13 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         build_type: [Release]
-        c_compiler: [clang, cl]
+        c_compiler: [clang]
         include:
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
-        exclude:
-          - os: windows-latest
-            c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
   
     steps:
     - uses: actions/checkout@v4
@@ -52,20 +44,14 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update 
-        sudo apt-get install -y ninja-build libomp-dev mesa-common-dev mesa-utils freeglut3-dev 
+        sudo apt-get install -y ninja-build libomp-dev libvtk9-dev
       
     - uses: ilammy/msvc-dev-cmd@v1 # Set up MSVC environment for Windows
       if: matrix.os == 'windows-latest'
     - name: Install dependencies for Windows # Install ninja
       if: matrix.os == 'windows-latest'
       run: choco install ninja
-
-    - name: Install latest VTK from source
-      run: | 
-        git clone https://github.com/Kitware/VTK.git /tmp/VTK --depth 1
-        cmake -G Ninja -S /tmp/VTK -B /tmp/VTK/build
-        cmake --build /tmp/VTK/build --target install
-
+    
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
