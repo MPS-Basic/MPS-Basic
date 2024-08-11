@@ -62,8 +62,15 @@ jobs:
 
     - name: Install latest VTK from source
       run: | 
-        git clone https://github.com/Kitware/VTK.git /tmp/VTK
-        cmake -G Ninja -S /tmp/VTK -B /tmp/VTK/build -DCMAKE_BUILD_TYPE=Release
+        git clone https://github.com/Kitware/VTK.git /tmp/VTK --depth 1
+        cmake -G Ninja \
+        -S /tmp/VTK -B /tmp/VTK/build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DVTK_GROUP_ENABLE_Qt=NO \
+        -DVTK_GROUP_ENABLE_Rendering=NO \
+        -DVTK_GROUP_ENABLE_StandAlone=YES \
+        -DVTK_GROUP_ENABLE_Views=NO \
+        -DVTK_GROUP_ENABLE_Web=NO \
         cmake --build /tmp/VTK/build --target install
 
     - name: Configure CMake
@@ -83,11 +90,6 @@ jobs:
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-    - name: Test on Ubuntu
-      if: matrix.os == 'ubuntu-latest'  
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ./mps_test
-    - name: Test on Windows
-      if: matrix.os == 'windows-latest'
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ./mps_test.exe
+    - name: Test with CTest
+      # Run the tests with CTest. You can also run the tests with the test runner of your choice.
+      run: ctest --test-dir ${{ steps.strings.outputs.build-output-dir }} -j
