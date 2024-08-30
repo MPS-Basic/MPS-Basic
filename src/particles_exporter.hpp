@@ -21,7 +21,7 @@ public:
     Particles particles;
 
     /// @brief Set the particles to export to a file. This method is required before exporting.
-    /// @param particles 
+    /// @param particles
     void setParticles(const Particles& particles);
 
     /// @brief Export the particles to a file in the Prof format.
