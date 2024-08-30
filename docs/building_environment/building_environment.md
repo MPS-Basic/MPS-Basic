@@ -11,7 +11,7 @@ Component | Explanation | Examples
 --- | --- | ---
 Editor/IDE | to write (, build and execute) programs. | Vim, Emacs, Visual Studio Code, Visual Studio, ...
 Compiler | to compile the program | Clang, GCC, ...
-Libraries | what you include at the begining of the code | C++ Standard Library (like `<vector>`), OpenMP, ...
+Libraries | what you include at the beginning of the code | C++ Standard Library (like `<vector>`), OpenMP, ...
 Build System | automatically build executable files based on setting files | Make, MSBuild, Ninja, ...
 CMake | automatically generate input files for user defined Build System | ---
 
@@ -31,7 +31,7 @@ Examples:
   - Xcode
   - Eclipse
 
-Simple editors are so simple that it's inconvinient (unless you're a pro),
+Simple editors are so simple that it's inconvenient (unless you're a pro),
 while IDEs are so sophisticated that it's difficult for beginners to use.
 Visual Studio Code is somewhere in between.
 VS Code allows you to open a terminal within it's window
@@ -41,9 +41,9 @@ and to introduce extensions to automate the build and execution of programs.
 ### Compiler and Libraries
 Sophisticated functionalities in `c++` such as `std::string`,  `std::vector`,
 and many more are provided as a C++ Standard Library.
-And you have to include the library at the begining of the code to use it,
-like `#include <strign>` or `#include <vector>`.
-Also, if you want to use OpenMP to parallerize your code, you need a library for that.
+And you have to include the library at the beginning of the code to use it,
+like `#include <string>` or `#include <vector>`.
+Also, if you want to use OpenMP to parallelize your code, you need a library for that.
 So if you want to use such functionalities in your program,
 you have to download libraries in addition to the compiler.
 
@@ -124,12 +124,12 @@ This makes compile process much faster when there are many files to deal with.
 So it's better to use a Build System such as `Make` to compile.
 Then why use `CMake`?
 
-There are some probrems when using a specific build system.
+There are some problems when using a specific build system.
 - There are multiple build systems, and they require their own setting files.
-  Your co-worker may want to use `MSBuild` or `Ninja` insted of `Make`,
+  Your co-worker may want to use `MSBuild` or `Ninja` instead of `Make`,
   and do you want to prepare setting files for all of them?
 - Input files for build systems are usually complicated,
-  and they use thei\r own syntax that you have to remember.
+  and they use their own syntax that you have to remember.
   Like the above `Makefile` example looked difficult, right?
 
 So using a specific build system is problematic especially when you are working
@@ -155,7 +155,7 @@ Now what you do is:
 cmake -S . -B build
 ```
 Argument `-S` specifies the location of `CMakeLists.txt`,
-and `-B` specifies the locaiton where the input files for build system will be generated.
+and `-B` specifies the location where the input files for build system will be generated.
 `CMake Generator` is responsible for generating input files for build system,
 so you specify which generator you want to use based on your build system using `-G` option.
 For example,
@@ -173,7 +173,7 @@ cmake -S . -B build -G "Ninja"
 ```
 generates `build.ninja` files for `Ninja` to use.
 
-Now you can see that by introducin `cmake` you can make your project platform-independent,
+Now you can see that by introducing `cmake` you can make your project platform-independent,
 meaning your project can be built in Windows, Mac, Linux, or any other platforms,
 just by a single and easy `CMakeLists.txt` file.
 
@@ -182,14 +182,14 @@ Finally let's see how we compile the code using `CMake` and build system.
 Here, let's assume we use `Make` as a build system.
 ```bash
 cmake -S . -B build -G "Unix Makefiles" # Generate build/Makefile
-cd build # Move down to buidld directory
+cd build # Move down to build directory
 make # Use Makefile and generate exe file
 ```
 If you want to use `MSBuild`, `Ninja` or any other build system,
 you just change the `-G` option at the first command and the third command as appropriate.
 
 @tips
-`-G` flag is optional. If not provided, `CMake` will use defalt generator which is determined
+`-G` flag is optional. If not provided, `CMake` will use default generator which is determined
 based on your platform.
 Type `cmake --help` to see your default generator.
 
