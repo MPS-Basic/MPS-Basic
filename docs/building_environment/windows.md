@@ -49,6 +49,7 @@ in Visual Studio Code.
 - [Clang](https://clang.llvm.org/index.html): ***Recommended***
 - GCC
 - [MSVC](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B): Currently not eligible with this project
+- [VTK](https://vtk.org/): Required for this project, We recommend to install it from the scratch.
 
 ### Clang
 [Clang](https://clang.llvm.org/index.html)
@@ -119,6 +120,12 @@ It's not bad, but there is a problem.
 By default, ***it creates an exe file under ```build/Debug``` or ```build/Release```, not under ```build```***.
 But the script that we provide assume that the exe file is in ```build``` directory,
 so it doesn't work well in this project.
+
+## Detailed Explanations for VTK
+[VTK](https://vtk.org/) (Visualization Toolkit) is a library for 3D visualization.
+It's required for this project, so you have to install it.
+[Official document](https://docs.vtk.org/en/latest/build_instructions/index.html)
+is a good reference to install VTK.
 
 [Visual Studio Build Tools]: https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022
 [Clang]: https://clang.llvm.org/index.html
