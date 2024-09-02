@@ -4,6 +4,15 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <vtkDataCompressor.h>
+#include <vtkDoubleArray.h>
+#include <vtkFieldData.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkPoints.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkVertex.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 
 using std::cerr;
 using std::endl;
@@ -31,117 +40,107 @@ void ParticlesExporter::toProf(const fs::path& path, const double& time) {
 }
 
 void ParticlesExporter::toVtu(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
-    std::ofstream ofs(path);
-    if (ofs.fail()) {
-        cerr << "cannot write " << path << endl;
-        std::exit(-1);
-    }
-
-    // --------------
-    // --- Header ---
-    // --------------
-    ofs << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
-    ofs << "<VTKFile byte_order='LittleEndian' version='0.1' type = 'UnstructuredGrid'>" << endl;
-    ofs << "<UnstructuredGrid>" << endl;
+    vtkNew<vtkUnstructuredGrid> grid;
 
     // -----------------
     // --- Time data ---
     // -----------------
-    ofs << "<FieldData>" << endl;
-    ofs << "<DataArray type='Float64' Name='Time' NumberOfComponents='1' NumberOfTuples='1' format='ascii'>" << endl;
-    ofs << time << endl;
-    ofs << "</DataArray>" << endl;
-    ofs << "</FieldData>" << endl;
+    vtkNew<vtkDoubleArray> timeArray;
+    timeArray->SetName("Time");
+    timeArray->SetNumberOfComponents(1);
+    timeArray->InsertNextValue(time);
+    grid->GetFieldData()->AddArray(timeArray);
 
     /// ------------------
     /// ----- Points -----
     /// ------------------
-    ofs << "<Piece NumberOfCells='" << particles.size() << "' NumberOfPoints='" << particles.size() << "'>" << endl;
-    ofs << "<Points>" << endl;
-    ofs << "<DataArray NumberOfComponents='3' type='Float64' "
-           "Name='position' format='ascii'>"
-        << endl;
+    vtkNew<vtkPoints> points;
     for (const auto& p : particles) {
-        ofs << p.position.x() << " ";
-        ofs << p.position.y() << " ";
-        ofs << p.position.z() << endl;
+        points->InsertNextPoint(p.position.x(), p.position.y(), p.position.z());
     }
-    ofs << "</DataArray>" << endl;
-    ofs << "</Points>" << endl;
+    grid->SetPoints(points);
 
     // ---------------------
     // ----- PointData -----
     // ---------------------
-    ofs << "<PointData>" << endl;
-
-    dataArrayBegin(ofs, "1", "Int32", "Particle Type");
+    // Particle Type
+    vtkNew<vtkIntArray> particleTypeArray;
+    particleTypeArray->SetName("Particle Type");
+    particleTypeArray->SetNumberOfComponents(1);
     for (auto& p : particles) {
-        ofs << static_cast<int>(p.type) << endl;
+        particleTypeArray->InsertNextValue(static_cast<int>(p.type));
     }
-    dataArrayEnd(ofs);
-
-    dataArrayBegin(ofs, "3", "Float64", "Velocity");
+    grid->GetPointData()->AddArray(particleTypeArray);
+    // Velocity
+    vtkNew<vtkDoubleArray> velocityArray;
+    velocityArray->SetName("Velocity");
+    velocityArray->SetNumberOfComponents(3);
     for (const auto& p : particles) {
-        ofs << p.velocity.x() << " ";
-        ofs << p.velocity.y() << " ";
-        ofs << 0.0 << endl;
+        velocityArray->InsertNextTuple3(p.velocity.x(), p.velocity.y(), p.velocity.z());
     }
-    dataArrayEnd(ofs);
-
-    dataArrayBegin(ofs, "1", "Float64", "Pressure");
-    for (const auto& p : particles)
-        ofs << p.pressure << endl;
-    dataArrayEnd(ofs);
-
-    dataArrayBegin(ofs, "1", "Float64", "Number Density");
-    for (const auto& p : particles)
-        ofs << p.numberDensity << endl;
-    dataArrayEnd(ofs);
-
-    dataArrayBegin(ofs, "1", "Float64", "Number Density Ratio");
-    for (auto& p : particles)
-        ofs << p.numberDensity / n0ForNumberDensity << std::endl;
-    dataArrayEnd(ofs);
-
-    dataArrayBegin(ofs, "1", "Int32", "Boundary Condition");
-    for (auto& p : particles)
-        ofs << static_cast<int>(p.boundaryCondition) << std::endl;
-    dataArrayEnd(ofs);
-
-    dataArrayBegin(ofs, "1", "Int32", "Fluid Type");
-    for (auto& p : particles)
-        ofs << p.fluidType << std::endl;
-    dataArrayEnd(ofs);
-
-    ofs << "</PointData>" << endl;
-
-    // -----------------
-    // ----- Cells -----
-    // -----------------
-    ofs << "<Cells>" << endl;
-    ofs << "<DataArray type='Int32' Name='connectivity' format='ascii'>" << endl;
-    for (int i = 0; i < particles.size(); i++) {
-        ofs << i << endl;
+    grid->GetPointData()->AddArray(velocityArray);
+    // Pressure
+    vtkNew<vtkDoubleArray> pressureArray;
+    pressureArray->SetName("Pressure");
+    pressureArray->SetNumberOfComponents(1);
+    for (const auto& p : particles) {
+        pressureArray->InsertNextValue(p.pressure);
     }
-    ofs << "</DataArray>" << endl;
-    ofs << "<DataArray type='Int32' Name='offsets' format='ascii'>" << endl;
-    for (int i = 0; i < particles.size(); i++) {
-        ofs << i + 1 << endl;
+    grid->GetPointData()->AddArray(pressureArray);
+    // Number Density
+    vtkNew<vtkDoubleArray> numberDensityArray;
+    numberDensityArray->SetName("Number Density");
+    numberDensityArray->SetNumberOfComponents(1);
+    for (const auto& p : particles) {
+        numberDensityArray->InsertNextValue(p.numberDensity);
     }
-    ofs << "</DataArray>" << endl;
-    ofs << "<DataArray type='UInt8' Name='types' format='ascii'>" << endl;
-    for (int i = 0; i < particles.size(); i++) {
-        ofs << "1" << endl;
+    grid->GetPointData()->AddArray(numberDensityArray);
+    // Number Density Ratio
+    vtkNew<vtkDoubleArray> numberDensityRatioArray;
+    numberDensityRatioArray->SetName("Number Density Ratio");
+    numberDensityRatioArray->SetNumberOfComponents(1);
+    for (auto& p : particles) {
+        numberDensityRatioArray->InsertNextValue(p.numberDensity / n0ForNumberDensity);
     }
-    ofs << "</DataArray>" << endl;
-    ofs << "</Cells>" << endl;
+    grid->GetPointData()->AddArray(numberDensityRatioArray);
+    // Boundary Condition
+    vtkNew<vtkIntArray> boundaryConditionArray;
+    boundaryConditionArray->SetName("Boundary Condition");
+    boundaryConditionArray->SetNumberOfComponents(1);
+    for (auto& p : particles) {
+        boundaryConditionArray->InsertNextValue(static_cast<int>(p.boundaryCondition));
+    }
+    grid->GetPointData()->AddArray(boundaryConditionArray);
+    // Fluid Type
+    vtkNew<vtkIntArray> fluidTypeArray;
+    fluidTypeArray->SetName("Fluid Type");
+    fluidTypeArray->SetNumberOfComponents(1);
+    for (auto& p : particles) {
+        fluidTypeArray->InsertNextValue(p.fluidType);
+    }
+    grid->GetPointData()->AddArray(fluidTypeArray);
 
-    // ------------------
-    // ----- Footer -----
-    // ------------------
-    ofs << "</Piece>" << endl;
-    ofs << "</UnstructuredGrid>" << endl;
-    ofs << "</VTKFile>" << endl;
+    // ---------------------
+    // ----- CellData ------
+    // ---------------------
+    vtkNew<vtkCellArray> cells;
+    for (vtkIdType i = 0; i < particles.size(); i++) {
+        vtkNew<vtkVertex> vertex;
+        vertex->GetPointIds()->SetId(0, i);
+        cells->InsertNextCell(vertex);
+    }
+    grid->SetCells(VTK_VERTEX, cells);
+
+    // ---------------------
+    // ---- Write file -----
+    // ---------------------
+    vtkNew<vtkXMLUnstructuredGridWriter> writer;
+    writer->SetFileName(path.c_str());
+    writer->SetInputData(grid);
+    writer->SetCompressorTypeToZLib();
+    writer->SetDataModeToAppended();
+    writer->SetEncodeAppendedData(false);
+    writer->Write();
 }
 
 void ParticlesExporter::toCsv(const fs::path& path, const double& time) {
@@ -161,15 +160,4 @@ void ParticlesExporter::toCsv(const fs::path& path, const double& time) {
         ofs << p.velocity.x() << "," << p.velocity.y() << "," << p.velocity.z();
         ofs << endl;
     }
-}
-
-void ParticlesExporter::dataArrayBegin(
-    std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
-) {
-    ofs << "<DataArray NumberOfComponents='" << numberOfComponents << "' type='" << type << "' Name='" << name
-        << "' format='ascii'>" << endl;
-}
-
-void ParticlesExporter::dataArrayEnd(std::ofstream& ofs) {
-    ofs << "</DataArray>" << endl;
 }

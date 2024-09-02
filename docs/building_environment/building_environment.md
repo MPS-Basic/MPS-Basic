@@ -43,6 +43,7 @@ Sophisticated functionalities in `c++` such as `std::string`,  `std::vector`,
 and many more are provided as a C++ Standard Library.
 And you have to include the library at the beginning of the code to use it,
 like `#include <string>` or `#include <vector>`.
+In this project, we use VTK (Visualization Toolkit) to save simulation results.
 Also, if you want to use OpenMP to parallelize your code, you need a library for that.
 So if you want to use such functionalities in your program,
 you have to download libraries in addition to the compiler.
@@ -131,6 +132,8 @@ There are some problems when using a specific build system.
 - Input files for build systems are usually complicated,
   and they use their own syntax that you have to remember.
   Like the above `Makefile` example looked difficult, right?
+- Some libraries require complicated settings to link. It's not easy to modify
+  the settings for each target platform.
 
 So using a specific build system is problematic especially when you are working
 as a team.

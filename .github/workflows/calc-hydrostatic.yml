@@ -21,10 +21,10 @@ jobs:
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
           echo "pr-comment=${{ github.workspace }}/pr_comment.md" >> "$GITHUB_OUTPUT"
 
-      - name: Install dependencies for Ubuntu # Install ninja, OpenMP, and Python packages
+      - name: Install dependencies for Ubuntu # Install ninja, VTK, OpenMP, and Python packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libomp-15-dev
+          sudo apt-get install -y ninja-build libomp-15-dev libvtk9-dev
           pip3 install meshio matplotlib PyGithub pyimgur
 
       - name: Configure CMake

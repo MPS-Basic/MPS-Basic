@@ -20,14 +20,21 @@ class ParticlesExporter {
 public:
     Particles particles;
 
+    /// @brief Set the particles to export to a file. This method is required before exporting.
+    /// @param particles
     void setParticles(const Particles& particles);
-    void toProf(const std::filesystem::path& path, const double& time);
-    void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
-    void toCsv(const std::filesystem::path& path, const double& time);
 
-private:
-    static void dataArrayBegin(
-        std::ofstream& ofs, const std::string& numberOfComponents, const std::string& type, const std::string& name
-    );
-    static void dataArrayEnd(std::ofstream& ofs);
+    /// @brief Export the particles to a file in the Prof format.
+    /// @param path path to the file to write
+    /// @param time current time in the simulation
+    void toProf(const std::filesystem::path& path, const double& time);
+    /// @brief Export the particles to a file in the VTK zlib format.
+    /// @param path path to the file to write
+    /// @param time current time in the simulation
+    /// @param n0ForNumberDensity reference number density for the number density calculation
+    void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
+    /// @brief Export the particles to a file in the CSV format.
+    /// @param path path to the file to write
+    /// @param time current time in the simulation
+    void toCsv(const std::filesystem::path& path, const double& time);
 };
