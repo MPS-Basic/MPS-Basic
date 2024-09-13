@@ -217,7 +217,8 @@ void MPS::calPressureGradient(const double& re) {
                 double w = weight(neighbor.distance, re);
                 // double dist2 = pow(neighbor.distance, 2);
                 double dist2 = (pj.position - pi.position).squaredNorm();
-                double pij   = (pj.pressure - pi.minimumPressure) / dist2;
+                // double pij   = (pj.pressure - pi.minimumPressure) / dist2;
+                double pij = (pi.pressure + pj.pressure - (pi.minimumPressure + pj.minimumPressure)) / dist2;
                 grad += (pj.position - pi.position) * pij * w;
             }
         }
