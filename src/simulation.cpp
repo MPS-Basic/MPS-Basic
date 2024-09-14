@@ -3,6 +3,7 @@
 #include "input.hpp"
 #include "particles_loader/csv.hpp"
 #include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
+#include "pressure_calculator/dirichlet_boundary_condition_generator/space_potential_particle.hpp"
 #include "pressure_calculator/explicit.hpp"
 #include "pressure_calculator/implicit.hpp"
 #include "surface_detector/distribution.hpp"
@@ -46,9 +47,10 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
         ));
     }
     std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
-    DirichletBoundaryConditionGenerator.reset(
-        new DirichletBoundaryConditionGenerator::FreeSurface(std::move(surfaceDetector))
-    );
+    // DirichletBoundaryConditionGenerator.reset(
+    //     new DirichletBoundaryConditionGenerator::FreeSurface(std::move(surfaceDetector))
+    // );
+    DirichletBoundaryConditionGenerator.reset(new DirichletBoundaryConditionGenerator::SpacePotentialParticle());
 
     std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
     if (input.settings.pressureCalculationMethod == "Implicit") {

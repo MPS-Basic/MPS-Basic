@@ -3,6 +3,7 @@
 #include "particle.hpp"
 #include "weight.hpp"
 
+#include <Eigen/Core>
 #include <queue>
 
 // This include is for checking if the pressure calculator is explicit.
@@ -30,6 +31,7 @@ MPS::MPS(
 }
 
 void MPS::stepForward() {
+    removeSpacePotentialParticles();
     neighborSearcher.setNeighbors(particles);
     calGravity();
     calViscosity(settings.re_forLaplacian);
@@ -40,6 +42,7 @@ void MPS::stepForward() {
 
     neighborSearcher.setNeighbors(particles);
     calNumberDensity(settings.re_forNumberDensity);
+    addSpacePotentialParticles();
     auto pressures = pressureCalculator->calc(particles);
     for (auto& particle : particles) {
         particle.pressure = pressures[particle.id];
@@ -58,6 +61,57 @@ void MPS::stepForward() {
     }
 
     calCourant();
+}
+
+void MPS::addSpacePotentialParticles() {
+    for (auto& particle : particles) {
+        if (particle.numberDensity < refValuesForNumberDensity.n0 && particle.type != ParticleType::DummyWall) {
+            addSpacePotentialParticle(particle);
+        }
+    }
+}
+
+void MPS::addSpacePotentialParticle(Particle& particle) {
+    if (particle.neighbors.size() == 0) {
+        // When there are no neighbors, there is no need to add a space potential particle.
+        return;
+    }
+
+    auto neighborCenter = calcRelativePositionToNeighborCenter(
+        particle,
+        particles,
+        settings.re_forNumberDensity,
+        refValuesForNumberDensity.n0
+    );
+    auto direction = (neighborCenter - particle.position).normalized();
+
+    auto ri = particle.position;
+    auto re = settings.re_forNumberDensity;
+    auto n0 = refValuesForNumberDensity.n0;
+    auto ni = particle.numberDensity;
+
+    Eigen::Vector3d rSPP = ri - direction * re / (n0 - ni + 1);
+    auto distance        = (rSPP - ri).norm();
+
+    if (distance == 0) {
+        // When the distance is 0, space potential particle cannot be added because weight function cannot be
+        // calculated.
+        return;
+    }
+
+    auto spp = Particle(particles.size(), ParticleType::SPP, rSPP, particle.velocity);
+    particles.add(spp);
+    particle.neighbors.emplace_back(Neighbor(spp.id, distance));
+}
+
+Eigen::Vector3d
+MPS::calcRelativePositionToNeighborCenter(const Particle& pi, const Particles& particles, double re, double n0) {
+    Eigen::Vector3d r_ig = Eigen::Vector3d::Zero();
+    for (const auto& neighbor : pi.neighbors) {
+        const auto& pj = particles[neighbor.id];
+        r_ig += (pj.position - pi.position) * weight(neighbor.distance, re);
+    }
+    return r_ig / n0;
 }
 
 void MPS::calGravity() {
@@ -235,6 +289,16 @@ void MPS::moveParticleUsingPressureGradient() {
         }
 
         p.acceleration.setZero();
+    }
+}
+
+void MPS::removeSpacePotentialParticles() {
+    for (auto it = particles.begin(); it != particles.end();) {
+        if (it->type == ParticleType::SPP) {
+            it = particles.erase(it);
+        } else {
+            ++it;
+        }
     }
 }
 
