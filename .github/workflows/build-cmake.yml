@@ -54,7 +54,8 @@ jobs:
     - name: Install dependencies for macOS # install OpenMP, ninja, vtk
       if: matrix.os == 'macos-latest'
       run: |
-        brew install ninja vtk
+        brew install ninja vtk libomp
+        export OpenMP_ROOT=$(brew --prefix)/opt/libomp
     
     - uses: ilammy/msvc-dev-cmd@v1 # Set up MSVC environment for Windows
       if: matrix.os == 'windows-latest'
