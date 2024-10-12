@@ -23,12 +23,16 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         build_type: [Release]
-        cpp_compiler: [clang++]
+        cpp_compiler: [clang++, g++]
         include:
           - os: ubuntu-latest
             cpp_compiler: clang++
+          - os: ubuntu-latest
+            cpp_compiler: g++
           - os: macos-latest
             cpp_compiler: clang++
+          - os: macos-latest
+            cpp_compiler: g++
   
     steps:
     - uses: actions/checkout@v4
