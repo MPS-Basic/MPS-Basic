@@ -1,4 +1,6 @@
-# computational conditions
+version: "1.0" # version of the settings file (required)
+
+# computational conditions (required)
 dim: 2
 particleDistance: 0.025
 dt: 0.001
@@ -6,41 +8,42 @@ endTime: 2.0
 outputPeriod: 0.04
 cflCondition: 0.3
 numPhysicalCores: 4
+radiusRatio:
+  forNumberDensity: 3.1
+  forGradient: 2.1
+  forLaplacian: 3.1
 
-# domain
-domainMin: [-0.1, -0.1, 0.0]
-domainMax: [1.1, 2.0, 0.0]
+# domain (required)
+domain:
+  min: [-0.1, -0.1, 0.0]
+  max: [1.1, 2.0, 0.0]
 
-# physical properties
-defaultDensity: 1000.0 # If the particle density is not specified, this value is used.
-kinematicViscosity: 1.0e-06 # 少数第一位まで書かないと文字列として認識されてしまう
+# physical properties (required)
+physicalProperties:
+  defaultDensity: 1000.0 # If the particle density is not specified, this value is used.
+  kinematicViscosity: 1.0e-06 # 少数第一位まで書かないと文字列として認識されてしまう
+  gravity: [0.0, -9.8, 0.0] # gravity
 
-# gravity
-gravity: [0.0, -9.8, 0.0]
+# free surface detection (select one from numberDensity or particleDistribution)
+surfaceDetection:
+  numberDensity:
+    threshold: 0.97
+  # particleDistributionを使いたい場合はnumberDensity:を消して以下を有効化
+  # particleDistribution:
+  #   threshold: 1.0
 
-# free surface detection
-# surface detection based on number density
-surfaceDetection-numberDensity-threshold: 0.97 # threshold ratio of the number density
-# surface detection based on particle distribution
-surfaceDetection-particleDistribution: true
-surfaceDetection-particleDistribution-threshold: 1.0
+# pressure calculation method (select one from implicit or explicit)
+pressureCalculation:
+  implicit:
+    compressibility: 0.45e-09
+    relaxationCoefficientForPressure: 0.2
+  explicit: # Explicit (Implicitと共存はできない。)
+    soundSpeed: 17.1
 
-# pressure calculation method
-pressureCalculationMethod: Implicit # Implicit or Explicit
-# for Implicit
-compressibility: 0.45e-09
-relaxationCoefficientForPressure: 0.2
-# for Explicit
-soundSpeed: 17.1
-
-# collision
-collisionDistanceRatio: 0.5
-coefficientOfRestitution: 0.2
-
-# effective radius
-radiusRatioForNumberDensity: 3.1
-radiusRatioForGradient: 2.1
-radiusRatioForLaplacian: 3.1
+stabilization:
+  collision:
+    distanceRatio: 0.5
+    coefficientOfRestitution: 0.2
 
 # i/o
 # relative path from the directory where this file is located

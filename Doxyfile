@@ -948,6 +948,7 @@ INPUT                  = src\
                          docs/execution.md\
                          docs/building_environment\
                          docs/input-output.md\
+                         docs/settings.md\
                          docs/improved_algorithms\
                          docs/coding_techniques.md\
                          CONTRIBUTING.md\
