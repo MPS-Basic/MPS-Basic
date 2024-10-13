@@ -42,6 +42,9 @@ add_executable(
     src/particles.cpp
     src/particles_exporter.cpp
     test/particles_exporter_test.cpp
+    src/bucket.cpp
+    src/neighbor_searcher.cpp
+    test/neighbor_searcher_test.cpp
 )
 # particle generator
 add_library(particles STATIC
