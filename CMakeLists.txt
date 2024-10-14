@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # ----- Target -----
 # ------------------
 # main executable
+# If you add a new source file, add it to the list below.
 add_executable(${PROJECT_NAME}
   src/bucket.cpp
   src/loader.cpp
@@ -34,14 +35,32 @@ add_executable(${PROJECT_NAME}
 enable_testing()
 add_executable(
     ${PROJECT_NAME}_test
-    src/refvalues.cpp
-    test/refvalues_test.cpp
-    src/weight.cpp
-    test/weight_test.cpp
+    # main code
+    src/bucket.cpp
+    src/loader.cpp
+    src/mps.cpp
     src/particle.cpp
     src/particles.cpp
     src/particles_exporter.cpp
+    src/particles_loader/prof.cpp
+    src/particles_loader/csv.cpp
+    src/refvalues.cpp
+    src/saver.cpp
+    src/simulation.cpp
+    src/weight.cpp
+    src/pressure_calculator/implicit.cpp
+    src/pressure_calculator/explicit.cpp
+    src/pressure_calculator/pressure_poisson_equation.cpp
+    src/pressure_calculator/dirichlet_boundary_condition.cpp
+    src/pressure_calculator/dirichlet_boundary_condition_generator/free_surface.cpp
+    src/surface_detector/number_density.cpp
+    src/surface_detector/distribution.cpp
+    src/neighbor_searcher.cpp
+    # test code
+    test/refvalues_test.cpp
+    test/weight_test.cpp
     test/particles_exporter_test.cpp
+    test/loader_test.cpp
 )
 # particle generator
 add_library(particles STATIC
@@ -154,6 +173,7 @@ if(NOT yaml-cpp_POPULATED)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
+target_link_libraries(${PROJECT_NAME}_test PUBLIC yaml-cpp::yaml-cpp)
 
 # -------------------------------
 # ----- fast-cpp-csv-parser -----
@@ -170,6 +190,7 @@ if(NOT fast-cpp-csv-parser_POPULATED)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${fast-cpp-csv-parser_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME}_test PRIVATE ${fast-cpp-csv-parser_SOURCE_DIR})
 
 # ------------------------------
 # ----- particle generator -----
