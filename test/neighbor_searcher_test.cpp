@@ -46,6 +46,6 @@ TEST(NeighborSearcherTest, NeighborSearch2d) {
         for (const auto& neighbor : pi.neighbors) {
             neighborsBySearcher.insert(neighbor.id);
         }
-        EXPECT_EQ(neighborsByBruteForce.size(), neighborsBySearcher.size());
+        EXPECT_EQ(neighborsByBruteForce, neighborsBySearcher);
     }
 }
