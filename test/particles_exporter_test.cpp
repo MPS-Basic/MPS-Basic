@@ -46,7 +46,7 @@ TEST(ParticlesExporterTest, ToVtu) {
 
     exporter.setParticles(particles);
     const std::filesystem::path path = "test.vtu";
-    const double time = 0.0;
+    const double time                = 0.0;
     exporter.toVtu(path, time);
     EXPECT_TRUE(std::filesystem::exists(path));
     std::filesystem::remove(path);
