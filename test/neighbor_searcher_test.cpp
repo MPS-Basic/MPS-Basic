@@ -9,12 +9,12 @@ TEST(NeighborSearcherTest, NeighborSearch2d) {
     double re           = 0.1;
     size_t particleSize = 100;
     Domain domain;
-    domain.xMin = 0.0;
-    domain.xMax = 1.0;
-    domain.yMin = 0.0;
-    domain.yMax = 2.0;
-    domain.zMin = 0.0;
-    domain.zMax = 0.0;
+    domain.xMin    = 0.0;
+    domain.xMax    = 1.0;
+    domain.yMin    = 0.0;
+    domain.yMax    = 2.0;
+    domain.zMin    = 0.0;
+    domain.zMax    = 0.0;
     domain.xLength = domain.xMax - domain.xMin;
     domain.yLength = domain.yMax - domain.yMin;
     domain.zLength = domain.zMax - domain.zMin;
