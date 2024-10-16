@@ -21,13 +21,18 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         build_type: [Release]
-        c_compiler: [clang]
+        cpp_compiler: [clang++, g++]
         include:
           - os: ubuntu-latest
-            c_compiler: clang
             cpp_compiler: clang++
+          - os: ubuntu-latest
+            cpp_compiler: g++
+          - os: macos-latest
+            cpp_compiler: clang++
+          - os: macos-latest
+            cpp_compiler: g++
   
     steps:
     - uses: actions/checkout@v4
@@ -45,7 +50,13 @@ jobs:
       run: |
         sudo apt-get update 
         sudo apt-get install -y ninja-build libomp-dev libvtk9-dev
-      
+    
+    - name: Install dependencies for macOS # install OpenMP, ninja, vtk
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install ninja vtk libomp
+        echo "OpenMP_ROOT=$(brew --prefix)/opt/libomp" >> "$GITHUB_ENV"
+    
     - uses: ilammy/msvc-dev-cmd@v1 # Set up MSVC environment for Windows
       if: matrix.os == 'windows-latest'
     - name: Install dependencies for Windows # Install ninja
@@ -60,8 +71,6 @@ jobs:
         -G ${{ steps.strings.outputs.cmake-generator }} 
         -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_Fortran_COMPILER=""
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
     
