@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "particles_exporter.hpp"
+#include <gtest/gtest.h>
 
 TEST(ParticlesExporterTest, SetParticles) {
     constexpr size_t particleSize = 100;
