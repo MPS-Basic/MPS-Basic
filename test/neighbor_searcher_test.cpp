@@ -7,7 +7,6 @@
 
 TEST(NeighborSearcherTest, NeighborSearch2d) {
     double re           = 0.1;
-    double re2          = re * re;
     size_t particleSize = 100;
     Domain domain;
     domain.xMin = 0.0;
@@ -24,29 +23,29 @@ TEST(NeighborSearcherTest, NeighborSearch2d) {
     std::uniform_real_distribution<double> dist_x(domain.xMin, domain.xMax);
     std::uniform_real_distribution<double> dist_y(domain.yMin, domain.yMax);
 
-    auto p = Particles();
+    auto particles = Particles();
     for (size_t i = 0; i < particleSize; i++) {
         auto r_i = Eigen::Vector3d(dist_x(engine), dist_y(engine), 0.0);
         auto u_i = Eigen::Vector3d::Zero();
-        p.add(Particle(i, ParticleType::Fluid, r_i, u_i, 1.0, 0));
+        particles.add(Particle(i, ParticleType::Fluid, r_i, u_i, 1.0, 0));
     }
 
     NeighborSearcher searcher(re, domain, particleSize);
-    searcher.setNeighbors(p);
-    for (const auto& pi : p) {
-        std::set<int> neighbors_bf;
-        for (const auto& pj : p) {
+    searcher.setNeighbors(particles);
+    for (const auto& pi : particles) {
+        std::set<int> neighborsByBruteForce;
+        for (const auto& pj : particles) {
             if (pi.id == pj.id) {
                 continue;
             }
-            if ((pi.position - pj.position).squaredNorm() < re2) {
-                neighbors_bf.insert(pj.id);
+            if ((pi.position - pj.position).squaredNorm() < re * re) {
+                neighborsByBruteForce.insert(pj.id);
             }
         }
-        std::set<int> neighbors_seach;
+        std::set<int> neighborsBySearcher;
         for (const auto& neighbor : pi.neighbors) {
-            neighbors_seach.insert(neighbor.id);
+            neighborsBySearcher.insert(neighbor.id);
         }
-        EXPECT_EQ(neighbors_bf.size(), neighbors_seach.size());
+        EXPECT_EQ(neighborsByBruteForce.size(), neighborsBySearcher.size());
     }
 }
