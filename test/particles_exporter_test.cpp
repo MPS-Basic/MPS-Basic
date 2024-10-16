@@ -28,7 +28,7 @@ TEST(ParticlesExporterTest, ToProf) {
 
     exporter.setParticles(particles);
     const std::filesystem::path path = "test.prof";
-    const double time = 0.0;
+    const double time                = 0.0;
     exporter.toProf(path, time);
     EXPECT_TRUE(std::filesystem::exists(path));
     std::filesystem::remove(path);
