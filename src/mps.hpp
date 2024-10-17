@@ -138,4 +138,13 @@ private:
      * @brief calculate Courant number
      */
     void calCourant();
+
+    void addSpacePotentialParticles();
+
+    void addSpacePotentialParticle(Particle& particle);
+
+    Eigen::Vector3d
+    calcRelativePositionToNeighborCenter(const Particle& pi, const Particles& particles, double re, double n0);
+
+    void removeSpacePotentialParticles();
 };
