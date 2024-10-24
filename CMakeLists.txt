@@ -12,6 +12,7 @@ add_executable(${PROJECT_NAME}
   src/loader.cpp
   src/main.cpp
   src/mps.cpp
+  src/mps_factory.cpp
   src/particle.cpp
   src/particles.cpp
   src/particles_exporter.cpp
@@ -102,7 +103,7 @@ target_include_directories(
     src/
 )
 target_include_directories(
-  ${PROJECT_NAME}_test 
+  ${PROJECT_NAME}_test
   PRIVATE
   ${eigen_SOURCE_DIR}
 )
@@ -118,7 +119,7 @@ gtest_discover_tests(${PROJECT_NAME}_test)
 #-------------------
 # ------ VTK -------
 #-------------------
-find_package(VTK COMPONENTS 
+find_package(VTK COMPONENTS
   CommonCore
   CommonDataModel
   IOXML

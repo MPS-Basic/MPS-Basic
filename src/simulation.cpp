@@ -1,12 +1,8 @@
 #include "simulation.hpp"
 
 #include "input.hpp"
+#include "mps_factory.hpp"
 #include "particles_loader/csv.hpp"
-#include "pressure_calculator/dirichlet_boundary_condition_generator/free_surface.hpp"
-#include "pressure_calculator/explicit.hpp"
-#include "pressure_calculator/implicit.hpp"
-#include "surface_detector/distribution.hpp"
-#include "surface_detector/number_density.hpp"
 
 #include <cstdio>
 #include <iostream>
@@ -15,69 +11,14 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-namespace fs                                  = std::filesystem;
-namespace chrono                              = std::chrono;
-namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBoundaryConditionGenerator;
+namespace fs     = std::filesystem;
+namespace chrono = std::chrono;
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
-    // TODO: Separate the following code into somewhere else.
     Input input = loader.load(settingPath, outputDirectory);
     saver       = Saver(outputDirectory);
 
-    RefValues refValuesForNumberDensity(
-        input.settings.dim,
-        input.settings.particleDistance,
-        input.settings.re_forNumberDensity
-    );
-
-    std::unique_ptr<SurfaceDetector::Interface> surfaceDetector;
-    if (input.settings.surfaceDetection_particleDistribution) {
-        surfaceDetector.reset(new SurfaceDetector::Distribution(
-            refValuesForNumberDensity.n0,
-            input.settings.particleDistance,
-            input.settings.surfaceDetection_particleDistribution_threshold,
-            input.settings.surfaceDetection_numberDensity_threshold
-        ));
-
-    } else {
-        surfaceDetector.reset(new SurfaceDetector::NumberDensity(
-            input.settings.surfaceDetection_numberDensity_threshold,
-            refValuesForNumberDensity.n0
-        ));
-    }
-    std::unique_ptr<DirichletBoundaryConditionGenerator::Interface> DirichletBoundaryConditionGenerator;
-    DirichletBoundaryConditionGenerator.reset(
-        new DirichletBoundaryConditionGenerator::FreeSurface(std::move(surfaceDetector))
-    );
-
-    std::unique_ptr<PressureCalculator::Interface> pressureCalculator;
-    if (input.settings.pressureCalculationMethod == "Implicit") {
-        pressureCalculator.reset(new PressureCalculator::Implicit(
-            input.settings.dim,
-            input.settings.particleDistance,
-            input.settings.re_forNumberDensity,
-            input.settings.re_forLaplacian,
-            input.settings.dt,
-            input.settings.compressibility,
-            input.settings.relaxationCoefficientForPressure,
-            std::move(DirichletBoundaryConditionGenerator)
-        ));
-
-    } else if (input.settings.pressureCalculationMethod == "Explicit") {
-        pressureCalculator.reset(new PressureCalculator::Explicit(
-            input.settings.re_forNumberDensity,
-            input.settings.soundSpeed,
-            input.settings.dim,
-            input.settings.particleDistance
-        ));
-
-    } else {
-        cerr << "Invalid pressure calculation method: " << input.settings.pressureCalculationMethod << endl;
-        cerr << "Please select either Implicit or Explicit." << endl;
-        std::exit(-1);
-    }
-
-    mps          = MPS(input, std::move(pressureCalculator), std::move(surfaceDetector));
+    mps          = MPSFactory::create(input);
     startTime    = input.startTime;
     time         = startTime;
     endTime      = input.settings.endTime;
