@@ -11,8 +11,8 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-namespace fs                                  = std::filesystem;
-namespace chrono                              = std::chrono;
+namespace fs     = std::filesystem;
+namespace chrono = std::chrono;
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     Input input = loader.load(settingPath, outputDirectory);
