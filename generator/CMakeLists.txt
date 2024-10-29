@@ -15,3 +15,5 @@ add_executable(generate_hydrostatic
 )
 target_include_directories(generate_hydrostatic PRIVATE ${eigen_SOURCE_DIR})
 target_link_libraries(generate_hydrostatic PRIVATE particles)
+target_link_libraries(generate_dambreak PRIVATE yaml-cpp::yaml-cpp)
+target_link_libraries(generate_hydrostatic PRIVATE yaml-cpp::yaml-cpp)
