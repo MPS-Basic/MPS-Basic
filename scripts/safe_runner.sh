@@ -7,7 +7,7 @@ inputDir="input/${projectName}"
 settingFile="${inputDir}/settings.yml"
 
 timestamp=$(date +%Y%m%d%H%M%S)
-outputDir="result/${timestamp}"
+outputDir="result/${timestamp}-${projectName}"
 errorLogFile="${outputDir}/error.log"
 consoleLogFile="${outputDir}/console.log"
 
