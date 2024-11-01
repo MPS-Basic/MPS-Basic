@@ -1,13 +1,23 @@
 #!/bin/bash
-# Runner that seplates the result into a new folder with a timestamp
+# Runner that separates the result into a new folder with a timestamp
 
-# set variables
-projectName="dambreak"
+if [ -z "$1" ]; then
+    echo "Usage: $0 <projectName> [--note <note>]"
+    echo "Following directory will be created: result/<timestamp>-<projectName>-<note>"
+    exit 1
+fi
+
+projectName="$1"
 inputDir="input/${projectName}"
 settingFile="${inputDir}/settings.yml"
 
+note=""
+if [ "$2" == "--note" ] && [ -n "$3" ]; then
+    note="$3"
+fi
+
 timestamp=$(date +%Y%m%d%H%M%S)
-outputDir="result/${timestamp}-${projectName}"
+outputDir="result/${timestamp}-${projectName}-${note}"
 errorLogFile="${outputDir}/error.log"
 consoleLogFile="${outputDir}/console.log"
 
