@@ -17,8 +17,9 @@
  *
  */
 class ParticlesExporter {
-    private:
+private:
     bool isBigEndian() const;
+
 public:
     Particles particles;
 
