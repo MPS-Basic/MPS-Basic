@@ -179,6 +179,7 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&type), sizeof(uint8_t));
     }
     ofs << "</Cells>" << endl;
+    ofs << "</Piece>" << endl;
     // ---------------------
     // ---- Field data  ----
     // ---------------------
@@ -191,7 +192,6 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     double time_copied = time; // copy time to use reinterpret_cast
     binaryData.write(reinterpret_cast<char*>(&time_copied), sizeof(double));
     ofs << "</FieldData>" << endl;
-    ofs << "</Piece>" << endl;
     ofs << "</UnstructuredGrid>" << endl;
     // ---------------------
     // --- Appended Data ---
