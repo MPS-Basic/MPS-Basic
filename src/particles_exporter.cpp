@@ -184,7 +184,7 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     // ---- Field data  ----
     // ---------------------
     ofs << "<FieldData>" << endl;
-    ofs << "<DataArray type=\"Float64\" Name=\"Time\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+    ofs << "<DataArray type=\"Float64\" Name=\"Time\" NumberOfTuples=\"1\" format=\"appended\" offset=\""
         << binaryData.tellp() << "\"/>" << endl;
     // Time
     uint64_t length_time = sizeof(double);
