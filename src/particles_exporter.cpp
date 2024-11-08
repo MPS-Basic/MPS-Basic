@@ -60,8 +60,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     /// ----- Points -----
     /// ------------------
     ofs << "<Points>" << endl;
-    ofs << "<DataArray Name=\"Position\" type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=\"" << binaryData.tellp()
-        << "\"/>" << endl;
+    ofs << "<DataArray Name=\"Position\" type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
     uint64_t length_points = particles.size() * 3 * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_points), sizeof(uint64_t));
     for (const auto& p : particles) {
