@@ -4,19 +4,16 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <vtkDataCompressor.h>
-#include <vtkDoubleArray.h>
-#include <vtkFieldData.h>
-#include <vtkNew.h>
-#include <vtkPointData.h>
-#include <vtkPoints.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkVertex.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 
 using std::cerr;
 using std::endl;
 namespace fs = std::filesystem;
+
+bool ParticlesExporter::isBigEndian() const {
+    uint32_t i         = 1; // 0x00000001
+    uint8_t first_byte = *reinterpret_cast<uint8_t*>(&i);
+    return first_byte == 0;
+}
 
 void ParticlesExporter::setParticles(const Particles& particles) {
     this->particles = particles;
@@ -40,107 +37,169 @@ void ParticlesExporter::toProf(const fs::path& path, const double& time) {
 }
 
 void ParticlesExporter::toVtu(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
-    vtkNew<vtkUnstructuredGrid> grid;
+    std::ofstream ofs(path);
+    if (ofs.fail()) {
+        cerr << "cannot write " << path << endl;
+        std::exit(-1);
+    }
 
-    // -----------------
-    // --- Time data ---
-    // -----------------
-    vtkNew<vtkDoubleArray> timeArray;
-    timeArray->SetName("Time");
-    timeArray->SetNumberOfComponents(1);
-    timeArray->InsertNextValue(time);
-    grid->GetFieldData()->AddArray(timeArray);
+    std::stringstream binaryData; // binary data to be written
 
+    // VTK header
+    ofs << "<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" header_type=\"UInt64\" byte_order=\"";
+    if (isBigEndian()) {
+        ofs << "BigEndian";
+    } else {
+        ofs << "LittleEndian";
+    }
+    ofs << "\">" << endl;
+    ofs << "<UnstructuredGrid>" << endl
+        << "<Piece NumberOfPoints=\"" << particles.size() << "\" NumberOfCells=\"" << particles.size() << "\">" << endl;
     /// ------------------
     /// ----- Points -----
     /// ------------------
-    vtkNew<vtkPoints> points;
+    ofs << "<Points>" << endl;
+    ofs << "<DataArray type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=\"" << binaryData.tellp()
+        << "\"/>" << endl;
+    uint64_t length_points = particles.size() * 3 * sizeof(double);
+    binaryData.write(reinterpret_cast<char*>(&length_points), sizeof(uint64_t));
     for (const auto& p : particles) {
-        points->InsertNextPoint(p.position.x(), p.position.y(), p.position.z());
+        double x = p.position.x();
+        double y = p.position.y();
+        double z = p.position.z();
+        binaryData.write(reinterpret_cast<char*>(&x), sizeof(double));
+        binaryData.write(reinterpret_cast<char*>(&y), sizeof(double));
+        binaryData.write(reinterpret_cast<char*>(&z), sizeof(double));
     }
-    grid->SetPoints(points);
-
+    ofs << "</Points>" << endl;
     // ---------------------
     // ----- PointData -----
     // ---------------------
+    ofs << "<PointData>" << endl;
     // Particle Type
-    vtkNew<vtkIntArray> particleTypeArray;
-    particleTypeArray->SetName("Particle Type");
-    particleTypeArray->SetNumberOfComponents(1);
-    for (auto& p : particles) {
-        particleTypeArray->InsertNextValue(static_cast<int>(p.type));
+    ofs << "<DataArray type=\"Int32\" Name=\"Particle Type\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_particle_type = particles.size() * sizeof(int32_t);
+    binaryData.write(reinterpret_cast<char*>(&length_particle_type), sizeof(uint64_t));
+    for (const auto& p : particles) {
+        int32_t type = static_cast<int32_t>(p.type);
+        binaryData.write(reinterpret_cast<char*>(&type), sizeof(int32_t));
     }
-    grid->GetPointData()->AddArray(particleTypeArray);
     // Velocity
-    vtkNew<vtkDoubleArray> velocityArray;
-    velocityArray->SetName("Velocity");
-    velocityArray->SetNumberOfComponents(3);
+    ofs << "<DataArray type=\"Float64\" Name=\"Velocity\" NumberOfComponents=\"3\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_velocity = particles.size() * 3 * sizeof(double);
+    binaryData.write(reinterpret_cast<char*>(&length_velocity), sizeof(uint64_t));
     for (const auto& p : particles) {
-        velocityArray->InsertNextTuple3(p.velocity.x(), p.velocity.y(), p.velocity.z());
+        double vx = p.velocity.x();
+        double vy = p.velocity.y();
+        double vz = p.velocity.z();
+        binaryData.write(reinterpret_cast<char*>(&vx), sizeof(double));
+        binaryData.write(reinterpret_cast<char*>(&vy), sizeof(double));
+        binaryData.write(reinterpret_cast<char*>(&vz), sizeof(double));
     }
-    grid->GetPointData()->AddArray(velocityArray);
     // Pressure
-    vtkNew<vtkDoubleArray> pressureArray;
-    pressureArray->SetName("Pressure");
-    pressureArray->SetNumberOfComponents(1);
+    ofs << "<DataArray type=\"Float64\" Name=\"Pressure\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_pressure = particles.size() * sizeof(double);
+    binaryData.write(reinterpret_cast<char*>(&length_pressure), sizeof(uint64_t));
     for (const auto& p : particles) {
-        pressureArray->InsertNextValue(p.pressure);
+        double pressure = p.pressure;
+        binaryData.write(reinterpret_cast<char*>(&pressure), sizeof(double));
     }
-    grid->GetPointData()->AddArray(pressureArray);
     // Number Density
-    vtkNew<vtkDoubleArray> numberDensityArray;
-    numberDensityArray->SetName("Number Density");
-    numberDensityArray->SetNumberOfComponents(1);
+    ofs << "<DataArray type=\"Float64\" Name=\"Number Density\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_number_density = particles.size() * sizeof(double);
+    binaryData.write(reinterpret_cast<char*>(&length_number_density), sizeof(uint64_t));
     for (const auto& p : particles) {
-        numberDensityArray->InsertNextValue(p.numberDensity);
+        double number_density = p.numberDensity;
+        binaryData.write(reinterpret_cast<char*>(&number_density), sizeof(double));
     }
-    grid->GetPointData()->AddArray(numberDensityArray);
     // Number Density Ratio
-    vtkNew<vtkDoubleArray> numberDensityRatioArray;
-    numberDensityRatioArray->SetName("Number Density Ratio");
-    numberDensityRatioArray->SetNumberOfComponents(1);
-    for (auto& p : particles) {
-        numberDensityRatioArray->InsertNextValue(p.numberDensity / n0ForNumberDensity);
+    ofs << "<DataArray type=\"Float64\" Name=\"Number Density Ratio\" NumberOfComponents=\"1\" format=\"appended\" "
+           "offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_number_density_ratio = particles.size() * sizeof(double);
+    binaryData.write(reinterpret_cast<char*>(&length_number_density_ratio), sizeof(uint64_t));
+    for (const auto& p : particles) {
+        double number_density_ratio = p.numberDensity / n0ForNumberDensity;
+        binaryData.write(reinterpret_cast<char*>(&number_density_ratio), sizeof(double));
     }
-    grid->GetPointData()->AddArray(numberDensityRatioArray);
     // Boundary Condition
-    vtkNew<vtkIntArray> boundaryConditionArray;
-    boundaryConditionArray->SetName("Boundary Condition");
-    boundaryConditionArray->SetNumberOfComponents(1);
-    for (auto& p : particles) {
-        boundaryConditionArray->InsertNextValue(static_cast<int>(p.boundaryCondition));
+    ofs << "<DataArray type=\"Int32\" Name=\"Boundary Condition\" NumberOfComponents=\"1\" format=\"appended\" "
+           "offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_boundary_condition = particles.size() * sizeof(int32_t);
+    binaryData.write(reinterpret_cast<char*>(&length_boundary_condition), sizeof(uint64_t));
+    for (const auto& p : particles) {
+        int32_t boundary_condition = static_cast<int32_t>(p.boundaryCondition);
+        binaryData.write(reinterpret_cast<char*>(&boundary_condition), sizeof(int32_t));
     }
-    grid->GetPointData()->AddArray(boundaryConditionArray);
     // Fluid Type
-    vtkNew<vtkIntArray> fluidTypeArray;
-    fluidTypeArray->SetName("Fluid Type");
-    fluidTypeArray->SetNumberOfComponents(1);
-    for (auto& p : particles) {
-        fluidTypeArray->InsertNextValue(p.fluidType);
+    ofs << "<DataArray type=\"Int32\" Name=\"Fluid Type\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_fluid_type = particles.size() * sizeof(int32_t);
+    binaryData.write(reinterpret_cast<char*>(&length_fluid_type), sizeof(uint64_t));
+    for (const auto& p : particles) {
+        int32_t fluid_type = p.fluidType;
+        binaryData.write(reinterpret_cast<char*>(&fluid_type), sizeof(int32_t));
     }
-    grid->GetPointData()->AddArray(fluidTypeArray);
-
+    ofs << "</PointData>" << endl;
     // ---------------------
     // ----- CellData ------
     // ---------------------
-    vtkNew<vtkCellArray> cells;
-    for (vtkIdType i = 0; i < particles.size(); i++) {
-        vtkNew<vtkVertex> vertex;
-        vertex->GetPointIds()->SetId(0, i);
-        cells->InsertNextCell(vertex);
+    ofs << "<CellData>" << endl;
+    // Connectivity
+    ofs << "<DataArray type=\"Int64\" Name=\"Connectivity\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_connectivity = particles.size() * sizeof(int64_t);
+    binaryData.write(reinterpret_cast<char*>(&length_connectivity), sizeof(uint64_t));
+    for (size_t i = 0; i < particles.size(); i++) {
+        int64_t connectivity = i;
+        binaryData.write(reinterpret_cast<char*>(&connectivity), sizeof(int64_t));
     }
-    grid->SetCells(VTK_VERTEX, cells);
+    // Offset
+    ofs << "<DataArray type=\"Int64\" Name=\"Offset\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_offset = particles.size() * sizeof(int64_t);
+    binaryData.write(reinterpret_cast<char*>(&length_offset), sizeof(uint64_t));
+    for (size_t i = 0; i < particles.size(); i++) {
+        int64_t offset = i + 1;
+        binaryData.write(reinterpret_cast<char*>(&offset), sizeof(int64_t));
+    }
+    // Types
+    ofs << "<DataArray type=\"UInt8\" Name=\"Types\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    uint64_t length_types = particles.size() * sizeof(uint8_t);
+    binaryData.write(reinterpret_cast<char*>(&length_types), sizeof(uint64_t));
+    for (const auto& p : particles) {
+        uint8_t type = 1; // 1: particle
+        binaryData.write(reinterpret_cast<char*>(&type), sizeof(uint8_t));
+    }
 
+    ofs << "</CellData>" << endl;
     // ---------------------
-    // ---- Write file -----
+    // ---- Field data  ----
     // ---------------------
-    vtkNew<vtkXMLUnstructuredGridWriter> writer;
-    writer->SetFileName(path.c_str());
-    writer->SetInputData(grid);
-    writer->SetCompressorTypeToZLib();
-    writer->SetDataModeToAppended();
-    writer->SetEncodeAppendedData(false);
-    writer->Write();
+    ofs << "<FieldData>" << endl;
+    ofs << "<DataArray type=\"Float64\" Name=\"Time\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+        << binaryData.tellp() << "\"/>" << endl;
+    // Time
+    uint64_t length_time = sizeof(double);
+    binaryData.write(reinterpret_cast<char*>(&length_time), sizeof(uint64_t));
+    double time_copied = time; // copy time to use reinterpret_cast
+    binaryData.write(reinterpret_cast<char*>(&time_copied), sizeof(double));
+    ofs << "</FieldData>" << endl;
+
+    ofs << "<UnstructuredGrid>" << endl;
+    // ---------------------
+    // --- Appended Data ---
+    // ---------------------
+    ofs << "<AppendedData encoding=\"raw\">" << endl;
+    ofs << "_" << binaryData.str() << endl;
+    ofs << "</AppendedData>" << endl;
+    ofs << "</VTKFile>" << endl;
 }
 
 void ParticlesExporter::toCsv(const fs::path& path, const double& time) {

@@ -116,30 +116,6 @@ target_link_libraries(
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_test)
 
-#-------------------
-# ------ VTK -------
-#-------------------
-find_package(VTK COMPONENTS
-  CommonCore
-  CommonDataModel
-  IOXML
-)
-if (NOT VTK_FOUND)
-  message(FATAL_ERROR "Unable to find the VTK. Please install it.")
-endif()
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${VTK_LIBRARIES})
-vtk_module_autoinit(
-  TARGETS ${PROJECT_NAME}
-  MODULES ${VTK_LIBRARIES}
-)
-
-target_link_libraries(${PROJECT_NAME}_test PRIVATE ${VTK_LIBRARIES})
-vtk_module_autoinit(
-  TARGETS ${PROJECT_NAME}_test
-  MODULES ${VTK_LIBRARIES}
-)
-
 # --------------------
 # ----- yaml-cpp -----
 # --------------------
@@ -180,10 +156,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${fast-cpp-csv-parser_SOURCE_
 # ------------------------------
 target_include_directories(particles PRIVATE ${eigen_SOURCE_DIR})
 target_link_libraries(particles PRIVATE ${VTK_LIBRARIES})
-vtk_module_autoinit(
-  TARGETS particles
-  MODULES ${VTK_LIBRARIES}
-)
 add_subdirectory(generator)
 
 # --------------------

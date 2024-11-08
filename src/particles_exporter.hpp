@@ -17,6 +17,8 @@
  *
  */
 class ParticlesExporter {
+    private:
+    bool isBigEndian() const;
 public:
     Particles particles;
 
@@ -28,6 +30,7 @@ public:
     /// @param path path to the file to write
     /// @param time current time in the simulation
     void toProf(const std::filesystem::path& path, const double& time);
+
     /// @brief Export the particles to a file in the VTK zlib format.
     /// @param path path to the file to write
     /// @param time current time in the simulation
