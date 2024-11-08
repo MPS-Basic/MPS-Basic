@@ -45,7 +45,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
 
     std::stringstream binaryData; // binary data to be written
 
-    // VTK header
+    // header
+    ofs << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
     ofs << "<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" header_type=\"UInt64\" byte_order=\"";
     if (isBigEndian()) {
         ofs << "BigEndian";
@@ -59,7 +60,7 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     /// ----- Points -----
     /// ------------------
     ofs << "<Points>" << endl;
-    ofs << "<DataArray type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=\"" << binaryData.tellp()
+    ofs << "<DataArray Name=\"Position\" type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=\"" << binaryData.tellp()
         << "\"/>" << endl;
     uint64_t length_points = particles.size() * 3 * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_points), sizeof(uint64_t));
@@ -146,12 +147,12 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&fluid_type), sizeof(int32_t));
     }
     ofs << "</PointData>" << endl;
-    // ---------------------
-    // ----- CellData ------
-    // ---------------------
-    ofs << "<CellData>" << endl;
-    // Connectivity
-    ofs << "<DataArray type=\"Int64\" Name=\"Connectivity\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+    /// ------------------
+    /// ----- Cells -----
+    /// ------------------
+    ofs << "<Cells>" << endl;
+    // connectivity
+    ofs << "<DataArray type=\"Int64\" Name=\"connectivity\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
         << binaryData.tellp() << "\"/>" << endl;
     uint64_t length_connectivity = particles.size() * sizeof(int64_t);
     binaryData.write(reinterpret_cast<char*>(&length_connectivity), sizeof(uint64_t));
@@ -159,8 +160,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         int64_t connectivity = i;
         binaryData.write(reinterpret_cast<char*>(&connectivity), sizeof(int64_t));
     }
-    // Offset
-    ofs << "<DataArray type=\"Int64\" Name=\"Offset\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+    // offsets
+    ofs << "<DataArray type=\"Int64\" Name=\"offsets\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
         << binaryData.tellp() << "\"/>" << endl;
     uint64_t length_offset = particles.size() * sizeof(int64_t);
     binaryData.write(reinterpret_cast<char*>(&length_offset), sizeof(uint64_t));
@@ -168,8 +169,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         int64_t offset = i + 1;
         binaryData.write(reinterpret_cast<char*>(&offset), sizeof(int64_t));
     }
-    // Types
-    ofs << "<DataArray type=\"UInt8\" Name=\"Types\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
+    // types
+    ofs << "<DataArray type=\"UInt8\" Name=\"types\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
         << binaryData.tellp() << "\"/>" << endl;
     uint64_t length_types = particles.size() * sizeof(uint8_t);
     binaryData.write(reinterpret_cast<char*>(&length_types), sizeof(uint64_t));
@@ -177,8 +178,7 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         uint8_t type = 1; // 1: particle
         binaryData.write(reinterpret_cast<char*>(&type), sizeof(uint8_t));
     }
-
-    ofs << "</CellData>" << endl;
+    ofs << "</Cells>" << endl;
     // ---------------------
     // ---- Field data  ----
     // ---------------------
@@ -191,8 +191,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     double time_copied = time; // copy time to use reinterpret_cast
     binaryData.write(reinterpret_cast<char*>(&time_copied), sizeof(double));
     ofs << "</FieldData>" << endl;
-
-    ofs << "<UnstructuredGrid>" << endl;
+    ofs << "</Piece>" << endl;
+    ofs << "</UnstructuredGrid>" << endl;
     // ---------------------
     // --- Appended Data ---
     // ---------------------
