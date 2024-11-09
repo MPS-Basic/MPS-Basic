@@ -1,0 +1,11 @@
+[project]
+name = "mps-basic"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.9.2",
+    "meshio>=5.3.5",
+    "pyimgur>=0.6.0",
+]
