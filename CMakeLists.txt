@@ -155,7 +155,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${fast-cpp-csv-parser_SOURCE_
 # ----- particle generator -----
 # ------------------------------
 target_include_directories(particles PRIVATE ${eigen_SOURCE_DIR})
-target_link_libraries(particles PRIVATE ${VTK_LIBRARIES})
 add_subdirectory(generator)
 
 # --------------------
