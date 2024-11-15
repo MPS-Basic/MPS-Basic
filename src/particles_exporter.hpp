@@ -18,6 +18,12 @@
  */
 class ParticlesExporter {
 private:
+    /// @brief detect the endian of the system
+    /// @details
+    /// Some CPUs are big endian, and others are little endian.
+    /// The endian of the system is detected by checking the first byte of the
+    /// 32-bit integer 1. If the first byte is 0, the system is big endian.
+    /// @return if the system is big endian, return true, otherwise false
     bool isBigEndian() const;
 
 public:
