@@ -15,6 +15,35 @@ bool ParticlesExporter::isBigEndian() const {
     return first_byte == 0;
 }
 
+std::string ParticlesExporter::dataArrayBegin(
+    const std::string& type, const std::string& name, int numberOfComponents, const std::string& format, size_t offset
+) const {
+    // --- assertion ---
+    // allowed types and format https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html
+    // -----------------
+    assert(
+        type == "Int8" || type == "UInt8" || type == "Int16" || type == "UInt16" || type == "UInt32" ||
+        type == "Int32" || type == "UInt64" || type == "Int64" || type == "Float32" || type == "Float64"
+    );                                                                       // allowed data types
+    assert(format == "ascii" || format == "binary" || format == "appended"); // allowed formats
+    assert(
+        format == "appended" && offset != SIZE_MAX || format != "appended" && offset == SIZE_MAX
+    ); // offset is required for appended format
+
+    std::string ret;
+    ret += "<DataArray type=\"" + type + "\" Name=\"" + name + "\" NumberOfComponents=\"" +
+           std::to_string(numberOfComponents) + "\" format=\"" + format + "\"";
+    if (format == "appended") {
+        ret += " offset=\"" + std::to_string(offset) + "\"";
+    }
+    ret += ">";
+    return ret;
+}
+
+std::string ParticlesExporter::dataArrayEnd() const {
+    return "</DataArray>";
+}
+
 void ParticlesExporter::setParticles(const Particles& particles) {
     this->particles = particles;
 }
@@ -60,8 +89,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     /// ----- Points -----
     /// ------------------
     ofs << "<Points>" << endl;
-    ofs << "<DataArray Name=\"Position\" type=\"Float64\" NumberOfComponents=\"3\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Float64", "Position", 3, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_points = particles.size() * 3 * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_points), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -78,8 +107,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     // ---------------------
     ofs << "<PointData>" << endl;
     // Particle Type
-    ofs << "<DataArray type=\"Int32\" Name=\"Particle Type\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Int32", "Particle Type", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_particle_type = particles.size() * sizeof(int32_t);
     binaryData.write(reinterpret_cast<char*>(&length_particle_type), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -87,8 +116,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&type), sizeof(int32_t));
     }
     // Velocity
-    ofs << "<DataArray type=\"Float64\" Name=\"Velocity\" NumberOfComponents=\"3\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Float64", "Velocity", 3, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_velocity = particles.size() * 3 * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_velocity), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -100,8 +129,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&vz), sizeof(double));
     }
     // Pressure
-    ofs << "<DataArray type=\"Float64\" Name=\"Pressure\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Float64", "Pressure", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_pressure = particles.size() * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_pressure), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -109,8 +138,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&pressure), sizeof(double));
     }
     // Number Density
-    ofs << "<DataArray type=\"Float64\" Name=\"Number Density\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Float64", "Number Density", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_number_density = particles.size() * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_number_density), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -118,9 +147,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&number_density), sizeof(double));
     }
     // Number Density Ratio
-    ofs << "<DataArray type=\"Float64\" Name=\"Number Density Ratio\" NumberOfComponents=\"1\" format=\"appended\" "
-           "offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Float64", "Number Density Ratio", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_number_density_ratio = particles.size() * sizeof(double);
     binaryData.write(reinterpret_cast<char*>(&length_number_density_ratio), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -128,9 +156,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&number_density_ratio), sizeof(double));
     }
     // Boundary Condition
-    ofs << "<DataArray type=\"Int32\" Name=\"Boundary Condition\" NumberOfComponents=\"1\" format=\"appended\" "
-           "offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Int32", "Boundary Condition", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_boundary_condition = particles.size() * sizeof(int32_t);
     binaryData.write(reinterpret_cast<char*>(&length_boundary_condition), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -138,8 +165,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&boundary_condition), sizeof(int32_t));
     }
     // Fluid Type
-    ofs << "<DataArray type=\"Int32\" Name=\"Fluid Type\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Int32", "Fluid Type", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_fluid_type = particles.size() * sizeof(int32_t);
     binaryData.write(reinterpret_cast<char*>(&length_fluid_type), sizeof(uint64_t));
     for (const auto& p : particles) {
@@ -152,8 +179,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     /// ------------------
     ofs << "<Cells>" << endl;
     // connectivity
-    ofs << "<DataArray type=\"Int64\" Name=\"connectivity\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Int64", "connectivity", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_connectivity = particles.size() * sizeof(int64_t);
     binaryData.write(reinterpret_cast<char*>(&length_connectivity), sizeof(uint64_t));
     for (size_t i = 0; i < particles.size(); i++) {
@@ -161,8 +188,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&connectivity), sizeof(int64_t));
     }
     // offsets
-    ofs << "<DataArray type=\"Int64\" Name=\"offsets\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("Int64", "offsets", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_offset = particles.size() * sizeof(int64_t);
     binaryData.write(reinterpret_cast<char*>(&length_offset), sizeof(uint64_t));
     for (size_t i = 0; i < particles.size(); i++) {
@@ -170,8 +197,8 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
         binaryData.write(reinterpret_cast<char*>(&offset), sizeof(int64_t));
     }
     // types
-    ofs << "<DataArray type=\"UInt8\" Name=\"types\" NumberOfComponents=\"1\" format=\"appended\" offset=\""
-        << binaryData.tellp() << "\"/>" << endl;
+    ofs << dataArrayBegin("UInt8", "types", 1, "appended", binaryData.tellp()) << endl;
+    ofs << dataArrayEnd() << endl;
     uint64_t length_types = particles.size() * sizeof(uint8_t);
     binaryData.write(reinterpret_cast<char*>(&length_types), sizeof(uint64_t));
     for (const auto& p : particles) {

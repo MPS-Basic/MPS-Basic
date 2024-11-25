@@ -26,6 +26,24 @@ private:
     /// @return if the system is big endian, return true, otherwise false
     bool isBigEndian() const;
 
+    /// @brief write the header of DataArray for the VTK format
+    /// @param type type of data (e.g., Float32, Int32)
+    /// @param name Name of the data array
+    /// @param numberOfComponents  number of components of the data array
+    /// @param format format of the data array (ascii, binary, appended)
+    /// @param offset offset of the data array in the appended format
+    /// @return the header of the DataArray
+    std::string dataArrayBegin(
+        const std::string& type,
+        const std::string& name,
+        int numberOfComponents,
+        const std::string& format,
+        size_t offset = SIZE_MAX
+    ) const;
+    /// @brief write the end of DataArray for the VTK format
+    /// @return the end of the DataArray
+    std::string dataArrayEnd() const;
+
 public:
     Particles particles;
 
@@ -43,6 +61,7 @@ public:
     /// @param time current time in the simulation
     /// @param n0ForNumberDensity reference number density for the number density calculation
     void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
+    
     /// @brief Export the particles to a file in the CSV format.
     /// @param path path to the file to write
     /// @param time current time in the simulation
