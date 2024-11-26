@@ -61,7 +61,6 @@ public:
     /// @param time current time in the simulation
     /// @param n0ForNumberDensity reference number density for the number density calculation
     void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
-    
     /// @brief Export the particles to a file in the CSV format.
     /// @param path path to the file to write
     /// @param time current time in the simulation
