@@ -64,8 +64,121 @@ void ParticlesExporter::toProf(const fs::path& path, const double& time) {
         ofs << endl;
     }
 }
+void ParticlesExporter::toVtuAscii(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
+    std::ofstream ofs(path);
+    if (ofs.fail()) {
+        cerr << "cannot write " << path << endl;
+        std::exit(-1);
+    }
 
-void ParticlesExporter::toVtu(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
+    // header
+    ofs << "<?xml version='1.0' encoding='UTF-8'?>" << endl;
+    ofs << "<VTKFile type=\"UnstructuredGrid\" version=\"1.0\" header_type=\"UInt64\" byte_order=\"";
+    if (isBigEndian()) {
+        ofs << "BigEndian";
+    } else {
+        ofs << "LittleEndian";
+    }
+    ofs << "\">" << endl;
+    ofs << "<UnstructuredGrid>" << endl
+        << "<Piece NumberOfPoints=\"" << particles.size() << "\" NumberOfCells=\"" << particles.size() << "\">" << endl;
+
+    /// ------------------
+    /// ----- Points -----
+    /// ------------------
+    ofs << "<Points>" << endl;
+    ofs << dataArrayBegin("Float64", "Position", 3, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << p.position.x() << " " << p.position.y() << " " << p.position.z() << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    ofs << "</Points>" << endl;
+
+    // ---------------------
+    // ----- PointData -----
+    // ---------------------
+    ofs << "<PointData>" << endl;
+    // Particle Type
+    ofs << dataArrayBegin("Int32", "Particle Type", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << static_cast<int32_t>(p.type) << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // Velocity
+    ofs << dataArrayBegin("Float64", "Velocity", 3, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << p.velocity.x() << " " << p.velocity.y() << " " << p.velocity.z() << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // Pressure
+    ofs << dataArrayBegin("Float64", "Pressure", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << p.pressure << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // Number Density
+    ofs << dataArrayBegin("Float64", "Number Density", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << p.numberDensity << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // Number Density Ratio
+    ofs << dataArrayBegin("Float64", "Number Density Ratio", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << p.numberDensity / n0ForNumberDensity << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // Boundary Condition
+    ofs << dataArrayBegin("Int32", "Boundary Condition", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << static_cast<int32_t>(p.boundaryCondition) << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // Fluid Type
+    ofs << dataArrayBegin("Int32", "Fluid Type", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << p.fluidType << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    ofs << "</PointData>" << endl;
+
+    /// -----------------
+    /// ----- Cells -----
+    /// -----------------
+    ofs << "<Cells>" << endl;
+    // connectivity
+    ofs << dataArrayBegin("Int64", "connectivity", 1, "ascii") << endl;
+    for (size_t i = 0; i < particles.size(); i++) {
+        ofs << i << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // offsets
+    ofs << dataArrayBegin("Int64", "offsets", 1, "ascii") << endl;
+    for (size_t i = 0; i < particles.size(); i++) {
+        ofs << i + 1 << endl;
+    }
+    ofs << dataArrayEnd() << endl;
+    // types
+    ofs << dataArrayBegin("UInt8", "types", 1, "ascii") << endl;
+    for (const auto& p : particles) {
+        ofs << 1 << endl; // 1: particle
+    }
+    ofs << dataArrayEnd() << endl;
+    ofs << "</Cells>" << endl;
+    ofs << "</Piece>" << endl;
+    // ---------------------
+    // ---- Field data  ----
+    // ---------------------
+    ofs << "<FieldData>" << endl;
+    ofs << "<DataArray type=\"Float64\" Name=\"Time\" NumberOfTuples=\"1\" format=\"ascii\">" << endl;
+    ofs << time << endl;
+    ofs << "</DataArray>" << endl;
+    ofs << "</FieldData>" << endl;
+    ofs << "</UnstructuredGrid>" << endl;
+    ofs << "</VTKFile>" << endl;
+}
+
+void ParticlesExporter::toVtuBinary(const fs::path& path, const double& time, const double& n0ForNumberDensity) {
     std::ofstream ofs(path);
     if (ofs.fail()) {
         cerr << "cannot write " << path << endl;
@@ -227,6 +340,16 @@ void ParticlesExporter::toVtu(const fs::path& path, const double& time, const do
     ofs << "_" << binaryData.str() << endl;
     ofs << "</AppendedData>" << endl;
     ofs << "</VTKFile>" << endl;
+}
+
+void ParticlesExporter::toVtu(
+    const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity, const bool binary
+) {
+    if (binary) {
+        toVtuBinary(path, time, n0ForNumberDensity);
+    } else {
+        toVtuAscii(path, time, n0ForNumberDensity);
+    }
 }
 
 void ParticlesExporter::toCsv(const fs::path& path, const double& time) {

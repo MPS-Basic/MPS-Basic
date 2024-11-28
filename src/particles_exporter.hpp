@@ -44,6 +44,18 @@ private:
     /// @return the end of the DataArray
     std::string dataArrayEnd() const;
 
+    /// @brief Export the particles to a file in the VTK zlib format.
+    /// @param path path to the file to write
+    /// @param time current time in the simulation
+    /// @param n0ForNumberDensity reference number density for the number density calculation
+    void toVtuAscii(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
+
+    /// @brief Export the particles to a file in the VTK zlib format.
+    /// @param path path to the file to write
+    /// @param time current time in the simulation
+    /// @param n0ForNumberDensity reference number density for the number density calculation
+    void toVtuBinary(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
+
 public:
     Particles particles;
 
@@ -60,7 +72,13 @@ public:
     /// @param path path to the file to write
     /// @param time current time in the simulation
     /// @param n0ForNumberDensity reference number density for the number density calculation
-    void toVtu(const std::filesystem::path& path, const double& time, const double& n0ForNumberDensity = 1.0);
+    void toVtu(
+        const std::filesystem::path& path,
+        const double& time,
+        const double& n0ForNumberDensity = 1.0,
+        const bool binary                = false
+    );
+
     /// @brief Export the particles to a file in the CSV format.
     /// @param path path to the file to write
     /// @param time current time in the simulation
