@@ -62,7 +62,7 @@ jobs:
         run: |
           URL=$(python3 ${{ github.workspace }}/ci/upload_image.py ${{ github.workspace }}/result/hydrostatic/output_0100.png ${{ secrets.IMGUR_CLIENT_ID }})
           calculationTime=$(grep -o 'Total Simulation time = [0-9]\+h [0-9]\+m [0-9]\+s' ${{ github.workspace }}/result/hydrostatic/console.log | sed 's/Total Simulation time = //')
-          echo -e "Hydrostatic problem was calculated. It took ${calculationTime}.\n <img src=${URL}>" > ${{ steps.strings.outputs.pr-comment }}
+          echo -e "<details><summary>Hydrostatic problem was calculated. It took ${calculationTime}.</summary>\n <img src=${URL}></details>" > ${{ steps.strings.outputs.pr-comment }}
 
       - name: Comment on PR
         env:
