@@ -2,8 +2,9 @@
 
 namespace fs = std::filesystem;
 
-Saver::Saver(const fs::path& dir) {
-    this->dir = dir;
+Saver::Saver(const fs::path& dir, const bool outputVtkInBinary) {
+    this->dir               = dir;
+    this->outputVtkInBinary = outputVtkInBinary;
     fs::create_directories(dir / "prof");
     fs::create_directories(dir / "vtu");
     fs::create_directories(dir / "csv");
@@ -20,7 +21,7 @@ void Saver::save(const MPS& mps, const double time) {
     std::stringstream vtuName;
     vtuName << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".vtu";
     fs::path vtuPath = dir / "vtu" / vtuName.str();
-    exporter.toVtu(vtuPath, time, mps.refValuesForNumberDensity.n0);
+    exporter.toVtu(vtuPath, time, mps.refValuesForNumberDensity.n0, outputVtkInBinary);
 
     std::stringstream csvName;
     csvName << "output_" << std::setfill('0') << std::setw(4) << fileNumber << ".csv";
@@ -28,4 +29,8 @@ void Saver::save(const MPS& mps, const double time) {
     exporter.toCsv(csvPath, time);
 
     fileNumber++;
+}
+
+int Saver::getFileNumber() const {
+    return fileNumber;
 }

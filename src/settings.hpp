@@ -58,4 +58,5 @@ struct Settings {
 
     // i/o
     std::filesystem::path particlesPath; ///< Path for input particle file
+    bool outputVtkInBinary{};              ///< Flag for saving VTK file in binary format
 };

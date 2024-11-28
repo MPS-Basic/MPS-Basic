@@ -127,5 +127,18 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     auto relativeProfPath = yaml["particlesPath"].as<std::string>();
     s.particlesPath       = fs::weakly_canonical(yamlDir / relativeProfPath);
 
+    // outputVtkFormat
+    s.outputVtkInBinary = false;
+    // check if outputVtkFormat is defined in the yaml file since it is optional
+    if (yaml["outputVtkFormat"]) {
+        if (yaml["outputVtkFormat"].as<std::string>() == "binary") {
+            s.outputVtkInBinary = true;
+        } else if (yaml["outputVtkFormat"].as<std::string>() == "ascii") {
+            s.outputVtkInBinary = false;
+        } else {
+            cerr << "unsupported outputVtkFormat: " << yaml["outputVtkFormat"].as<std::string>() << endl;
+            std::exit(-1);
+        }
+    }
     return s;
 }
