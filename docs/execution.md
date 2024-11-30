@@ -100,7 +100,7 @@ For example, the standard output of the command below
 will be written to `result.log`.
 The standard error output will be shown in the console as usual.
 ```bash
-./test.exe > resut.log
+./test.exe > result.log
 ```
 
 In the next example, the standard output will be written to `result.log`,

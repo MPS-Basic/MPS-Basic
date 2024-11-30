@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-Simulation::Simulation() recieves `settingPath`,
+Simulation::Simulation() receives `settingPath`,
 and make Loader load `settings.yml`.
 User-defined pressure calculation method is now set in
 `input.settings.pressureCalculationMethod`.
@@ -55,14 +55,14 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
 }
 ```
 
-### Asigning the Class
+### Assigning the Class
 Then it moves on to switching the pressure method.
-This part consits of three steps.
+This part consists of three steps.
 1. Create PressureCalculator::Interface class variable named `pressureCalculator`.
 2. User-specified Pressure Calculator class (`Implicit`, `Explicit`, ...)
-   will be asigned to the `pressureCalculator` variable, using `if` statements.
+   will be assigned to the `pressureCalculator` variable, using `if` statements.
 3. `pressureCalculator` will be handed over to MPS::MPS(),
-   the constractor of MPS class. Inside MPS::MPS(),
+   the constructor of MPS class. Inside MPS::MPS(),
    `pressureCalculator` will be copied to it's own public attributes.
 
 ```cpp
@@ -75,13 +75,13 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     if (input.settings.pressureCalculationMethod == "Implicit") {
         pressureCalculator.reset(
           new PressureCalculator::Implicit(
-            // arguments for constactor
+            // arguments for constructor
         ));
 
     } else if (input.settings.pressureCalculationMethod == "Explicit") {
         pressureCalculator.reset(
           new PressureCalculator::Explicit(
-            // arguments for constactor
+            // arguments for constructor
         ));
     }
 
@@ -94,10 +94,10 @@ Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
 ```
 @note
 Here we use "Interface Class" and "Smart Pointer".
-See [Coding Techniqes](../coding_techniques.md) for more information.
+See [Coding Techniques](../coding_techniques.md) for more information.
 
 ### Pressure Calculation
-Finally, at each timestep, MPS::stepForward() calls
+Finally, at each time step, MPS::stepForward() calls
 `pressureCalculator` that MPS class maintains, and execute pressure calculation.
 ```cpp
 void MPS::stepForward() {
