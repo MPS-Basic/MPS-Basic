@@ -132,7 +132,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     if (yaml["outputVtkInBinary"]) {
         s.outputVtkInBinary = yaml["outputVtkInBinary"].as<bool>();
     } else {
-         s.outputVtkInBinary = false;
+        s.outputVtkInBinary = false;
     }
     return s;
 }
