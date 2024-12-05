@@ -45,3 +45,4 @@ radiusRatioForLaplacian: 3.1
 # i/o
 # relative path from the directory where this file is located
 particlesPath: ./input.prof
+outputVtkInBinary: true # ascii or binary (if is not specified, false)

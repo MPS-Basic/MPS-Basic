@@ -49,12 +49,12 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update 
-        sudo apt-get install -y ninja-build libomp-dev libvtk9-dev
+        sudo apt-get install -y ninja-build libomp-dev
     
     - name: Install dependencies for macOS # install OpenMP, ninja, vtk
       if: matrix.os == 'macos-latest'
       run: |
-        brew install ninja vtk libomp
+        brew install ninja libomp
         echo "OpenMP_ROOT=$(brew --prefix)/opt/libomp" >> "$GITHUB_ENV"
     
     - uses: ilammy/msvc-dev-cmd@v1 # Set up MSVC environment for Windows

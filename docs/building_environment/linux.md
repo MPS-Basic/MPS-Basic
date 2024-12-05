@@ -20,10 +20,6 @@ For Ubuntu 22.04 and later, please run the following command:
 ```bash
 sudo apt install cmake clang libomp-dev ninja-build
 ```
-If you haven't installed VTK, please install it as well.
-```bash
-sudo apt install libvtk9-dev
-```
 
 (If you're using VSCode,) add the following to ```.vscode/settings.json```.
 Create one if you don't have.

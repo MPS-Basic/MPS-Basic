@@ -16,7 +16,7 @@ namespace chrono = std::chrono;
 
 Simulation::Simulation(fs::path& settingPath, fs::path& outputDirectory) {
     Input input = loader.load(settingPath, outputDirectory);
-    saver       = Saver(outputDirectory);
+    saver       = Saver(outputDirectory, input.settings.outputVtkInBinary);
 
     mps          = MPSFactory::create(input);
     startTime    = input.startTime;
@@ -94,7 +94,7 @@ void Simulation::timeStepReport(
         remain.c_str(),
         ave,
         last,
-        saver.fileNumber,
+        saver.getFileNumber(),
         mps.courant
     );
 
@@ -104,7 +104,7 @@ void Simulation::timeStepReport(
 
 bool Simulation::saveCondition() {
     // NOTE: Is fileNumber really necessary?
-    return time - startTime >= outputPeriod * double(saver.fileNumber);
+    return time - startTime >= outputPeriod * double(saver.getFileNumber());
 }
 
 // NOTE: If this function is also needed in other classes, it should be moved to a separate file.
