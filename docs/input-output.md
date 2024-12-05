@@ -22,7 +22,7 @@ This is a ParaView file just for checking if the input file is correctly generat
 
 ### Generating Input Files
 #### YAML file
-`***.yml` should be modified by the user based on ther desired simulation settings.
+`***.yml` should be modified by the user based on their desired simulation settings.
 
 #### Prof data
 `***.prof` can be made by cpp programs provided in `generator` folder.

@@ -87,7 +87,7 @@ MinGW-w64 comes with libraries. You can manage libraries using
 [MSVC](https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B)
 (Microsoft Visual C++ Compiler) is a compiler developed and provided by Microsoft
 through [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
-MSVC cannnot be used in this MPS-Basic project,
+MSVC cannot be used in this MPS-Basic project,
 because currently [it only supports OpenMP 2.0](https://learn.microsoft.com/en-us/cpp/build/reference/openmp-enable-openmp-2-0-support?view=msvc-170),
 while this project requires OpenMP 5.0.
 
@@ -102,7 +102,7 @@ There are mainly three build systems that Windows users can choose.
 We recommend beginners to use this build system.
 
 ### Make
-`Make` can be installed throuh varios ways such as:
+`Make` can be installed through various ways such as:
 - (Original) MinGW (old and not recommended)
 - MSYS2
 - GnuWin32 (old and not recommended)

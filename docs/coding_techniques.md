@@ -37,7 +37,7 @@ meaning derived classes must override this function.
 In the above example, all the classes that's derived from `Interface` class
 ***must*** override `calc` function, because it's a pure virtual function.
 At the same time,
-those new `calc` functions must recieve `vector<Particles>` as an input,
+those new `calc` functions must receive `vector<Particles>` as an input,
 and return `vector<double>` as an output.
 If you take a look at PressureCalculator::Implicit::calc(), for example,
 you can see it follows the rule defined in this `Interface` class.
@@ -50,7 +50,7 @@ It doesn't have any process in this code, but it's recommended to declare it her
 by c++ rule.
 
 So in short,
-- Interface class defines the input and output of fucntions
+- Interface class defines the input and output of functions
   that its derived class must have.
 - By deriving new class from the interface class, we can guarantee
   that all the derived classes have same input and output.
@@ -85,7 +85,7 @@ public:
 ```
 
 In the main program, first we define `Animal` pointer.
-Then it's asigned to new instance of `Dog` or `Cat`.
+Then it's assigned to new instance of `Dog` or `Cat`.
 ```cpp
 int main() {
     // input data
@@ -119,7 +119,7 @@ If we use a pointer,
   meaning we can determine the entity of the variable dynamically
 - The compiler knows `myAnimal` is `Animal` class, allowing us to call functions
   defined in `Animal` class
-  (which is also defined in either `Dog` or `Cat` clas since we use pure virtual function).
+  (which is also defined in either `Dog` or `Cat` class since we use pure virtual function).
 
 @attention
 This way of pointer usage is dangerous and not recommended.
@@ -181,10 +181,10 @@ we can use `std::move`.
 std::unique_ptr<MyClass> ptr1(new MyClass());
 std::unique_ptr<MyClass> ptr2 = std::move(ptr1);
 // ptr1 now points to nothing.
-// Ownership has been transfered to ptr2
+// Ownership has been transferred to ptr2
 ```
 
-This way of tranfering ownership is especially usefull
+This way of transferring ownership is especially useful
 when we want to use a smart pointer for a function argument.
 ```cpp
 void myFunc(std::unique_ptr<MyClass> ptr){
@@ -199,7 +199,7 @@ In the above example,
 `myFunc(myPtr)` doesn't work because `ptr` in `myFunc` requires an ownership
 that `myPtr` has.
 `myFunc(std::move(myPtr))` works fine because there will the ownership will
-be transfered safely.
+be transferred safely.
 
 To clarify that there will be a transfer in ownership,
 you should add `&&` to the argument.
