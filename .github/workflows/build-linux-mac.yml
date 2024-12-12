@@ -1,5 +1,3 @@
-# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: CMake on Linux/macOS
 
 on:
@@ -10,20 +8,9 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
-
-      # Set up a matrix to run the following 3 configurations:
-      # 1. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
-      #
-      # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        build_type: [Release]
-        cpp_compiler: [clang++, g++]
         include:
           - os: ubuntu-latest
             cpp_compiler: clang++
@@ -33,17 +20,12 @@ jobs:
             cpp_compiler: clang++
           - os: macos-latest
             cpp_compiler: g++
-  
+    
+    name: CI on ${{ matrix.os }} ${{ matrix.cpp_compiler }}
+    runs-on: ${{ matrix.os }}
     steps:
+    
     - uses: actions/checkout@v4
-
-    - name: Set reusable strings
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-        echo "cmake-generator=Ninja" >> "$GITHUB_OUTPUT"
 
     - name: Install dependencies for Ubuntu # Install OpenMP, ninja
       if: matrix.os == 'ubuntu-latest'
@@ -57,27 +39,11 @@ jobs:
         brew install ninja libomp
         echo "OpenMP_ROOT=$(brew --prefix)/opt/libomp" >> "$GITHUB_ENV"
     
-    - uses: ilammy/msvc-dev-cmd@v1 # Set up MSVC environment for Windows
-      if: matrix.os == 'windows-latest'
-    - name: Install dependencies for Windows # Install ninja
-      if: matrix.os == 'windows-latest'
-      run: choco install ninja
-    
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: >
-        cmake
-        -G ${{ steps.strings.outputs.cmake-generator }} 
-        -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
-    
+      run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+
     - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build build
 
     - name: Test with CTest
-      # Run the tests with CTest. You can also run the tests with the test runner of your choice.
-      run: ctest --test-dir ${{ steps.strings.outputs.build-output-dir }} -j
+      run: ctest --test-dir build -j
