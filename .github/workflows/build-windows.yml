@@ -6,7 +6,6 @@ on:
       - main
   pull_request:
 
-
 jobs:
   build:
     runs-on: windows-latest
@@ -22,26 +21,25 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        persist-credentials: false
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{matrix.sys}}
+          update: true
+          pacboy: >-
+            toolchain:p
+            cmake:p
+            ninja:p
 
-    - uses: msys2/setup-msys2@v2
-      with:
-        msystem: ${{matrix.sys}}
-        update: true
-        pacboy: >-
-          toolchain:p
-          cmake:p
-          ninja:p
+      - name: Configure CMake
+        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
 
-    - name: Configure CMake
-      run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
-    
-    - name: Build
-      run: cmake --build build
-    
-    - name: Test with CTest
-      run: ctest --test-dir build -j
+      - name: Build
+        run: cmake --build build
+
+      - name: Test with CTest
+        run: ctest --test-dir build -j

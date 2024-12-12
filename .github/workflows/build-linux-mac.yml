@@ -20,30 +20,29 @@ jobs:
             cpp_compiler: clang++
           - os: macos-latest
             cpp_compiler: g++
-    
+
     name: CI on ${{ matrix.os }} ${{ matrix.cpp_compiler }}
     runs-on: ${{ matrix.os }}
     steps:
-    
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies for Ubuntu # Install OpenMP, ninja
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update 
-        sudo apt-get install -y ninja-build libomp-dev
-    
-    - name: Install dependencies for macOS # install OpenMP, ninja, vtk
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install ninja libomp
-        echo "OpenMP_ROOT=$(brew --prefix)/opt/libomp" >> "$GITHUB_ENV"
-    
-    - name: Configure CMake
-      run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+      - name: Install dependencies for Ubuntu # Install OpenMP, ninja
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update 
+          sudo apt-get install -y ninja-build libomp-dev
 
-    - name: Build
-      run: cmake --build build
+      - name: Install dependencies for macOS # install OpenMP, ninja
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install ninja libomp
+          echo "OpenMP_ROOT=$(brew --prefix)/opt/libomp" >> "$GITHUB_ENV"
 
-    - name: Test with CTest
-      run: ctest --test-dir build -j
+      - name: Configure CMake
+        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test with CTest
+        run: ctest --test-dir build -j
