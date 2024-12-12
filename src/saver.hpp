@@ -15,16 +15,18 @@
  *
  */
 class Saver {
-public:
+private:
     ParticlesExporter exporter;
     int fileNumber = 0;
     std::filesystem::path dir;
+    bool outputVtkInBinary = false;
 
+public:
     Saver() = default;
 
-    Saver(const std::filesystem::path& dir);
+    Saver(const std::filesystem::path& dir, const bool binaryFormat);
 
     void save(const MPS& mps, const double time);
 
-private:
+    int getFileNumber() const;
 };
