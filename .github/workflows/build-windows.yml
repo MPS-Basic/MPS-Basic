@@ -39,5 +39,9 @@ jobs:
 
     - name: Configure CMake
       run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
+    
     - name: Build
       run: cmake --build build
+    
+    - name: Test with CTest
+      run: ctest --test-dir build -j
