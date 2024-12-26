@@ -1,6 +1,7 @@
 #include "../src/particle.hpp"
 #include "../src/particles.hpp"
 #include "../src/particles_exporter.hpp"
+#include "config_loader.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -14,11 +15,15 @@ void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_rang
 bool isInside(Eigen::Vector3d& position, std::vector<double>& x_range, std::vector<double>& y_range, double& eps);
 
 int main(int argc, char** argv) {
+    fs::path settingPath = "./input/dambreak/settings.yml";
+
     Particles particles;
 
-    double l0      = 0.025;
+    double l0 = getParticleDistance(settingPath);
+    std::cout << "Particle distance:\t" << l0 << std::endl;
     double eps     = 0.01 * l0;
-    double density = 1000.0;
+    double density = getDensity(settingPath);
+    std::cout << "Density of fluid:\t" << density << std::endl;
 
     std::vector<double> fluid_x_range{0.0, 1.0};
     std::vector<double> fluid_y_range{0.0, 0.6};
@@ -73,8 +78,9 @@ int main(int argc, char** argv) {
 
     ParticlesExporter exporter;
     exporter.setParticles(particles);
-    exporter.toProf(fs::path("input/dambreak/input.prof"), 0.0);
-    exporter.toVtu(fs::path("input/dambreak/input.vtu"), 0.0);
+    auto profPath = getParticlesPath(settingPath);
+    exporter.toProf(profPath, 0.0);
+    exporter.toVtu(profPath.replace_extension("vtu"), 0.0);
 }
 
 void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps) {
