@@ -32,7 +32,7 @@ jobs:
          cmake
          -G Ninja
          -DCMAKE_BUILD_TYPE=Release
-         -DCMAKE_CXX_COMPILER=clang++-15
+         -DCMAKE_CXX_COMPILER=clang++
          -S ${{ github.workspace }}
          -B  ${{ steps.strings.outputs.build-output-dir }}
 
