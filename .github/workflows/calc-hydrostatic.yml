@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies for Ubuntu # Install ninja, VTK, OpenMP, and Python packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libomp-15-dev
+          sudo apt-get install -y ninja-build libomp-dev
           pip3 install meshio matplotlib PyGithub pyimgur
 
       - name: Configure CMake
@@ -32,7 +32,7 @@ jobs:
          cmake
          -G Ninja
          -DCMAKE_BUILD_TYPE=Release
-         -DCMAKE_CXX_COMPILER=clang++-15
+         -DCMAKE_CXX_COMPILER=clang++
          -S ${{ github.workspace }}
          -B  ${{ steps.strings.outputs.build-output-dir }}
 
