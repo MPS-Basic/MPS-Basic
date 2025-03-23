@@ -7,12 +7,18 @@
 
 /**
  * @brief Enum class for particle type
+ * @details
+ * - Ghost: Ghost particle (outside of the domain, not used for calculation)
+ * - Fluid: Fluid particle
+ * - Wall: Wall particle
+ * - DummyWall: Dummy wall particle (pressure is not calculated)
+ * Values are same as the [Textbook](https://www.kinokuniya.co.jp/f/dsg-01-9784621088340).
  */
 enum class ParticleType {
-    Ghost,     ///< Ghost particle (outside of the domain, not used for calculation)
-    Fluid,     ///< Fluid particle
-    Wall,      ///< Wall particle
-    DummyWall, ///< Dummy wall particle (pressure is not calculated)
+    Ghost     = -1, ///< Ghost particle (outside of the domain, not used for calculation)
+    Fluid     = 0,  ///< Fluid particle
+    Wall      = 2,  ///< Wall particle
+    DummyWall = 3,  ///< Dummy wall particle (pressure is not calculated)
 };
 
 /**
