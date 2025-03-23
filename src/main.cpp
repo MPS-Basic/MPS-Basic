@@ -3,6 +3,8 @@
 
 #include <argparse/argparse.hpp>
 #include <filesystem>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 using std::cerr;
 using std::cout;
@@ -18,17 +20,22 @@ namespace fs = std::filesystem;
  */
 int main(int argc, char** argv) {
     argparse::ArgumentParser program("mps");
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    console_sink->set_level(spdlog::level::info);
+    auto error_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
+    error_sink->set_level(spdlog::level::err);
+    spdlog::logger logger("console", {console_sink, error_sink});
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>(logger));
 
     program.add_argument("-s", "--setting")
         .required()
         .help("path to setting file")
         .action([](const std::string& value) {
             if (!fs::exists(value)) {
-                cout << "ERROR: The setting file " << value << " does not exist" << endl;
-                cerr << "ERROR: The setting file " << value << " does not exist" << endl;
+                spdlog::error("The setting file {} does not exist", value);
                 exit(-1);
             }
-            cout << "Setting file: " << value << endl;
+            spdlog::info("Setting file: {}", value);
             return value;
         });
 
@@ -37,11 +44,10 @@ int main(int argc, char** argv) {
         .help("path to output directory")
         .action([](const std::string& value) {
             if (!fs::exists(value)) {
-                cout << "ERROR: The output directory " << value << " does not exist" << endl;
-                cerr << "ERROR: The output directory " << value << " does not exist" << endl;
+                spdlog::error("The output directory {} does not exist", value);
                 exit(-1);
             }
-            cout << "Output directory: " << value << endl;
+            spdlog::error("Output directory: {}", value);
             fs::create_directories(value);
             return value;
         });
