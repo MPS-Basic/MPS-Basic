@@ -24,10 +24,8 @@ jobs:
       - name: Install dependencies for Ubuntu # Install ninja, VTK, OpenMP, and Python packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libomp-dev libvtk9-dev
-      - uses: astral-sh/setup-uv@v3
-        with:
-          enable-cache: true
+          sudo apt-get install -y ninja-build libomp-dev
+      - uses: astral-sh/setup-uv@v5
       - name: Configure CMake
         run: >
          cmake
