@@ -61,13 +61,31 @@ void MPS::stepForward() {
 }
 
 void MPS::calGravity() {
-#pragma omp parallel for
-    for (auto& p : particles) {
-        if (p.type == ParticleType::Fluid) {
-            p.acceleration += settings.gravity;
+    if(settings.directInput) {
+    #pragma omp parallel for
+        for (auto& p : particles) {
+            if (p.type == ParticleType::Fluid) {
+                p.acceleration += settings.gDirectInput;
+            } else {
+                p.acceleration.setZero();
+            }
+        }
+    } else {
+    #pragma omp parallel for
+        for (auto& p : particles) {
+            double gAngle = settings.gAngle; // also can change angle by time
 
-        } else {
-            p.acceleration.setZero();
+            if (p.type == ParticleType::Fluid) {
+                double theta = settings.gAngle * M_PI / 180;
+                Eigen::Vector3d gravity(
+                    settings.gNorm * sin(theta),
+                    -settings.gNorm * cos(theta),
+                    0.0 // in XY plane
+                );
+                p.acceleration += gravity;
+            } else {
+                p.acceleration.setZero();
+            }
         }
     }
 }
@@ -79,8 +97,7 @@ void MPS::calViscosity(const double& re) {
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        if (pi.type != ParticleType::Fluid)
-            continue;
+        if (pi.type != ParticleType::Fluid) continue;
 
         Eigen::Vector3d viscosityTerm = Eigen::Vector3d::Zero();
 

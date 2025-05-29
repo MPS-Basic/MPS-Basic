@@ -29,7 +29,10 @@ struct Settings {
     double defaultDensity{};     ///< default density for fluid and wall particles.
 
     // gravity
-    Eigen::Vector3d gravity; ///< Gravity
+    bool directInput;
+    Eigen::Vector3d gDirectInput; ///< Gravity vector when using direct input
+    double gNorm;                 ///< Norm of gravity when using norm and angle
+    double gAngle;                ///< Angle of gravity when using norm and angle
 
     // free surface detection
     // surface detection based on number density
