@@ -45,4 +45,4 @@ jobs:
         run: cmake --build build
 
       - name: Test with CTest
-        run: ctest --test-dir build -j
+        run: ./build/mps_test
