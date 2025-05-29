@@ -42,4 +42,4 @@ jobs:
         run: cmake --build build
 
       - name: Test with CTest
-        run: .\build\mps_test.exe
+        run: ./build/mps_test.exe
