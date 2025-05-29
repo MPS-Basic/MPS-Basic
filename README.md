@@ -34,6 +34,8 @@ Modernized Moving Particle Semi-implicit/Simulation method code written in C++.
 	```bash
 	cmake -S . -B build
 	```
+	If you use cmake 4.0 or later, you need to add
+	`-DCMAKE_POLICY_VERSION_MINIMUM=3.5` to the above command.
 1. Execute build
 	```bash
 	cmake --build build
