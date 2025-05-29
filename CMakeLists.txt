@@ -73,10 +73,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
   GIT_TAG 3.4.0
 )
-if (NOT eigen_POPULATED)
-  message(STATUS "Fetching Eigen...")
-  FetchContent_Populate(Eigen)
-endif()
+FetchContent_MakeAvailable(Eigen)
 target_include_directories(${PROJECT_NAME} PRIVATE ${eigen_SOURCE_DIR})
 
 # -----------------------
@@ -125,13 +122,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
   GIT_TAG 0.8.0
 )
-FetchContent_GetProperties(yaml-cpp)
-
-if(NOT yaml-cpp_POPULATED)
-  message(STATUS "Fetching yaml-cpp...")
-  FetchContent_Populate(yaml-cpp)
-  add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml-cpp_BINARY_DIR})
-endif()
+FetchContent_MakeAvailable(yaml-cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC yaml-cpp::yaml-cpp)
 
@@ -143,12 +134,8 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/ben-strasser/fast-cpp-csv-parser.git
   GIT_TAG a71a87e700b0fb92645c6b124742cbf326e0f7b1
 )
-
-if(NOT fast-cpp-csv-parser_POPULATED)
-  message(STATUS "Fetching fast-cpp-csv-parser...")
-  FetchContent_Populate(fast-cpp-csv-parser)
-endif()
-
+FetchContent_MakeAvailable(fast-cpp-csv-parser)
+message(STATUS "Fetching fast-cpp-csv-parser...")
 target_include_directories(${PROJECT_NAME} PRIVATE ${fast-cpp-csv-parser_SOURCE_DIR})
 
 # ------------------------------
