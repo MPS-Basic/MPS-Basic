@@ -83,7 +83,7 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.kinematicViscosity = yaml["kinematicViscosity"].as<double>();
 
     // gravity
-    s.directInput = yaml["direct-input"].as<bool>();
+    s.directInput     = yaml["direct-input"].as<bool>();
     s.gDirectInput[0] = yaml["gravity-direct-input"][0].as<double>();
     s.gDirectInput[1] = yaml["gravity-direct-input"][1].as<double>();
     s.gDirectInput[2] = yaml["gravity-direct-input"][2].as<double>();
