@@ -36,7 +36,7 @@ jobs:
             ninja:p
 
       - name: Configure CMake
-        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 # yaml-cpp cannot be built with cmake 4
+        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: cmake --build build
