@@ -36,10 +36,10 @@ jobs:
             ninja:p
 
       - name: Configure CMake
-        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release
+        run: cmake -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 # yaml-cpp cannot be built with cmake 4
 
       - name: Build
         run: cmake --build build
 
       - name: Test with CTest
-        run: ctest --test-dir build -j
+        run: ./build/mps_test.exe
