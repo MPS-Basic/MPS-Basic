@@ -25,7 +25,6 @@
 class MPS {
 public:
     Settings settings;                   ///< Settings for the simulation
-    Eigen::Vector3d gravity;             ///< Gravity vector for the simulation
     RefValues refValuesForNumberDensity; ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
     RefValues refValuesForLaplacian;     ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
     RefValues refValuesForGradient;      ///< Reference values for the simulation (\f$n^0\f$, \f$\lambda^0\f$)
@@ -39,7 +38,6 @@ public:
     MPS() = default;
 
     MPS(const Input& input,
-        Eigen::Vector3d& gravity,
         std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
         std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector);
 

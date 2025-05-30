@@ -29,8 +29,8 @@ struct Settings {
     double defaultDensity{};     ///< default density for fluid and wall particles.
 
     // gravity
-    bool xyzInput;
-    Eigen::Vector3d gXyzInput; ///< Gravity vector when using xyz input
+    bool directInput;
+    Eigen::Vector3d gDirectInput; ///< Gravity vector when using direct input
     double gNorm;                 ///< Norm of gravity when using norm and angle
     double gAngle;                ///< Angle of gravity when using norm and angle
 

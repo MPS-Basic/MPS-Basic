@@ -16,9 +16,9 @@ defaultDensity: 1000.0 # If the particle density is not specified, this value is
 kinematicViscosity: 1.0e-04 # 少数第一位まで書かないと文字列として認識されてしまう
 
 # gravity
-xyz-input: true # xyz xyz input OR designate norm and angle
-# xyz input
-gravity-xyz-input: [0.0, -9.8, 0.0]
+direct-input: true # direct xyz input OR designate norm and angle
+# direct input
+gravity-direct-input: [0.0, -9.8, 0.0]
 # designate norm and angle, in XY plane ONLY
 gravity-norm: 9.8
 gravity-angle: 0 # in degrees, counter-clockwise from -Y direction
