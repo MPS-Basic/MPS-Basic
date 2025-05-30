@@ -14,12 +14,14 @@ using std::endl;
 
 MPS::MPS(
     const Input& input,
+    Eigen::Vector3d& gravity,
     std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
     std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector
 ) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
+    this->gravity            = gravity;
     this->pressureCalculator = std::move(pressureCalculator);
     this->surfaceDetector    = std::move(surfaceDetector);
     this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
@@ -61,31 +63,12 @@ void MPS::stepForward() {
 }
 
 void MPS::calGravity() {
-    if(settings.directInput) {
-    #pragma omp parallel for
-        for (auto& p : particles) {
-            if (p.type == ParticleType::Fluid) {
-                p.acceleration += settings.gDirectInput;
-            } else {
-                p.acceleration.setZero();
-            }
-        }
-    } else {
-    #pragma omp parallel for
-        for (auto& p : particles) {
-            double gAngle = settings.gAngle; // also can change angle by time
-
-            if (p.type == ParticleType::Fluid) {
-                double theta = settings.gAngle * M_PI / 180;
-                Eigen::Vector3d gravity(
-                    settings.gNorm * sin(theta),
-                    -settings.gNorm * cos(theta),
-                    0.0 // in XY plane
-                );
-                p.acceleration += gravity;
-            } else {
-                p.acceleration.setZero();
-            }
+#pragma omp parallel for
+    for (auto& p : particles) {
+        if (p.type == ParticleType::Fluid) {
+            p.acceleration += gravity;
+        } else {
+            p.acceleration.setZero();
         }
     }
 }
