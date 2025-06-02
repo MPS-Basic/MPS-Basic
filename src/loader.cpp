@@ -87,8 +87,8 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.gXyzInput[0] = yaml["gravity-xyz-input"][0].as<double>();
     s.gXyzInput[1] = yaml["gravity-xyz-input"][1].as<double>();
     s.gXyzInput[2] = yaml["gravity-xyz-input"][2].as<double>();
-    s.gNorm  = yaml["gravity-norm"].as<double>();
-    s.gAngle = yaml["gravity-angle"].as<double>();
+    s.gNorm        = yaml["gravity-norm"].as<double>();
+    s.gAngle       = yaml["gravity-angle"].as<double>();
 
     // free surface detection
     s.surfaceDetection_numberDensity_threshold = yaml["surfaceDetection-numberDensity-threshold"].as<double>();
