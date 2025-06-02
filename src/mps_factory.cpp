@@ -15,7 +15,7 @@ MPS MPSFactory::create(const Input& input) {
     } else {
         double gNorm  = input.settings.gNorm;
         double gAngle = input.settings.gAngle;
-        double theta  = gAngle * M_PI / 180.0; // Convert angle to radians
+        double theta  = gAngle * M_PI / 180.0;                   // Convert angle to radians
         gravity << gNorm * sin(theta), -gNorm * cos(theta), 0.0; // Gravity in XY plane
     }
 
