@@ -72,6 +72,8 @@ int main(int argc, char** argv) {
 
     ParticlesExporter exporter;
     exporter.setParticles(particles);
-    exporter.toProf(fs::path("input/hydrostatic/input.prof"), 0.0);
-    exporter.toVtu(fs::path("input/hydrostatic/input.vtu"), 0.0);
+    std::string parentPath = "input/hydrostatic";
+    exporter.generatorDialogue(fs::path(parentPath));  
+    exporter.toProf(fs::path(parentPath+"/input.prof"), 0.0);
+    exporter.toVtu(fs::path(parentPath+"/input.vtu"), 0.0);
 }
