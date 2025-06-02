@@ -80,7 +80,8 @@ void MPS::calViscosity(const double& re) {
 
 #pragma omp parallel for
     for (auto& pi : particles) {
-        if (pi.type != ParticleType::Fluid) continue;
+        if (pi.type != ParticleType::Fluid)
+            continue;
 
         Eigen::Vector3d viscosityTerm = Eigen::Vector3d::Zero();
 
