@@ -11,7 +11,7 @@ namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBou
 MPS MPSFactory::create(const Input& input) {
     Eigen::Vector3d gravity = Eigen::Vector3d::Zero();
     if (input.settings.xyzInput) {
-        gravity = input.settings.gXyzInput;
+        gravity = input.settings.gravity;
     } else {
         double gNorm  = input.settings.gNorm;
         double gAngle = input.settings.gAngle;

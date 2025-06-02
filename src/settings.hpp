@@ -30,7 +30,7 @@ struct Settings {
 
     // gravity
     bool xyzInput;
-    Eigen::Vector3d gXyzInput; ///< Gravity vector when using xyz input
+    Eigen::Vector3d gravity; ///< Gravity vector when using xyz input
     double gNorm;              ///< Norm of gravity when using norm and angle
     double gAngle;             ///< Angle of gravity when using norm and angle
 
