@@ -53,9 +53,14 @@ void ParticlesExporter::generatorDialogue(const fs::path& parentPath) {
         fs::create_directories(parentPath);
         std::cout << "New directory has been made: " << parentPath << std::endl;
     } else {
-        std::cout << "The following files might be overwritten in the directory: " << parentPath << std::endl;
         for (const auto& entry : fs::directory_iterator(parentPath)) {
+            bool inputFileFound = false;
             if (entry.path().filename().string().find("input") == 0) {
+                if (!inputFileFound) {
+                    // Show the message only once when "input.xxx" file was found.
+                    std::cout << "The following files might be overwritten in the directory: " << parentPath << std::endl;
+                    inputFileFound = true;
+                } 
                 std::cout << "|   " << entry.path().filename() << std::endl;
             }
         }
