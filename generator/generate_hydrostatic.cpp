@@ -75,9 +75,5 @@ int main(int argc, char** argv) {
     exporter.setParticles(particles);
     std::string parentPath = "input/hydrostatic";
     GeneratorDialogue gd;
-    gd.generatorDialogue(
-        fs::path(parentPath), 
-        particles, 
-        {".prof", ".vtu"}
-    );  
+    gd.generatorDialogue(fs::path(parentPath), particles, {".prof", ".vtu"});
 }
