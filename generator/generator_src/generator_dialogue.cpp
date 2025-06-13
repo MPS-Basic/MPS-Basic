@@ -4,9 +4,7 @@
 namespace fs = std::filesystem;
 
 void GeneratorDialogue::generatorDialogue(
-    const fs::path& parentPath, 
-    const Particles& particles, 
-    const std::vector<std::string>& extensions
+    const fs::path& parentPath, const Particles& particles, const std::vector<std::string>& extensions
 ) {
     if (extensions.empty()) {
         std::cerr << "No file extensions provided for exporting particles." << std::endl;
