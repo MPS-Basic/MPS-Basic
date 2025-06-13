@@ -11,7 +11,13 @@
 
 namespace fs = std::filesystem;
 
-bool isInside(Eigen::Vector3d& position, std::vector<double>& x_range, std::vector<double>& y_range, std::vector<double>& z_range, double& eps);
+bool isInside(
+    Eigen::Vector3d& position,
+    std::vector<double>& x_range,
+    std::vector<double>& y_range,
+    std::vector<double>& z_range,
+    double& eps
+);
 
 int main(int argc, char** argv) {
     Particles particles;
