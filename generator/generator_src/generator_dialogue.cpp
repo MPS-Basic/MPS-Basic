@@ -1,5 +1,4 @@
 #include "generator_dialogue.hpp"
-#include "../../src/particles.hpp"
 #include "../../src/particles_exporter.hpp"
 
 namespace fs = std::filesystem;
