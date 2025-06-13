@@ -62,5 +62,4 @@ void GeneratorDialogue::generatorDialogue(
             std::cout << "Particles exported to " << filePath << std::endl;
         }
     }
-
 }
