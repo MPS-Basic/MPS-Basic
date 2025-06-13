@@ -1,6 +1,7 @@
 #include "../src/particle.hpp"
 #include "../src/particles.hpp"
 #include "../src/particles_exporter.hpp"
+#include "generator_src/generator_dialogue.hpp"
 
 #include <filesystem>
 #include <fstream>
@@ -70,13 +71,13 @@ int main(int argc, char** argv) {
         }
     }
 
-    ParticlesExporter exporter;
-    exporter.setParticles(particles);
     std::string parentPath = "input/dambreak";
-    exporter.generatorDialogue(fs::path(parentPath));  
-    exporter.toProf(fs::path(parentPath+"/input.prof"), 0.0);
-    exporter.toVtu(fs::path(parentPath+"/input.vtu"), 0.0);
-    std::cout << "Particles generated and saved to " << parentPath << std::endl;
+    GeneratorDialogue gd;
+    gd.generatorDialogue(
+        fs::path(parentPath), 
+        particles, 
+        {".prof", ".vtu"}
+    );  
 }
 
 bool isInside(Eigen::Vector3d& pos, std::vector<double>& x_range, std::vector<double>& y_range, std::vector<double>& z_range, double& eps) {

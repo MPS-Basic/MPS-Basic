@@ -5,12 +5,14 @@
 # to build generators.
 
 add_executable(generate_dambreak
+    generator_src/generator_dialogue.cpp
     generate_dambreak.cpp
 )
 target_include_directories(generate_dambreak PRIVATE ${eigen_SOURCE_DIR})
 target_link_libraries(generate_dambreak PRIVATE particles)
 
 add_executable(generate_hydrostatic
+    generator_src/generator_dialogue.cpp
     generate_hydrostatic.cpp
 )
 target_include_directories(generate_hydrostatic PRIVATE ${eigen_SOURCE_DIR})

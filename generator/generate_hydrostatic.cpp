@@ -1,6 +1,7 @@
 #include "../src/particle.hpp"
 #include "../src/particles.hpp"
 #include "../src/particles_exporter.hpp"
+#include "generator_src/generator_dialogue.hpp"
 
 #include <algorithm>
 #include <array>
@@ -73,8 +74,10 @@ int main(int argc, char** argv) {
     ParticlesExporter exporter;
     exporter.setParticles(particles);
     std::string parentPath = "input/hydrostatic";
-    exporter.generatorDialogue(fs::path(parentPath));  
-    exporter.toProf(fs::path(parentPath+"/input.prof"), 0.0);
-    exporter.toVtu(fs::path(parentPath+"/input.vtu"), 0.0);
-    std::cout << "Particles generated and saved to " << parentPath << std::endl;
+    GeneratorDialogue gd;
+    gd.generatorDialogue(
+        fs::path(parentPath), 
+        particles, 
+        {".prof", ".vtu"}
+    );  
 }

@@ -63,12 +63,6 @@ public:
     /// @param particles
     void setParticles(const Particles& particles);
 
-    /// @brief Show a dialogue to check the directory and file names before exporting the initial particles in generators.
-    /// @details This method will create a directory if it does not exist.
-    /// If the directory exists, it will show the files in the directory and ask for confirmation to overwrite them.
-    /// @param parentPath path to the parent directory where the files will be exported
-    void generatorDialogue(const std::filesystem::path& parentPath);     
-
     /// @brief Export the particles to a file in the Prof format.
     /// @param path path to the file to write
     /// @param time current time in the simulation
