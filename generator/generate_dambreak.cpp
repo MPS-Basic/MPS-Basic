@@ -79,11 +79,7 @@ int main(int argc, char** argv) {
 
     std::string parentPath = "input/dambreak";
     GeneratorDialogue gd;
-    gd.generatorDialogue(
-        fs::path(parentPath), 
-        particles, 
-        {".prof", ".vtu"}
-    );  
+    gd.generatorDialogue(fs::path(parentPath), particles, {".prof", ".vtu"});
 }
 
 bool isInside(Eigen::Vector3d& pos, std::vector<double>& x_range, std::vector<double>& y_range, std::vector<double>& z_range, double& eps) {
