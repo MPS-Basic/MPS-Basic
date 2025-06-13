@@ -53,8 +53,8 @@ void ParticlesExporter::generatorDialogue(const fs::path& parentPath) {
         fs::create_directories(parentPath);
         std::cout << "New directory has been made: " << parentPath << std::endl;
     } else {
+        bool inputFileFound = false;
         for (const auto& entry : fs::directory_iterator(parentPath)) {
-            bool inputFileFound = false;
             if (entry.path().filename().string().find("input") == 0) {
                 if (!inputFileFound) {
                     // Show the message only once when "input.xxx" file was found.
@@ -64,17 +64,19 @@ void ParticlesExporter::generatorDialogue(const fs::path& parentPath) {
                 std::cout << "|   " << entry.path().filename() << std::endl;
             }
         }
-        std::string response;
-        while (true) {
-            std::cout << "Are you sure you want to export the input particles? (y/n): ";
-            std::cin >> response;
-            if (response == "n" || response == "N") {
-                std::cout << "The request has been cancelled." << std::endl;
-                std::exit(0);
-            } else if (response == "y" || response == "Y") {
-                break;
-            } else {
-                std::cout << "Invalid input. Please enter 'y' or 'n'." << std::endl;
+        if (inputFileFound) {
+            std::string response;
+            while (true) {
+                std::cout << "Are you sure you want to export the input particles? (y/n): ";
+                std::cin >> response;
+                if (response == "n" || response == "N") {
+                    std::cout << "The request has been cancelled." << std::endl;
+                    std::exit(0);
+                } else if (response == "y" || response == "Y") {
+                    break;
+                } else {
+                    std::cout << "Invalid input. Please enter 'y' or 'n'." << std::endl;
+                }
             }
         }
     }

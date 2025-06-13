@@ -76,4 +76,5 @@ int main(int argc, char** argv) {
     exporter.generatorDialogue(fs::path(parentPath));  
     exporter.toProf(fs::path(parentPath+"/input.prof"), 0.0);
     exporter.toVtu(fs::path(parentPath+"/input.vtu"), 0.0);
+    std::cout << "Particles generated and saved to " << parentPath << std::endl;
 }
