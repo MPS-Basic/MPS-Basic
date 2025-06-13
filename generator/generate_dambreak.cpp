@@ -82,7 +82,13 @@ int main(int argc, char** argv) {
     gd.generatorDialogue(fs::path(parentPath), particles, {".prof", ".vtu"});
 }
 
-bool isInside(Eigen::Vector3d& pos, std::vector<double>& x_range, std::vector<double>& y_range, std::vector<double>& z_range, double& eps) {
+bool isInside(
+    Eigen::Vector3d& pos,
+    std::vector<double>& x_range,
+    std::vector<double>& y_range,
+    std::vector<double>& z_range,
+    double& eps
+) {
     std::sort(x_range.begin(), x_range.end());
     std::sort(y_range.begin(), y_range.end());
     std::sort(z_range.begin(), z_range.end());
