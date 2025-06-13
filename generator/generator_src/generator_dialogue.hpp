@@ -14,8 +14,6 @@ public:
     /// @param particles Particles to be exported
     /// @param extensions vector of file extensions to be used for exporting the particles
     void generatorDialogue(
-        const std::filesystem::path& parentPath, 
-        const Particles& particles, 
-        const std::vector<std::string>& extensions
+        const std::filesystem::path& parentPath, const Particles& particles, const std::vector<std::string>& extensions
     );
 };
