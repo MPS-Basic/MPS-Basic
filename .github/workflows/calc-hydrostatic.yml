@@ -40,7 +40,7 @@ jobs:
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }}
 
       - name: Generate input
-        run: ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
+        run: echo "y" | ${{ steps.strings.outputs.build-output-dir }}/generator/generate_hydrostatic
 
       - name: Create result directory
         run: mkdir -p ${{ github.workspace }}/result/hydrostatic
