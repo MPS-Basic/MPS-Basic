@@ -1,7 +1,8 @@
 #include "../../src/particles.hpp"
+
 #include <filesystem>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <vector>
 
 class GeneratorDialogue {
