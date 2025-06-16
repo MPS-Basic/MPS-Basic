@@ -11,6 +11,7 @@
 
 namespace fs = std::filesystem;
 
+// void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps);
 bool isInside(
     Eigen::Vector3d& position,
     std::vector<double>& x_range,
@@ -28,6 +29,7 @@ int main(int argc, char** argv) {
 
     std::vector<double> fluid_x_range{0.0, 1.0};
     std::vector<double> fluid_y_range{0.0, 0.6};
+    // check_fluid_range(fluid_x_range, fluid_y_range, l0, eps);
 
     int ix_begin = round(fluid_x_range.at(0) / l0) - 4;
     int ix_end   = round(fluid_x_range.at(1) / l0) + 4;
@@ -81,6 +83,21 @@ int main(int argc, char** argv) {
     GeneratorDialogue gd;
     gd.generatorDialogue(fs::path(parentPath), particles, {".prof", ".vtu"});
 }
+
+// void check_fluid_range(std::vector<double>& x_range, std::vector<double>& y_range, double& l0, double& eps) {
+
+//     double nx = (x_range.at(1) - x_range.at(0)) / l0;
+//     if (abs(nx - std::round(nx)) > eps) {
+//         std::cerr << "x_range of the fluid is not divisible by particle length." << std::endl;
+//         std::exit(-1);
+//     }
+
+//     double ny = (y_range.at(1) - y_range.at(0)) / l0;
+//     if (abs(ny - std::round(ny)) > eps) {
+//         std::cerr << "y_range of the fluid is not divisible by particle length." << std::endl;
+//         std::exit(-1);
+//     }
+// }
 
 bool isInside(
     Eigen::Vector3d& pos,
