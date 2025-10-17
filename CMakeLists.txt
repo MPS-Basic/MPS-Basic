@@ -71,7 +71,7 @@ include(FetchContent)
 FetchContent_Declare(
   Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  GIT_TAG 3.4.0
+  GIT_TAG 5.0.0
 )
 FetchContent_MakeAvailable(Eigen)
 target_include_directories(${PROJECT_NAME} PRIVATE ${eigen_SOURCE_DIR})

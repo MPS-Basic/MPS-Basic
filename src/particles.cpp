@@ -1,5 +1,6 @@
 #include "particles.hpp"
 
+#include <cassert>
 #include <vector>
 
 std::vector<Particle>::iterator Particles::begin() {
