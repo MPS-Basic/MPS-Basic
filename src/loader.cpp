@@ -2,6 +2,7 @@
 
 #include "particles_loader/csv.hpp"
 #include "particles_loader/prof.hpp"
+#include "particles_loader/vtu.hpp"
 
 #include <cmath>
 #include <iostream>
@@ -42,6 +43,8 @@ std::unique_ptr<ParticlesLoader::Interface> Loader::getParticlesLoader(const fs:
         return std::make_unique<ParticlesLoader::Csv>();
     } else if (extension == ".prof") {
         return std::make_unique<ParticlesLoader::Prof>();
+    } else if (extension == ".vtu") {
+        return std::make_unique<ParticlesLoader::Vtu>();
     } else {
         cerr << "unsupported file format: " << particlesPath.extension() << endl;
         std::exit(-1);

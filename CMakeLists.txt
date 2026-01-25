@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
   src/particles_exporter.cpp
   src/particles_loader/prof.cpp
   src/particles_loader/csv.cpp
+  src/particles_loader/vtu.cpp
   src/refvalues.cpp
   src/saver.cpp
   src/simulation.cpp
