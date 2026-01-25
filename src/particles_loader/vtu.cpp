@@ -94,9 +94,9 @@ std::pair<double, Particles> Vtu::load(const fs::path& path, double defaultDensi
     for (size_t i = 0; i < numParticles; ++i) {
         Eigen::Vector3d pos = positions[i];
         Eigen::Vector3d vel = (i < velocities.size()) ? velocities[i] : Eigen::Vector3d(0, 0, 0);
-        int type = (i < types.size()) ? types[i] : 0;
-        int fluidType = (i < fluidTypes.size()) ? fluidTypes[i] : 0;
-        double density = (i < densities.size() && densities[i] >= 0) ? densities[i] : defaultDensity;
+        int type            = (i < types.size()) ? types[i] : 0;
+        int fluidType       = (i < fluidTypes.size()) ? fluidTypes[i] : 0;
+        double density      = (i < densities.size() && densities[i] >= 0) ? densities[i] : defaultDensity;
 
         particles.add(Particle(particles.size(), static_cast<ParticleType>(type), pos, vel, density, fluidType));
     }
