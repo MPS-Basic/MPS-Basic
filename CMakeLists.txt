@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
   src/particles_exporter.cpp
   src/particles_loader/prof.cpp
   src/particles_loader/csv.cpp
+  src/particles_loader/vtu.cpp
   src/refvalues.cpp
   src/saver.cpp
   src/simulation.cpp
@@ -30,6 +31,12 @@ add_executable(${PROJECT_NAME}
   src/surface_detector/number_density.cpp
   src/surface_detector/distribution.cpp
   src/neighbor_searcher.cpp
+)
+# particle generator
+add_library(particles STATIC
+  src/particle.cpp
+  src/particles.cpp
+  src/particles_exporter.cpp
 )
 # unit test
 enable_testing()
@@ -46,12 +53,8 @@ add_executable(
     src/bucket.cpp
     src/neighbor_searcher.cpp
     test/neighbor_searcher_test.cpp
-)
-# particle generator
-add_library(particles STATIC
-  src/particle.cpp
-  src/particles.cpp
-  src/particles_exporter.cpp
+    src/particles_loader/vtu.cpp
+    test/vtu_loader.cpp
 )
 
 # ------------------
