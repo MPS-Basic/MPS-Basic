@@ -32,6 +32,12 @@ add_executable(${PROJECT_NAME}
   src/surface_detector/distribution.cpp
   src/neighbor_searcher.cpp
 )
+# particle generator
+add_library(particles STATIC
+  src/particle.cpp
+  src/particles.cpp
+  src/particles_exporter.cpp
+)
 # unit test
 enable_testing()
 add_executable(
@@ -47,12 +53,8 @@ add_executable(
     src/bucket.cpp
     src/neighbor_searcher.cpp
     test/neighbor_searcher_test.cpp
-)
-# particle generator
-add_library(particles STATIC
-  src/particle.cpp
-  src/particles.cpp
-  src/particles_exporter.cpp
+    src/particles_loader/vtu.cpp
+    test/vtu_loader.cpp
 )
 
 # ------------------
