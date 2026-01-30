@@ -9,6 +9,16 @@
 namespace DirichletBoundaryConditionGenerator = PressureCalculator::DirichletBoundaryConditionGenerator;
 
 MPS MPSFactory::create(const Input& input) {
+    Eigen::Vector3d gravity = Eigen::Vector3d::Zero();
+    if (input.settings.xyzInput) {
+        gravity = input.settings.gravity;
+    } else {
+        double gNorm  = input.settings.gNorm;
+        double gAngle = input.settings.gAngle;
+        double theta  = gAngle * M_PI / 180.0;                   // Convert angle to radians
+        gravity << gNorm * sin(theta), -gNorm * cos(theta), 0.0; // Gravity in XY plane
+    }
+
     RefValues refValuesForNumberDensity(
         input.settings.dim,
         input.settings.particleDistance,
@@ -60,5 +70,5 @@ MPS MPSFactory::create(const Input& input) {
         std::exit(-1);
     }
 
-    return MPS(input, std::move(pressureCalculator), std::move(surfaceDetector));
+    return MPS(input, gravity, std::move(pressureCalculator), std::move(surfaceDetector));
 }

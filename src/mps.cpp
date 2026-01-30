@@ -14,12 +14,14 @@ using std::endl;
 
 MPS::MPS(
     const Input& input,
+    Eigen::Vector3d& gravity,
     std::unique_ptr<PressureCalculator::Interface>&& pressureCalculator,
     std::unique_ptr<SurfaceDetector::Interface>&& surfaceDetector
 ) {
     this->settings           = input.settings;
     this->domain             = input.settings.domain;
     this->particles          = input.particles;
+    this->gravity            = gravity;
     this->pressureCalculator = std::move(pressureCalculator);
     this->surfaceDetector    = std::move(surfaceDetector);
     this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
@@ -64,8 +66,7 @@ void MPS::calGravity() {
 #pragma omp parallel for
     for (auto& p : particles) {
         if (p.type == ParticleType::Fluid) {
-            p.acceleration += settings.gravity;
-
+            p.acceleration += gravity;
         } else {
             p.acceleration.setZero();
         }

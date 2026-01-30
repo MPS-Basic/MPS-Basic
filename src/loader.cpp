@@ -86,9 +86,12 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.kinematicViscosity = yaml["kinematicViscosity"].as<double>();
 
     // gravity
+    s.xyzInput = yaml["xyz-input"] ? yaml["xyz-input"].as<bool>() : true;
     s.gravity[0] = yaml["gravity"][0].as<double>();
     s.gravity[1] = yaml["gravity"][1].as<double>();
     s.gravity[2] = yaml["gravity"][2].as<double>();
+    s.gNorm  = yaml["gravity-norm"] ? yaml["gravity-norm"].as<double>() : 0.0;
+    s.gAngle = yaml["gravity-angle"] ? yaml["gravity-angle"].as<double>() : 0.0;
 
     // free surface detection
     s.surfaceDetection_numberDensity_threshold = yaml["surfaceDetection-numberDensity-threshold"].as<double>();
