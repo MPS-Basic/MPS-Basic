@@ -101,6 +101,7 @@ void PressurePoissonEquation::setMatrixTriplets(
 ) {
     auto a  = 2.0 * dimension / (n0_forLaplacian * lambda0);
     auto re = reForLaplacian;
+    Weight weight(WeightType::SemiImplicit);
 
     for (auto& pi : particles) {
         if (dirichletBoundaryCondition.contains(pi.id)) {
@@ -118,7 +119,7 @@ void PressurePoissonEquation::setMatrixTriplets(
             }
 
             if (neighbor.distance < re) {
-                double coefficient_ij = a * weight(neighbor.distance, re) / pi.density;
+                double coefficient_ij = a * weight.weightFn(neighbor.distance, re) / pi.density;
                 matrixTriplets.emplace_back(pi.id, pj.id, -1.0 * coefficient_ij);
                 coefficient_ii += coefficient_ij;
             }

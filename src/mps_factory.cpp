@@ -22,7 +22,8 @@ MPS MPSFactory::create(const Input& input) {
     RefValues refValuesForNumberDensity(
         input.settings.dim,
         input.settings.particleDistance,
-        input.settings.re_forNumberDensity
+        input.settings.re_forNumberDensity,
+        (input.settings.pressureCalculationMethod == "Implicit") ? WeightType::SemiImplicit : WeightType::Explicit
     );
 
     std::unique_ptr<SurfaceDetector::Interface> surfaceDetector;

@@ -10,6 +10,7 @@
 #include "refvalues.hpp"
 #include "settings.hpp"
 #include "surface_detector/interface.hpp"
+#include "weight.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -48,6 +49,8 @@ public:
 private:
     NeighborSearcher neighborSearcher;                           ///< Neighbor searcher for neighbor search
     std::unique_ptr<SurfaceDetector::Interface> surfaceDetector; ///< Interface for free surface detection
+    Weight weight;     ///< Weight function instance except for gradient calculation
+    Weight weightGrad; ///< Weight function instance for the gradient calculation
 
     /**
      * @brief calculate gravity term
