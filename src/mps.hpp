@@ -114,6 +114,7 @@ private:
     /**
      * @brief set minimum pressure for pressure gradient calculation
      * @param re effective radius \f$r_e\f$
+     * This function is needed only in semi-implicit method.
      */
     void setMinimumPressure(const double& re);
 

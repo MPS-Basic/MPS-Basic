@@ -68,7 +68,8 @@ void MPS::stepForward() {
         particle.pressure = pressures[particle.id];
     }
 
-    setMinimumPressure(settings.re_forGradient);
+    if (settings.pressureCalculationMethod == "Implicit")
+        setMinimumPressure(settings.re_forGradient);
     calPressureGradient(settings.re_forGradient);
     moveParticleUsingPressureGradient();
 
@@ -239,7 +240,9 @@ void MPS::calPressureGradient(const double& re) {
                 double w = weightGrad.weightFn(neighbor.distance, re);
                 // double dist2 = pow(neighbor.distance, 2);
                 double dist2 = (pj.position - pi.position).squaredNorm();
-                double pij   = (pj.pressure - pi.minimumPressure) / dist2;
+                double pij   = (settings.pressureCalculationMethod == "Implicit")
+                                   ? (pj.pressure - pi.minimumPressure) / dist2
+                                   : (pj.pressure + pi.pressure) / dist2;
                 grad += (pj.position - pi.position) * pij * w;
             }
         }
