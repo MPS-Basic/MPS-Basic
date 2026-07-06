@@ -20,18 +20,9 @@ Implicit::Implicit(
     double relaxationCoefficient,
     std::unique_ptr<DirichletBoundaryConditionGenerator::Interface>&& dirichletBoundaryConditionGenerator
 ) {
-    auto refValuesForNumberDensity            = RefValues(
-        dimension, 
-        particleDistance, 
-        reForNumberDensity,
-        WeightType::SemiImplicit
-    );
-    auto refValuesForLaplacian                = RefValues(
-        dimension, 
-        particleDistance, 
-        reForLaplacian,
-        WeightType::SemiImplicit
-    );
+    auto refValuesForNumberDensity =
+        RefValues(dimension, particleDistance, reForNumberDensity, WeightType::SemiImplicit);
+    auto refValuesForLaplacian = RefValues(dimension, particleDistance, reForLaplacian, WeightType::SemiImplicit);
     this->dirichletBoundaryConditionGenerator = std::move(dirichletBoundaryConditionGenerator);
     this->pressurePoissonEquation             = PressurePoissonEquation(
         dimension,
