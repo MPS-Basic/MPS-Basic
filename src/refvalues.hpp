@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "weight.hpp"
 
 /**
  *  @brief Struct for reference values of MPS method
@@ -17,6 +18,10 @@ public:
      * @param dim dimension of the simulation
      * @param particleDistance initial particle distance
      * @param re effective radius
+     * @param weightType weight function type
      */
-    RefValues(int dim, double particleDistance, double re);
+    RefValues(int dim, double particleDistance, double re, WeightType weightType);
+
+private:
+    Weight weight; ///< weight function instance
 };

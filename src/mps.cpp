@@ -26,9 +26,30 @@ MPS::MPS(
     this->surfaceDetector    = std::move(surfaceDetector);
     this->neighborSearcher   = NeighborSearcher(input.settings.reMax, input.settings.domain, input.particles.size());
 
-    refValuesForNumberDensity = RefValues(settings.dim, settings.particleDistance, settings.re_forNumberDensity);
-    refValuesForGradient      = RefValues(settings.dim, settings.particleDistance, settings.re_forGradient);
-    refValuesForLaplacian     = RefValues(settings.dim, settings.particleDistance, settings.re_forLaplacian);
+    refValuesForNumberDensity = RefValues(
+        settings.dim,
+        settings.particleDistance,
+        settings.re_forNumberDensity,
+        (settings.pressureCalculationMethod == "Implicit") ? WeightType::SemiImplicit : WeightType::Explicit
+    );
+    refValuesForGradient = RefValues(
+        settings.dim,
+        settings.particleDistance,
+        settings.re_forGradient,
+        (settings.pressureCalculationMethod == "Implicit") ? WeightType::SemiImplicit : WeightType::ExplicitGrad
+    );
+    refValuesForLaplacian = RefValues(
+        settings.dim,
+        settings.particleDistance,
+        settings.re_forLaplacian,
+        (settings.pressureCalculationMethod == "Implicit") ? WeightType::SemiImplicit : WeightType::Explicit
+    );
+
+    this->weight =
+        Weight((settings.pressureCalculationMethod == "Implicit") ? WeightType::SemiImplicit : WeightType::Explicit);
+    this->weightGrad = Weight(
+        (settings.pressureCalculationMethod == "Implicit") ? WeightType::SemiImplicit : WeightType::ExplicitGrad
+    );
 }
 
 void MPS::stepForward() {
@@ -47,7 +68,8 @@ void MPS::stepForward() {
         particle.pressure = pressures[particle.id];
     }
 
-    setMinimumPressure(settings.re_forGradient);
+    if (settings.pressureCalculationMethod == "Implicit")
+        setMinimumPressure(settings.re_forGradient);
     calPressureGradient(settings.re_forGradient);
     moveParticleUsingPressureGradient();
 
@@ -88,8 +110,8 @@ void MPS::calViscosity(const double& re) {
         for (auto& neighbor : pi.neighbors) {
             auto& pj = particles[neighbor.id];
 
-            if (neighbor.distance < settings.re_forLaplacian) {
-                double w = weight(neighbor.distance, re);
+            if (neighbor.distance < re) {
+                double w = weight.weightFn(neighbor.distance, re);
                 viscosityTerm += (pj.velocity - pi.velocity) * w;
             }
         }
@@ -155,7 +177,7 @@ void MPS::calNumberDensity(const double& re) {
             continue;
 
         for (auto& neighbor : pi.neighbors)
-            pi.numberDensity += weight(neighbor.distance, re);
+            pi.numberDensity += weight.weightFn(neighbor.distance, re);
     }
 }
 
@@ -215,10 +237,12 @@ void MPS::calPressureGradient(const double& re) {
                 continue;
 
             if (neighbor.distance < re) {
-                double w = weight(neighbor.distance, re);
+                double w = weightGrad.weightFn(neighbor.distance, re);
                 // double dist2 = pow(neighbor.distance, 2);
                 double dist2 = (pj.position - pi.position).squaredNorm();
-                double pij   = (pj.pressure - pi.minimumPressure) / dist2;
+                double pij   = (settings.pressureCalculationMethod == "Implicit")
+                                   ? (pj.pressure - pi.minimumPressure) / dist2
+                                   : (pj.pressure + pi.pressure) / dist2;
                 grad += (pj.position - pi.position) * pij * w;
             }
         }

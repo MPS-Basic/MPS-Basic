@@ -6,9 +6,12 @@
 #include <cmath>
 #include <utility>
 
-RefValues::RefValues(int dim, double particleDistance, double re) {
+RefValues::RefValues(int dim, double particleDistance, double re, WeightType weightType) {
     assert(dim == 2 || dim == 3);
     assert(particleDistance < re);
+
+    this->weight = Weight(weightType);
+
     int iZ_start = -4;
     int iZ_end   = 5;
     if (dim == 2) {
@@ -29,8 +32,8 @@ RefValues::RefValues(int dim, double particleDistance, double re) {
                 double zj   = particleDistance * (double) (iZ);
                 double dis2 = xj * xj + yj * yj + zj * zj;
                 double dis  = sqrt(dis2);
-                n0 += weight(dis, re);
-                lambda += dis2 * weight(dis, re);
+                n0 += weight.weightFn(dis, re);
+                lambda += dis2 * weight.weightFn(dis, re);
             }
         }
     }

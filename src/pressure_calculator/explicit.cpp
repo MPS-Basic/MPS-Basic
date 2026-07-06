@@ -1,12 +1,10 @@
 #include "explicit.hpp"
 
-#include "../refvalues.hpp"
-
 using PressureCalculator::Explicit;
 
-Explicit::Explicit(double re, double soundSpeed, int dimension, double particleDistance) {
+Explicit::Explicit(double n0, double soundSpeed, int dimension, double particleDistance) {
     this->soundSpeed = soundSpeed;
-    this->n0         = RefValues(dimension, particleDistance, re).n0;
+    this->n0         = n0;
 }
 
 Explicit::~Explicit() {
@@ -18,7 +16,7 @@ std::vector<double> Explicit::calc(Particles& particles) {
 
 #pragma omp parallel for
     for (const auto& pi : particles) {
-        if (pi.type == ParticleType::Ghost) {
+        if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
             pressure[pi.id] = 0;
         } else {
             auto ni  = pi.numberDensity;
