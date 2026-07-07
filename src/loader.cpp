@@ -79,7 +79,6 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     s.endTime          = yaml["endTime"].as<double>();
     s.outputPeriod     = yaml["outputPeriod"].as<double>();
     s.cflCondition     = yaml["cflCondition"].as<double>();
-    s.numPhysicalCores = yaml["numPhysicalCores"].as<int>();
 
     // physical properties
     s.defaultDensity     = yaml["defaultDensity"].as<double>();

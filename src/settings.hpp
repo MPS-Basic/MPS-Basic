@@ -20,7 +20,6 @@ struct Settings {
     double endTime{};          ///< End time of the simulation
     double outputPeriod{};     ///< Output period of the simulation
     double cflCondition{};     ///< CFL condition
-    int numPhysicalCores{};    ///< Number of cores to calculate
 
     Domain domain{}; ///< domain of the simulation
 

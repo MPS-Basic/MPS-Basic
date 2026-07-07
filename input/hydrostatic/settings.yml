@@ -11,7 +11,6 @@ numPhysicalCores: 4
 domainMin: [-0.25, -0.05, 0.0]
 domainMax: [0.25, 0.6, 0.0]
 
-# physical properties
 defaultDensity: 1000.0 # If the particle density is not specified, this value is used.
 kinematicViscosity: 1.0e-04 # 少数第一位まで書かないと文字列として認識されてしまう
 

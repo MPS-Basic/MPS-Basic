@@ -90,13 +90,6 @@ private:
     void calNumberDensity(const double& re);
 
     /**
-     *@brief set boundary condition of pressure Poisson equation
-     */
-    void setBoundaryCondition();
-
-    bool isFreeSurface(const Particle& pi);
-
-    /**
      * @brief check if particle distribution is biased.
      * @details
      * Particle number density can be low even in the fluid region, making the free surface detection based on particle
