@@ -181,22 +181,6 @@ void MPS::calNumberDensity(const double& re) {
     }
 }
 
-void MPS::setBoundaryCondition() {
-#pragma omp parallel for
-    for (auto& pi : particles) {
-        if (pi.type == ParticleType::Ghost || pi.type == ParticleType::DummyWall) {
-            pi.boundaryCondition = FluidState::Ignored;
-
-        } else { // Fluid particles
-            if (surfaceDetector->isFreeSurface(particles, pi)) {
-                pi.boundaryCondition = FluidState::FreeSurface;
-            } else {
-                pi.boundaryCondition = FluidState::Inner;
-            }
-        }
-    }
-}
-
 void MPS::setMinimumPressure(const double& re) {
 #pragma omp parallel for
     for (auto& p : particles) {
