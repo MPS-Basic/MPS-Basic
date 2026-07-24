@@ -74,11 +74,6 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
 
     // computational conditions
     YAML::Node comp    = yaml["computationalConditions"];
-    if (!comp["dim"] || !comp["particleDistance"] || !comp["dt"] || !comp["endTime"] || !comp["outputPeriod"] ||
-        !comp["cflCondition"]) {
-        cerr << "missing computational conditions in the input file" << endl;
-        std::exit(-1);
-    }
     s.dim              = comp["dim"].as<int>();
     s.particleDistance = comp["particleDistance"].as<double>();
     s.dt               = comp["dt"].as<double>();
