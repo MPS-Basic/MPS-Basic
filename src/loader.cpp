@@ -73,71 +73,91 @@ Settings Loader::loadSettingYaml(const fs::path& settingPath) {
     Settings s;
 
     // computational conditions
-    s.dim              = yaml["dim"].as<int>();
-    s.particleDistance = yaml["particleDistance"].as<double>();
-    s.dt               = yaml["dt"].as<double>();
-    s.endTime          = yaml["endTime"].as<double>();
-    s.outputPeriod     = yaml["outputPeriod"].as<double>();
-    s.cflCondition     = yaml["cflCondition"].as<double>();
+    YAML::Node comp    = yaml["computationalConditions"];
+    if (!comp["dim"] || !comp["particleDistance"] || !comp["dt"] || !comp["endTime"] || !comp["outputPeriod"] ||
+        !comp["cflCondition"]) {
+        cerr << "missing computational conditions in the input file" << endl;
+        std::exit(-1);
+    }
+    s.dim              = comp["dim"].as<int>();
+    s.particleDistance = comp["particleDistance"].as<double>();
+    s.dt               = comp["dt"].as<double>();
+    s.endTime          = comp["endTime"].as<double>();
+    s.outputPeriod     = comp["outputPeriod"].as<double>();
+    s.cflCondition     = comp["cflCondition"].as<double>();
 
     // physical properties
-    s.defaultDensity     = yaml["defaultDensity"].as<double>();
-    s.kinematicViscosity = yaml["kinematicViscosity"].as<double>();
+    YAML::Node phys      = yaml["physicalProperties"];
+    s.defaultDensity     = phys["defaultDensity"].as<double>();
+    s.kinematicViscosity = phys["kinematicViscosity"].as<double>();
 
     // gravity
-    s.xyzInput   = yaml["xyz-input"] ? yaml["xyz-input"].as<bool>() : true;
-    s.gravity[0] = yaml["gravity"][0].as<double>();
-    s.gravity[1] = yaml["gravity"][1].as<double>();
-    s.gravity[2] = yaml["gravity"][2].as<double>();
-    s.gNorm      = yaml["gravity-norm"] ? yaml["gravity-norm"].as<double>() : 0.0;
-    s.gAngle     = yaml["gravity-angle"] ? yaml["gravity-angle"].as<double>() : 0.0;
+    YAML::Node grav = yaml["gravity"];
+    s.gravityMethod = grav["method"] ? grav["method"].as<std::string>() : "xyz";
+    if (s.gravityMethod == "xyz") {
+        s.gravity[0] = grav["xyz"][0].as<double>();
+        s.gravity[1] = grav["xyz"][1].as<double>();
+        s.gravity[2] = grav["xyz"][2].as<double>();
+    } else if (s.gravityMethod == "normAndAngle") {
+        s.gNorm  = grav["normAndAngle"]["norm"] ? grav["normAndAngle"]["norm"].as<double>() : 0.0;
+        s.gAngle = grav["normAndAngle"]["angle"] ? grav["normAndAngle"]["angle"].as<double>() : 0.0;
+    } else {
+        cerr << "unsupported gravity method: " << s.gravityMethod << endl;
+        std::exit(-1);
+    }
 
     // free surface detection
-    s.surfaceDetection_numberDensity_threshold = yaml["surfaceDetection-numberDensity-threshold"].as<double>();
-    s.surfaceDetection_particleDistribution    = yaml["surfaceDetection-particleDistribution"].as<bool>();
-    s.surfaceDetection_particleDistribution_threshold =
-        yaml["surfaceDetection-particleDistribution-threshold"].as<double>();
+    YAML::Node surf                                   = yaml["surfaceDetection"];
+    s.surfaceDetection_numberDensity_threshold        = surf["numberDensity"]["threshold"].as<double>();
+    s.surfaceDetection_particleDistribution           = surf["particleDistribution"]["enabled"].as<bool>();
+    s.surfaceDetection_particleDistribution_threshold = surf["particleDistribution"]["threshold"].as<double>();
 
     // pressure calculation method
-    s.pressureCalculationMethod = yaml["pressureCalculationMethod"].as<std::string>();
-    // for Implicit
-    s.compressibility                  = yaml["compressibility"].as<double>();
-    s.relaxationCoefficientForPressure = yaml["relaxationCoefficientForPressure"].as<double>();
-    // for Explicit
-    s.soundSpeed = yaml["soundSpeed"].as<double>();
+    YAML::Node press            = yaml["pressureCalculation"];
+    s.pressureCalculationMethod = press["method"].as<std::string>();
+    if (press["method"].as<std::string>() == "Implicit") {
+        // for Implicit
+        s.compressibility                  = press["implicit"]["compressibility"].as<double>();
+        s.relaxationCoefficientForPressure = press["implicit"]["relaxationCoefficient"].as<double>();
+    } else if (press["method"].as<std::string>() == "Explicit") {
+        // for Explicit
+        s.soundSpeed = press["explicit"]["soundSpeed"].as<double>();
+    } else {
+        cerr << "unsupported pressure calculation method: " << press["method"].as<std::string>() << endl;
+        std::exit(-1);
+    }
 
     // collision
-    s.collisionDistance        = yaml["collisionDistanceRatio"].as<double>() * s.particleDistance;
-    s.coefficientOfRestitution = yaml["coefficientOfRestitution"].as<double>();
+    YAML::Node coll            = yaml["collision"];
+    s.collisionDistance        = coll["distanceRatio"].as<double>() * s.particleDistance;
+    s.coefficientOfRestitution = coll["coefficientOfRestitution"].as<double>();
 
     // effective radius
-    s.re_forNumberDensity = yaml["radiusRatioForNumberDensity"].as<double>() * s.particleDistance;
-    s.re_forGradient      = yaml["radiusRatioForGradient"].as<double>() * s.particleDistance;
-    s.re_forLaplacian     = yaml["radiusRatioForLaplacian"].as<double>() * s.particleDistance;
+    YAML::Node re         = yaml["effectiveRadius"];
+    s.re_forNumberDensity = re["ratioForNumberDensity"].as<double>() * s.particleDistance;
+    s.re_forGradient      = re["ratioForGradient"].as<double>() * s.particleDistance;
+    s.re_forLaplacian     = re["ratioForLaplacian"].as<double>() * s.particleDistance;
     s.reMax               = std::max({s.re_forNumberDensity, s.re_forGradient, s.re_forLaplacian});
 
     // domain
-    s.domain.xMin    = yaml["domainMin"][0].as<double>();
-    s.domain.xMax    = yaml["domainMax"][0].as<double>();
-    s.domain.yMin    = yaml["domainMin"][1].as<double>();
-    s.domain.yMax    = yaml["domainMax"][1].as<double>();
-    s.domain.zMin    = yaml["domainMin"][2].as<double>();
-    s.domain.zMax    = yaml["domainMax"][2].as<double>();
+    YAML::Node dom   = yaml["domain"];
+    s.domain.xMin    = dom["min"][0].as<double>();
+    s.domain.xMax    = dom["max"][0].as<double>();
+    s.domain.yMin    = dom["min"][1].as<double>();
+    s.domain.yMax    = dom["max"][1].as<double>();
+    s.domain.zMin    = dom["min"][2].as<double>();
+    s.domain.zMax    = dom["max"][2].as<double>();
     s.domain.xLength = s.domain.xMax - s.domain.xMin;
     s.domain.yLength = s.domain.yMax - s.domain.yMin;
     s.domain.zLength = s.domain.zMax - s.domain.zMin;
 
-    // particlesPath
+    // i/o
+    YAML::Node io         = yaml["io"];
     auto yamlDir          = settingPath.parent_path();
-    auto relativeProfPath = yaml["particlesPath"].as<std::string>();
+    auto relativeProfPath = io["particlesPath"].as<std::string>();
     s.particlesPath       = fs::weakly_canonical(yamlDir / relativeProfPath);
 
     // outputVtkFormatInBinary
-    // check if outputVtkFormat is defined in the yaml file since it is optional
-    if (yaml["outputVtkInBinary"]) {
-        s.outputVtkInBinary = yaml["outputVtkInBinary"].as<bool>();
-    } else {
-        s.outputVtkInBinary = false;
-    }
+    s.outputVtkInBinary = io["outputVtkInBinary"] ? io["outputVtkInBinary"].as<bool>() : false;
     return s;
 }
